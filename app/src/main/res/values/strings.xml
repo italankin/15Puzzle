@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">15 Puzzle</string>
+    <string name="action_settings">SETTINGS</string>
+    <string name="action_new">NEW</string>
+    <string name="action_about">PAUSE</string>
+    <string name="info_moves">MOVES</string>
+    <string name="info_time">TIME</string>
+    <string name="info_win">SOLVED!</string>
+    <string name="info_pause">PAUSED</string>
+    <string name="pref_width">Width</string>
+    <string name="pref_height">Height</string>
+    <string name="pref_color">Color</string>
+    <string name="pref_color_mode">Color theme</string>
+    <string name="pref_mode">Mode</string>
+    <string name="pref_animation">Animation</string>
+    <string name="back">back</string>
+
+    <string-array name="animations">
+        <item>off</item>
+        <item>on</item>
+    </string-array>
+    <string-array name="color_mode">
+        <item>day</item>
+        <item>night</item>
+    </string-array>
+    <string-array name="game_modes">
+        <item>classic</item>
+        <item>snake</item>
+    </string-array>
+
+</resources>

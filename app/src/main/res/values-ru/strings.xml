@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">15</string>
+    <string name="action_settings">ОПЦИИ</string>
+    <string name="action_new">НОВАЯ ИГРА</string>
+    <string name="info_moves">ХОДЫ</string>
+    <string name="info_time">ВРЕМЯ</string>
+    <string name="info_win">СОБРАНО!</string>
+    <string name="info_pause">ПАУЗА</string>
+    <string name="pref_width">Ширина</string>
+    <string name="pref_height">Высота</string>
+    <string name="pref_animation">Анимация</string>
+    <string name="pref_mode">Режим игры</string>
+    <string name="pref_color_mode">Тема</string>
+    <string name="pref_color">Цвета</string>
+    <string name="back">назад</string>
+    <string name="action_about">ПАУЗА</string>
+
+    <string-array name="animations">
+        <item>выкл.</item>
+        <item>вкл.</item>
+    </string-array>
+    <string-array name="color_mode">
+        <item>день</item>
+        <item>ночь</item>
+    </string-array>
+    <string-array name="game_modes">
+        <item>классика</item>
+        <item>змейка</item>
+    </string-array>
+
+</resources>
