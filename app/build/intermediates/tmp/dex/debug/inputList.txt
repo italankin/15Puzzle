@@ -1,0 +1,4 @@
+D:\Documents\android\15Puzzle\app\build\intermediates\classes\debug
+D:\Documents\android\15Puzzle\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-07f71aa6ff0ad68ae8fe208b0dff9ddc8f974080.jar
+D:\Documents\android\15Puzzle\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-b51d4d4353856cc8b9fd08ca52e997f2d2ca81dd.jar
+D:\Documents\android\15Puzzle\app\build\intermediates\pre-dexed\debug\classes-8bcecaf601b2ae4f70c349b24a73fe18d2a5978e.jar
