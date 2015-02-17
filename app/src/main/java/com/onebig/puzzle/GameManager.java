@@ -14,7 +14,7 @@ public class GameManager extends Thread {
         this.mView = view;
     }
 
-    public void setmRunning(boolean run) {
+    public void setRunning(boolean run) {
         mRunning = run;
     }
 
@@ -40,11 +40,11 @@ public class GameManager extends Thread {
             }
             sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
             try {
-                if (sleepTime == 0) {
+                if (sleepTime < 1) {
                     sleepTime = 10;
                 }
                 sleep(sleepTime);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Log.e("GameManager", e.toString());
             }
         }

@@ -147,12 +147,13 @@ public class Tile {
         return false;
     }
 
-    public void setAnimation(int type, int delay) {
+    public Tile setAnimation(int type, int delay) {
         if (Settings.animationEnabled) {
             mAnimation.delay = delay;
             mAnimation.type = type;
             mAnimation.frames = Settings.tileAnimFrames;
         }
+        return this;
     }
 
     //

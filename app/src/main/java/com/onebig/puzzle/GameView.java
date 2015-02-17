@@ -54,7 +54,7 @@ public class GameView extends SurfaceView {
 
             public void surfaceDestroyed(SurfaceHolder holder) {
                 boolean retry = true;
-                mGameLoopThread.setmRunning(false);
+                mGameLoopThread.setRunning(false);
                 while (retry) {
                     try {
                         mGameLoopThread.join();
@@ -73,7 +73,7 @@ public class GameView extends SurfaceView {
                 mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
                 mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
 
-                mGameLoopThread.setmRunning(true);
+                mGameLoopThread.setRunning(true);
                 try {
                     mGameLoopThread.start();
                 } catch (IllegalThreadStateException e) {
@@ -173,65 +173,68 @@ public class GameView extends SurfaceView {
 
         // вычисление размеров
         Constraints.compute(this.getWidth(), this.getHeight(), 1.0f);
-        mRectField = new RectF(Constraints.fieldMarginLeft - Constraints.spacing, Constraints.fieldMarginTop
-                - Constraints.spacing, Constraints.fieldMarginLeft + Constraints.fieldWidth + Constraints.spacing,
-                Constraints.fieldMarginTop + Constraints.fieldHeight + Constraints.spacing);
+        mRectField = new RectF(
+                Constraints.fieldMarginLeft - Constraints.spacing,
+                Constraints.fieldMarginTop - Constraints.spacing,
+                Constraints.fieldMarginLeft + Constraints.fieldWidth + Constraints.spacing,
+                Constraints.fieldMarginTop + Constraints.fieldHeight + Constraints.spacing
+        );
 
         mTiles.clear();
 
         Random rnd = new Random();
-        int size = Game.getSize();                  // размер
+        int size = Game.getSize();                      // размер
         int animationType = rnd.nextInt(10);            // тип анимации
         int shift = size / 26 + 1;                      // коэффициент смещения анимации (группировка)
+        int delay = 0;
         for (int i = 0; i < size; i++) {
             int n = Game.getAt(i);
             if (n > 0) {
                 Tile t = new Tile(this, n, i);
                 if (Settings.animationEnabled) {
                     switch (animationType) {
-                        case 0:
-                            // все вместе
-                            t.setAnimation(Tile.Animation.SCALE, 0);
-                            break;
                         case 1:
                             // по порядку ячеек (сверху вниз)
-                            t.setAnimation(Tile.Animation.SCALE, i / shift);
+                            delay = i / shift;
                             break;
                         case 2:
                             // в обратном порядке ячеек (снизу вверх)
-                            t.setAnimation(Tile.Animation.SCALE, (size - i) / shift);
+                            delay = (size - i) / shift;
                             break;
                         case 3:
                             // случайный порядок
-                            t.setAnimation(Tile.Animation.SCALE, rnd.nextInt(10 + 10 * (shift - 1)));
+                            delay = rnd.nextInt(10 + 10 * (shift - 1));
                             break;
                         case 4:
                             // по порядку (1, 2, 3, ..., n-1, n)
-                            t.setAnimation(Tile.Animation.SCALE, n / shift);
+                            delay = n / shift;
                             break;
                         case 5:
                             // в обратном порядке (n, n-1, n-2, ..., 2, 1)
-                            t.setAnimation(Tile.Animation.SCALE, (size - n) / shift);
+                            delay = (size - n) / shift;
                             break;
                         case 6:
                             // по строкам
-                            t.setAnimation(Tile.Animation.SCALE, i / Settings.gameWidth * 3);
+                            delay = i / Settings.gameWidth * 3; // 3 - задержка в кадрах между группами
                             break;
                         case 7:
                             // по столбцам
-                            t.setAnimation(Tile.Animation.SCALE, i % Settings.gameWidth * 3);
+                            delay = i % Settings.gameWidth * 3;
                             break;
                         case 8:
                             // по строкам в обратном порядке
-                            t.setAnimation(Tile.Animation.SCALE, (Settings.gameHeight - i / Settings.gameWidth) * 3);
+                            delay = (Settings.gameHeight - i / Settings.gameWidth) * 3;
                             break;
                         case 9:
                             // по столбцам в обратном порядке
-                            t.setAnimation(Tile.Animation.SCALE, (Settings.gameWidth - i % Settings.gameWidth) * 3);
+                            delay = (Settings.gameWidth - i % Settings.gameWidth) * 3;
                             break;
+                        default:
+                            // все вместе
+                            delay = 0;
                     }
                 }
-                mTiles.add(t);
+                mTiles.add(t.setAnimation(Tile.Animation.SCALE, delay));
             }
         }
 

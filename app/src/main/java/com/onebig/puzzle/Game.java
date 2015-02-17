@@ -285,11 +285,6 @@ public class Game {
         return result;
     } // end slide
 
-    // возвращает число по координатам (x;y)
-    public static int getAt(int x, int y) {
-        return instance.grid.get(y * instance.width + x);
-    }
-
     // возвращает число с индексом index
     public static int getAt(int index) {
         return instance.grid.get(index);
@@ -297,7 +292,8 @@ public class Game {
 
     // вычисляет направление вектора с началом index и концом zeroPos
     public static int getDirection(int index) {
-        return Tools.direction(instance.zeroPos % instance.width - index % instance.width, instance.zeroPos / instance.width - index / instance.width);
+        return Tools.direction(instance.zeroPos % instance.width - index % instance.width,
+                instance.zeroPos / instance.width - index / instance.width);
     }
 
     // количество ходов
