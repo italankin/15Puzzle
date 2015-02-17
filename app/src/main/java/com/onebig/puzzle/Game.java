@@ -75,14 +75,14 @@ public class Game {
         int n, m, s;
         switch (Settings.gameMode) {
             case MODE_CLASSIC:
+                // для каждого числа высчитываем количество чисел, которые
+                // 1) меньше данного числа
+                // 2) стоят после него (по строкам)
                 for (int i = 0; i < size; i++) {
                     n = instance.grid.get(i);
                     s = 0;
                     for (int j = i + 1; j < size; j++) {
                         m = instance.grid.get(j);
-                        // для каждого числа высчитываем количество чисел, которые
-                        // 1) меньше данного числа
-                        // 2) стоят после него (по строкам)
                         if (n > m && m > 0) {
                             s++;
                         }
@@ -103,14 +103,13 @@ public class Game {
             // MODE_CLASSIC
 
             case MODE_SNAKE:
+                // для "змейки" нужно проверить,
+                // является ли номер текущей строки четным
                 for (int i = 0; i < size; i++) {
-
-                    // для "змейки" нужно проверить,
-                    // является ли номер текущей строки четным
+                    // если строка имеет четный номер, элементы массива нужно перебирать в обратном порядке
                     if ((i / instance.width) % 2 == 0) {
                         n = instance.grid.get(i);
                     } else {
-                        // если строка имеет четный номер, элементы массива нужно перебирать в обратном порядке
                         n = instance.grid.get(instance.width * (1 + i / instance.width) - i % instance.width - 1);
                     }
 
@@ -129,13 +128,6 @@ public class Game {
                     }
                     summ += s;
                 }
-
-//                if (instance.height % 2 == 1) {
-//                    int z = instance.width - instance.zeroPos % instance.width;
-//                    if (z % 2 == 0) {
-//                        return summ % 2 == 1;
-//                    }
-//                }
 
                 return summ % 2 == 0;
             // MODE_SNAKE
