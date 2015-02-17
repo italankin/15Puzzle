@@ -38,8 +38,8 @@ public class Tools {
         for (String s : list) {
             try {
                 result.add(Integer.parseInt(s));
-            } catch (Exception e) {
-                Log.e("getIntegerArray", e.toString());
+            } catch (NumberFormatException e) {
+                Log.e("getIntegerArray", "Error: " + s + " - invalid number");
             }
         }
         return result;

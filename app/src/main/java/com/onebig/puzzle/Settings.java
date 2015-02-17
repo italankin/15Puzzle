@@ -25,10 +25,9 @@ public class Settings {
 
     public static int gameWidth = 4;                    // ширина игры (в ячейках)
     public static int gameHeight = 4;                   // высота игры
-
     public static boolean saveGame = true;              // сохранение игр между сессиями
     public static boolean animationEnabled = true;      // анимации (вкл/выкл)
-    public static boolean sounds = true;      // звук (вкл/выкл)
+    public static boolean sounds = true;                // звук (вкл/выкл)
     public static boolean antiAlias = true;             // сглаживание (вкл/выкл)
     public static int tileAnimFrames = 13;              // количество кадров для анимирования плиток
     public static int screenAnimFrames = 10;            // кол-во кадров для анимирования элементов интерфейса

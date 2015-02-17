@@ -21,32 +21,32 @@ import java.util.TimerTask;
 
 public class GameView extends SurfaceView {
 
-    private Context context;                            // контекст приложения
+    private Context mContext;                           // контекст приложения
 
-    private GameManager gameLoopThread;                 // главный поток
+    private GameManager mGameLoopThread;                // главный поток
 
-    private Tiles tiles = new Tiles();                  // массив спрайтов
+    private Tiles mTiles = new Tiles();                 // массив спрайтов
 
-    private SettingsScreen screenSettings;              // настройки
-    private InterfaceScreen screenInterface;            // элементы интерфейса
-    private FieldOverlay overlaySolved;                 // экран конца игры
-    private FieldOverlay overlayPause;                  // экран паузы
-    private RectF rectField;                            // область игрового поля
+    private SettingsScreen mScreenSettings;             // настройки
+    private InterfaceScreen mScreenInterface;           // элементы интерфейса
+    private FieldOverlay mOverlaySolved;                // экран конца игры
+    private FieldOverlay mOverlayPause;                 // экран паузы
+    private RectF mRectField;                           // область игрового поля
 
     public boolean solved = false;                      // состояние головоломки (решено/не решено)
     public boolean paused = false;                      // пауза
 
-    private int startX;                                 // координата x и y начальной точки
-    private int startY;                                 // вектора перемещения
-    private boolean buttonResult = false;               // результат взаимодействия нажатия с элементом интерфейса
+    private int mStartX;                                // координата x и y начальной точки
+    private int mStartY;                                // вектора перемещения
+    private boolean mButtonResult = false;              // результат взаимодействия нажатия с элементом интерфейса
 
     public Timer gameClock;                             // таймер для отслеживания затраченного времени
 
     // конструктор
     public GameView(Context context) {
         super(context);
-        this.context = context;
-        gameLoopThread = new GameManager(this);
+        this.mContext = context;
+        mGameLoopThread = new GameManager(this);
 
         SurfaceHolder holder = getHolder();
 
@@ -54,10 +54,10 @@ public class GameView extends SurfaceView {
 
             public void surfaceDestroyed(SurfaceHolder holder) {
                 boolean retry = true;
-                gameLoopThread.setRunning(false);
+                mGameLoopThread.setmRunning(false);
                 while (retry) {
                     try {
-                        gameLoopThread.join();
+                        mGameLoopThread.join();
                         retry = false;
                     } catch (InterruptedException e) {
                         Log.e("GameView.surfaceDestroyed", e.toString());
@@ -68,15 +68,15 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder holder) {
                 createNewGame(false);
 
-                screenSettings = new SettingsScreen();
-                screenInterface = new InterfaceScreen();
-                overlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
-                overlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
+                mScreenSettings = new SettingsScreen();
+                mScreenInterface = new InterfaceScreen();
+                mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
+                mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
 
-                gameLoopThread.setRunning(true);
+                mGameLoopThread.setmRunning(true);
                 try {
-                    gameLoopThread.start();
-                } catch (Exception e) {
+                    mGameLoopThread.start();
+                } catch (IllegalThreadStateException e) {
                     Log.e("GameView.surfaceCreated", e.toString());
                 }
             }
@@ -96,31 +96,31 @@ public class GameView extends SurfaceView {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                startX = x;
-                startY = y;
-                if (screenSettings.isShown()) {
-                    buttonResult = screenSettings.onClick(x, y);
+                mStartX = x;
+                mStartY = y;
+                if (mScreenSettings.isShown()) {
+                    mButtonResult = mScreenSettings.onClick(x, y);
                 } else {
-                    if (solved && rectField.contains(x, y)) {
+                    if (solved && mRectField.contains(x, y)) {
                         solved = false;
                         createNewGame(true);
                     } else {
-                        buttonResult = screenInterface.onClick(x, y);
+                        mButtonResult = mScreenInterface.onClick(x, y);
                     }
                 }
                 break; // ACTION_DOWN
 
             case MotionEvent.ACTION_UP:
-                int dx = x - startX;
-                int dy = y - startY;
+                int dx = x - mStartX;
+                int dy = y - mStartY;
 
                 if (Math.sqrt(dx * dx + dy * dy) > (Constraints.tileWidth / 6.0f) && !paused) {
-                    tiles.move(startX, startY, Tools.direction(dx, dy));
-                } else if (!buttonResult && paused && rectField.contains(x, y)) {
+                    mTiles.move(mStartX, mStartY, Tools.direction(dx, dy));
+                } else if (!mButtonResult && paused && mRectField.contains(x, y)) {
                     paused = false;
-                    overlayPause.hide();
-                } else if (!solved && !buttonResult) {
-                    tiles.move(startX, startY, Tools.DIRECTION_DEFAULT);
+                    mOverlayPause.hide();
+                } else if (!solved && !mButtonResult) {
+                    mTiles.move(mStartX, mStartY, Tools.DIRECTION_DEFAULT);
                 }
                 break; // ACTION_UP
 
@@ -131,7 +131,7 @@ public class GameView extends SurfaceView {
 
     //
     public boolean onBackPressed() {
-        return !screenSettings.isShown() || screenSettings.hide();
+        return !mScreenSettings.isShown() || mScreenSettings.hide();
     }
 
     //
@@ -146,13 +146,13 @@ public class GameView extends SurfaceView {
     private void createNewGame(boolean isUser) {
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         // если создание новой игры не было инициировано пользователем,
         // загружаем сохрененную игру (если имеется)
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
             String string_array = prefs.getString(Settings.KEY_GAME_ARRAY, Game.getGrid().toString());
             ArrayList<Integer> list = Tools.getIntegerArray(Arrays.asList(string_array.split("\\s*,\\s*")));
-            if (list.size() == Game.getGridSize()) {
+            if (list.size() == Game.getSize()) {
                 Game.load(list, prefs.getInt(Settings.KEY_GAME_MOVES, 0), prefs.getLong(Settings.KEY_GAME_TIME, 0));
             }
 
@@ -173,14 +173,14 @@ public class GameView extends SurfaceView {
 
         // вычисление размеров
         Constraints.compute(this.getWidth(), this.getHeight(), 1.0f);
-        rectField = new RectF(Constraints.fieldMarginLeft - Constraints.spacing, Constraints.fieldMarginTop
+        mRectField = new RectF(Constraints.fieldMarginLeft - Constraints.spacing, Constraints.fieldMarginTop
                 - Constraints.spacing, Constraints.fieldMarginLeft + Constraints.fieldWidth + Constraints.spacing,
                 Constraints.fieldMarginTop + Constraints.fieldHeight + Constraints.spacing);
 
-        tiles.clear();
+        mTiles.clear();
 
         Random rnd = new Random();
-        int size = Game.getGridSize();                  // размер
+        int size = Game.getSize();                  // размер
         int animationType = rnd.nextInt(10);            // тип анимации
         int shift = size / 26 + 1;                      // коэффициент смещения анимации (группировка)
         for (int i = 0; i < size; i++) {
@@ -231,7 +231,7 @@ public class GameView extends SurfaceView {
                             break;
                     }
                 }
-                tiles.add(t);
+                mTiles.add(t);
             }
         }
 
@@ -247,25 +247,22 @@ public class GameView extends SurfaceView {
 
     } // createNewGame
 
-    // функция рисования
     public void draw(Canvas canvas) {
-        screenInterface.draw(canvas);                   // рисование элементов интерфейса
+        mScreenInterface.draw(canvas);                   // рисование элементов интерфейса
 
-        // рисование спрайтов
-        for (int i = 0; i < tiles.size(); i++) {
-            tiles.get(i).draw(canvas);
-        }
+        mTiles.draw(canvas);
 
         if (solved) {
-            overlaySolved.draw(canvas);                 // оверлей "solved"
+            mOverlaySolved.draw(canvas);                 // оверлей "solved"
         }
-        if (screenSettings.isShown()) {
-            screenSettings.draw(canvas);                // экран настроек
+        if (mScreenSettings.isShown()) {
+            mScreenSettings.draw(canvas);                // экран настроек
         } else if (paused && !solved) {
-            overlayPause.draw(canvas);                  // оверлей "paused"
+            mOverlayPause.draw(canvas);                  // оверлей "paused"
         }
     }
 
+    //
     class Tiles extends ArrayList<Tile> {
 
         public int at(float x, float y) {
@@ -301,7 +298,7 @@ public class GameView extends SurfaceView {
                         gameClock.cancel();
                         gameClock = null;
                     }
-                    overlaySolved.show();
+                    mOverlaySolved.show();
                 }
 
                 if (Settings.sounds) {
@@ -311,7 +308,13 @@ public class GameView extends SurfaceView {
             } // if
         } // move
 
-    }
+        public void draw(Canvas canvas) {
+            for (int i = 0; i < size(); i++) {
+                get(i).draw(canvas);
+            }
+        }
+
+    } // Tiles
 
     public class InterfaceScreen {
 
@@ -321,111 +324,111 @@ public class GameView extends SurfaceView {
         private static final int BTN_PAUSE = 2;
         private final int OVERLAY_FRAMES = (int) 1.5 * Settings.screenAnimFrames;
 
-        private Paint paintButton;                      // Paint для рисования иконки приложения (вверху слева)
-        private Paint paintField;                       // ... фон игрового поля
-        private Paint paintTextButton;                  // ... текст кнопок интерфейса
-        private Paint paintTextValue;                   // ... отображение текстов инфо
-        private Paint paintTextCaption;                 // ... отображение заголовков инфо
-        private Paint paintOverlay;                     // ... анимация подсветки кнопок
+        private Paint mPaintButton;                     // Paint для рисования иконки приложения (вверху слева)
+        private Paint mPaintField;                      // ... фон игрового поля
+        private Paint mPaintTextButton;                 // ... текст кнопок интерфейса
+        private Paint mPaintTextValue;                  // ... отображение текстов инфо
+        private Paint mPaintTextCaption;                // ... отображение заголовков инфо
+        private Paint mPaintOverlay;                    // ... анимация подсветки кнопок
 
-        private String textMode[];                      // режим игры
-        private String textMoves;                       // ходы
-        private String textTime;                        // время
+        private String mTextMode[];                     // режим игры
+        private String mTextMoves;                      // ходы
+        private String mTextTime;                       // время
 
-        private RectF rectInfo;                         // ... инфо
-        private RectF rectMode;                         // режим игры
+        private RectF mRectInfo;                        // ... инфо
+        private RectF mRectMode;                        // режим игры
 
-        private Rect boundsTextButton = new Rect();     // границы текста на кнопках
-        private Rect boundsTextValue = new Rect();      // границы текста инфо панели (режим игры)
-        private Rect boundsTextCaption = new Rect();    // границы надписей инфо панели
+        private Rect mBoundsButton = new Rect();        // границы текста на кнопках
+        private Rect mBoundsValue = new Rect();         // границы текста инфо панели (режим игры)
+        private Rect mBoundsCaption = new Rect();       // границы надписей инфо панели
 
-        private ArrayList<Button> panelButtons = new ArrayList<Button>(); // кнопки вверху экрана
-        private float panelHeight;
+        private ArrayList<Button> mButtons = new ArrayList<Button>(); // кнопки вверху экрана
+        private float mButtonHeight;
 
         public InterfaceScreen() {
-            paintTextButton = new Paint();
-            paintTextButton.setAntiAlias(Settings.antiAlias);
-            paintTextButton.setColor(Colors.getTileTextColor());
-            paintTextButton.setTypeface(Settings.typeface);
-            paintTextButton.setTextAlign(Paint.Align.CENTER);
-            paintTextButton.setTextSize(Constraints.interfaceFontSize);
+            mPaintTextButton = new Paint();
+            mPaintTextButton.setAntiAlias(Settings.antiAlias);
+            mPaintTextButton.setColor(Colors.getTileTextColor());
+            mPaintTextButton.setTypeface(Settings.typeface);
+            mPaintTextButton.setTextAlign(Paint.Align.CENTER);
+            mPaintTextButton.setTextSize(Constraints.interfaceFontSize);
 
-            paintTextValue = new Paint(paintTextButton);
-            paintTextValue.setTextSize(Constraints.interfaceFontSize * 1.9f);
-            paintTextValue.setColor(Colors.getInfoTextColor());
+            mPaintTextValue = new Paint(mPaintTextButton);
+            mPaintTextValue.setTextSize(Constraints.interfaceFontSize * 1.9f);
+            mPaintTextValue.setColor(Colors.getInfoTextColor());
 
-            paintTextCaption = new Paint(paintTextButton);
-            paintTextCaption.setTextSize(Constraints.interfaceFontSize * 1.4f);
-            paintTextCaption.setTextAlign(Paint.Align.LEFT);
+            mPaintTextCaption = new Paint(mPaintTextButton);
+            mPaintTextCaption.setTextSize(Constraints.interfaceFontSize * 1.4f);
+            mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
 
-            paintField = new Paint();
-            paintField.setAntiAlias(Settings.antiAlias);
-            paintField.setColor(Colors.backgroundField);
+            mPaintField = new Paint();
+            mPaintField.setAntiAlias(Settings.antiAlias);
+            mPaintField.setColor(Colors.backgroundField);
 
-            paintButton = new Paint();
-            paintButton.setAntiAlias(Settings.antiAlias);
+            mPaintButton = new Paint();
+            mPaintButton.setAntiAlias(Settings.antiAlias);
 
-            paintOverlay = new Paint();
-            paintOverlay.setColor(Colors.getBgColor());
+            mPaintOverlay = new Paint();
+            mPaintOverlay.setColor(Colors.getBgColor());
 
-            panelHeight = Constraints.surfaceHeight * 0.07f;
+            mButtonHeight = Constraints.surfaceHeight * 0.07f;
             float w = (Constraints.surfaceWidth / BTN_COUNT);
 
-            panelButtons.add(new Button(new RectF(w * panelButtons.size(), 0.0f, w * (panelButtons.size() + 1), panelHeight), getResources().getString(R.string.action_new)));
-            panelButtons.add(new Button(new RectF(w * panelButtons.size(), 0.0f, w * (panelButtons.size() + 1), panelHeight), getResources().getString(R.string.action_settings)));
-            panelButtons.add(new Button(new RectF(w * panelButtons.size(), 0.0f, w * (panelButtons.size() + 1), panelHeight), getResources().getString(R.string.action_about)));
+            mButtons.add(new Button(new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight), getResources().getString(R.string.action_new)));
+            mButtons.add(new Button(new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight), getResources().getString(R.string.action_settings)));
+            mButtons.add(new Button(new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight), getResources().getString(R.string.action_about)));
 
             float height = Constraints.surfaceHeight * 0.13f;
-            float center = (Constraints.fieldMarginTop - Constraints.spacing - panelHeight) / 2.0f + panelHeight;
-            rectInfo = new RectF(0.0f, center - height / 2.0f, Constraints.surfaceWidth, center + height / 2.0f);
-            rectMode = new RectF(0.0f, center - height / 4.0f, Constraints.surfaceWidth * 0.5f, center + height / 4.0f);
+            float center = (Constraints.fieldMarginTop - Constraints.spacing - mButtonHeight) / 2.0f + mButtonHeight;
+            mRectInfo = new RectF(0.0f, center - height / 2.0f, Constraints.surfaceWidth, center + height / 2.0f);
+            mRectMode = new RectF(0.0f, center - height / 4.0f, Constraints.surfaceWidth * 0.5f, center + height / 4.0f);
 
-            paintTextButton.getTextBounds("A", 0, 1, boundsTextButton);
-            paintTextValue.getTextBounds("A", 0, 1, boundsTextValue);
-            paintTextCaption.getTextBounds("A", 0, 1, boundsTextCaption);
+            mPaintTextButton.getTextBounds("A", 0, 1, mBoundsButton);
+            mPaintTextValue.getTextBounds("A", 0, 1, mBoundsValue);
+            mPaintTextCaption.getTextBounds("A", 0, 1, mBoundsCaption);
 
-            textMode = getResources().getStringArray(R.array.game_modes);
-            textMoves = getResources().getString(R.string.info_moves);
-            textTime = getResources().getString(R.string.info_time);
+            mTextMode = getResources().getStringArray(R.array.game_modes);
+            mTextMoves = getResources().getString(R.string.info_moves);
+            mTextTime = getResources().getString(R.string.info_time);
         } // constructor
 
         public boolean onClick(float x, float y) {
 
             // -- создание новой игры --
-            if (panelButtons.get(BTN_NEW).contains(x, y)) {
+            if (mButtons.get(BTN_NEW).contains(x, y)) {
                 createNewGame(true);
                 if (Settings.animationEnabled) {
-                    panelButtons.get(BTN_NEW).setOverlay();
+                    mButtons.get(BTN_NEW).setOverlay();
                 }
                 return true;
             }
 
             // -- отображение настроек --
-            if (panelButtons.get(BTN_SETTINGS).contains(x, y)) {
+            if (mButtons.get(BTN_SETTINGS).contains(x, y)) {
                 paused = Game.move(0) > 0;
-                screenSettings.show();
+                mScreenSettings.show();
                 if (Settings.animationEnabled) {
-                    panelButtons.get(BTN_SETTINGS).setOverlay();
+                    mButtons.get(BTN_SETTINGS).setOverlay();
                 }
                 return true;
             }
 
             // -- о программе --
-            if (panelButtons.get(BTN_PAUSE).contains(x, y)) {
+            if (mButtons.get(BTN_PAUSE).contains(x, y)) {
                 if (!solved) {
                     paused = true;
                 }
-                if (!overlayPause.isShown()) {
-                    overlayPause.show();
+                if (!mOverlayPause.isShown()) {
+                    mOverlayPause.show();
                 }
                 if (Settings.animationEnabled) {
-                    panelButtons.get(BTN_PAUSE).setOverlay();
+                    mButtons.get(BTN_PAUSE).setOverlay();
                 }
                 return true;
             }
 
             // -- режим игры --
-            if (rectMode.contains(x, y)) {
+            if (mRectMode.contains(x, y)) {
                 Settings.gameMode = (++Settings.gameMode % 2);
                 Settings.save();
                 createNewGame(true);
@@ -437,43 +440,42 @@ public class GameView extends SurfaceView {
 
         public void draw(Canvas canvas) {
             canvas.drawColor(Colors.getBgColor());
-            canvas.drawRect(rectField, paintField);
-            canvas.drawRect(rectInfo, paintField);
-            paintButton.setColor(Colors.getTileColor());
-            canvas.drawRect(0.0f, 0.0f, Constraints.surfaceWidth, panelHeight, paintButton);
+            canvas.drawRect(mRectField, mPaintField);
+            canvas.drawRect(mRectInfo, mPaintField);
+            mPaintButton.setColor(Colors.getTileColor());
+            canvas.drawRect(0.0f, 0.0f, Constraints.surfaceWidth, mButtonHeight, mPaintButton);
 
-            // кнопки вверху экрана
-            for (Button b : panelButtons) {
+            for (Button b : mButtons) {
                 if (b.frame > 5) {
                     float a = (float) Tools.easeOut(b.frame--, 0.0f, 1.0f, OVERLAY_FRAMES);
-                    paintOverlay.setAlpha((int) (255 * (1.0f - a)));
-                    canvas.drawRect(b.rect, paintOverlay);
+                    mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
+                    canvas.drawRect(b.rect, mPaintOverlay);
                 }
-                canvas.drawText(b.caption, b.rect.centerX(), b.rect.centerY() - boundsTextButton.centerY(), paintTextButton);
+                canvas.drawText(b.caption, b.rect.centerX(), b.rect.centerY() - mBoundsButton.centerY(), mPaintTextButton);
             }
 
             // режим игры
-            canvas.drawText(textMode[Settings.gameMode].toUpperCase(), Constraints.surfaceWidth * 0.25f, rectInfo.centerY() - boundsTextValue.centerY(), paintTextValue);
+            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase(), Constraints.surfaceWidth * 0.25f, mRectInfo.centerY() - mBoundsValue.centerY(), mPaintTextValue);
 
-            float row1 = rectInfo.top + rectInfo.height() * 0.3f - boundsTextCaption.centerY();
-            float row2 = rectInfo.top + rectInfo.height() * 0.7f - boundsTextCaption.centerY();
+            float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mBoundsCaption.centerY();
+            float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mBoundsCaption.centerY();
             // надписи
-            paintTextCaption.setColor(Colors.getTileTextColor());
-            paintTextCaption.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(textMoves, Constraints.surfaceWidth / 2.0f, row1, paintTextCaption);
-            canvas.drawText(textTime, Constraints.surfaceWidth / 2.0f, row2, paintTextCaption);
+            mPaintTextCaption.setColor(Colors.getTileTextColor());
+            mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(mTextMoves, Constraints.surfaceWidth / 2.0f, row1, mPaintTextCaption);
+            canvas.drawText(mTextTime, Constraints.surfaceWidth / 2.0f, row2, mPaintTextCaption);
             // значения
-            paintTextCaption.setColor(Colors.getInfoTextColor());
-            paintTextCaption.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText(Integer.toString(Game.move(0)), Constraints.surfaceWidth - Constraints.spacing * 2.0f, row1, paintTextCaption);
-            canvas.drawText(Tools.timeToString(Game.time(0)), Constraints.surfaceWidth - Constraints.spacing * 2.0f, row2, paintTextCaption);
+            mPaintTextCaption.setColor(Colors.getInfoTextColor());
+            mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(Integer.toString(Game.move(0)), Constraints.surfaceWidth - Constraints.spacing * 2.0f, row1, mPaintTextCaption);
+            canvas.drawText(Tools.timeToString(Game.time(0)), Constraints.surfaceWidth - Constraints.spacing * 2.0f, row2, mPaintTextCaption);
         } // draw
 
         public void update() {
-            paintTextValue.setColor(Colors.getInfoTextColor());
-            paintTextButton.setColor(Colors.getTileTextColor());
-            paintField.setColor(Colors.backgroundField);
-            paintOverlay.setColor(Colors.getBgColor());
+            mPaintTextValue.setColor(Colors.getInfoTextColor());
+            mPaintTextButton.setColor(Colors.getTileTextColor());
+            mPaintField.setColor(Colors.backgroundField);
+            mPaintOverlay.setColor(Colors.getBgColor());
         }
 
         //
@@ -482,9 +484,9 @@ public class GameView extends SurfaceView {
             public String caption;
             public int frame = 0;
 
-            Button(RectF r, String c) {
+            Button(RectF r, String s) {
                 rect = r;
-                caption = c;
+                caption = s;
             }
 
             public boolean contains(float x, float y) {
@@ -501,109 +503,109 @@ public class GameView extends SurfaceView {
 
     public class SettingsScreen {
 
-        private Paint paintText;                        // заголовок элемента настроек
-        private Paint paintValue;                       // значение элемента настроек
-        private Paint paintControls;                    // кнопки управления (назад)
-        private Paint paintIcon;                        // для графического представления (например, цвет плиток)
+        private Paint mPaintText;                       // заголовок элемента настроек
+        private Paint mPaintValue;                      // значение элемента настроек
+        private Paint mPaintControls;                   // кнопки управления (назад)
+        private Paint mPaintIcon;                       // для графического представления (например, цвет плиток)
 
-        private String textWidth;                       // ширина поля
-        private String textWidthValue;
-        private String textHeight;                      // высота поля
-        private String textHeightValue;
-        private String textAnimations;                  // анимации
-        private String textAnimationsValue[];
-        private String textColor;                       // цвет плиток
-        private String textColorMode;                   // цвет фона
-        private String textColorModeValue[];            // цветовая тема
-        private String textMode;                        // режим игры
-        private String textModeValue[];
-        private String textBack;                        // кнопка "назад"
+        private String mTextWidth;                      // ширина поля
+        private String mTextWidthValue;
+        private String mTextHeight;                     // высота поля
+        private String mTextHeightValue;
+        private String mTextAnimations;                 // анимации
+        private String mTextAnimationsValue[];
+        private String mTextColor;                      // цвет плиток
+        private String mTextColorMode;                  // цвет фона
+        private String mTextColorModeValue[];           // цветовая тема
+        private String mTextMode;                       // режим игры
+        private String mTextModeValue[];
+        private String mTextBack;                       // кнопка "назад"
 
-        private RectF fieldWidth;                       // граница элемента настройки ширины
-        private RectF fieldHeight;                      // ... высоты
-        private RectF fieldColor;                       // ... цвета
-        private RectF fieldColorMode;                   // ... цвета фона
-        private RectF iconColor;                        // ... визуальное представление цвета
-        private RectF fieldAnimations;                  // ... анимации
-        private RectF fieldMode;                        // ... режим игры
-        private RectF fieldBack;                        // ... "назад"
+        private RectF mRectWidth;                       // граница элемента настройки ширины
+        private RectF mRectHeight;                      // ... высоты
+        private RectF mRectColor;                       // ... цвета
+        private RectF mRectColorMode;                   // ... цвета фона
+        private RectF mRectColorIcon;                   // ... визуальное представление цвета
+        private RectF mRectAnimations;                  // ... анимации
+        private RectF mRectMode;                        // ... режим игры
+        private RectF mRectBack;                        // ... "назад"
 
-        private boolean show = false;
+        private boolean mShow = false;
 
         public SettingsScreen() {
             int h = (int) (Constraints.surfaceHeight * 0.082f); // промежуток между строками
             int ch = (int) (Constraints.surfaceHeight * 0.15f); // отступ от верхнего края экрана
 
-            paintText = new Paint();
-            paintText.setAntiAlias(Settings.antiAlias);
-            paintText.setColor(Colors.getOverlayTextColor());
-            paintText.setTextSize(Constraints.menuFontSize);
-            paintText.setTypeface(Settings.typeface);
-            paintText.setTextAlign(Paint.Align.RIGHT);
+            mPaintText = new Paint();
+            mPaintText.setAntiAlias(Settings.antiAlias);
+            mPaintText.setColor(Colors.getOverlayTextColor());
+            mPaintText.setTextSize(Constraints.menuFontSize);
+            mPaintText.setTypeface(Settings.typeface);
+            mPaintText.setTextAlign(Paint.Align.RIGHT);
 
-            paintValue = new Paint();
-            paintValue.setAntiAlias(Settings.antiAlias);
-            paintValue.setColor(Colors.menuTextValue);
-            paintValue.setTextSize(Constraints.menuFontSize);
-            paintValue.setTypeface(Settings.typeface);
-            paintValue.setTextAlign(Paint.Align.LEFT);
+            mPaintValue = new Paint();
+            mPaintValue.setAntiAlias(Settings.antiAlias);
+            mPaintValue.setColor(Colors.menuTextValue);
+            mPaintValue.setTextSize(Constraints.menuFontSize);
+            mPaintValue.setTypeface(Settings.typeface);
+            mPaintValue.setTextAlign(Paint.Align.LEFT);
 
-            paintControls = new Paint(paintText);
-            paintControls.setTextAlign(Paint.Align.CENTER);
+            mPaintControls = new Paint(mPaintText);
+            mPaintControls.setTextAlign(Paint.Align.CENTER);
 
-            paintIcon = new Paint();
-            paintIcon.setAntiAlias(Settings.antiAlias);
+            mPaintIcon = new Paint();
+            mPaintIcon.setAntiAlias(Settings.antiAlias);
 
             Rect r = new Rect();
-            textWidth = getResources().getString(R.string.pref_width);
-            paintText.getTextBounds(textWidth, 0, textWidth.length(), r);
+            mTextWidth = getResources().getString(R.string.pref_width);
+            mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
 
             // -- настройки --
 
             ch += h;
-            textMode = getResources().getString(R.string.pref_mode);
-            fieldMode = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+            mTextMode = getResources().getString(R.string.pref_mode);
+            mRectMode = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
 
-            textModeValue = getResources().getStringArray(R.array.game_modes);
-
-            ch += h;
-            fieldWidth = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
-
-            textWidthValue = Integer.toString(Settings.gameWidth);
+            mTextModeValue = getResources().getStringArray(R.array.game_modes);
 
             ch += h;
-            textHeight = getResources().getString(R.string.pref_height);
-            fieldHeight = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+            mRectWidth = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
 
-            textHeightValue = Integer.toString(Settings.gameHeight);
-
-            ch += h;
-            textAnimations = getResources().getString(R.string.pref_animation);
-            fieldAnimations = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
-
-            textAnimationsValue = getResources().getStringArray(R.array.animations);
+            mTextWidthValue = Integer.toString(Settings.gameWidth);
 
             ch += h;
-            textColorMode = getResources().getString(R.string.pref_color_mode);
-            fieldColorMode = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+            mTextHeight = getResources().getString(R.string.pref_height);
+            mRectHeight = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
 
-            textColorModeValue = getResources().getStringArray(R.array.color_mode);
+            mTextHeightValue = Integer.toString(Settings.gameHeight);
 
             ch += h;
-            textColor = getResources().getString(R.string.pref_color);
-            fieldColor = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
-            iconColor = new RectF(Constraints.surfaceWidth / 2 + 2.0f * Constraints.spacing, fieldColor.top, Constraints.surfaceWidth / 2 + 2.0f * Constraints.spacing + r.height(), fieldColor.bottom);
-            iconColor.inset(-iconColor.width() / 4, -iconColor.width() / 4);
+            mTextAnimations = getResources().getString(R.string.pref_animation);
+            mRectAnimations = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+
+            mTextAnimationsValue = getResources().getStringArray(R.array.animations);
+
+            ch += h;
+            mTextColorMode = getResources().getString(R.string.pref_color_mode);
+            mRectColorMode = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+
+            mTextColorModeValue = getResources().getStringArray(R.array.color_mode);
+
+            ch += h;
+            mTextColor = getResources().getString(R.string.pref_color);
+            mRectColor = new RectF(0, ch, Constraints.surfaceWidth, ch + r.height());
+            mRectColorIcon = new RectF(Constraints.surfaceWidth / 2 + 2.0f * Constraints.spacing, mRectColor.top, Constraints.surfaceWidth / 2 + 2.0f * Constraints.spacing + r.height(), mRectColor.bottom);
+            mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
             // -- элементы управления --
 
-            textBack = getResources().getString(R.string.back);
-            fieldBack = new RectF(0, Constraints.surfaceHeight - h, Constraints.surfaceWidth, Constraints.surfaceHeight - h + r.height());
+            mTextBack = getResources().getString(R.string.back);
+            mRectBack = new RectF(0, Constraints.surfaceHeight - h, Constraints.surfaceWidth, Constraints.surfaceHeight - h + r.height());
         }
 
         public boolean onClick(int x, int y) {
             // -- ширина поля --
-            if (fieldWidth.contains(x, y)) {
+            if (mRectWidth.contains(x, y)) {
                 Settings.gameWidth++;
                 if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
                     Settings.gameWidth = (Settings.gameHeight > 2) ? 2 : 3;
@@ -613,7 +615,7 @@ public class GameView extends SurfaceView {
             }
 
             // -- высота поля --
-            if (fieldHeight.contains(x, y)) {
+            if (mRectHeight.contains(x, y)) {
                 Settings.gameHeight++;
                 if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
                     Settings.gameHeight = (Settings.gameWidth > 2) ? 2 : 3;
@@ -623,53 +625,53 @@ public class GameView extends SurfaceView {
             }
 
             // -- переключение анимаций --
-            if (fieldAnimations.contains(x, y)) {
+            if (mRectAnimations.contains(x, y)) {
                 Settings.animationEnabled = !Settings.animationEnabled;
                 Settings.save();
             }
 
             // -- цвет спрайтов --
-            if (fieldColor.contains(x, y)) {
+            if (mRectColor.contains(x, y)) {
                 Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
                 Settings.save();
             }
 
             // -- цвет фона --
-            if (fieldColorMode.contains(x, y)) {
+            if (mRectColorMode.contains(x, y)) {
                 Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
                 Settings.save();
 
-                screenInterface.update();
-                screenSettings.update();
-                overlayPause.update();
-                overlaySolved.update();
+                mScreenInterface.update();
+                mScreenSettings.update();
+                mOverlayPause.update();
+                mOverlaySolved.update();
             }
 
             // -- режим игры --
-            if (fieldMode.contains(x, y)) {
+            if (mRectMode.contains(x, y)) {
                 Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
                 Settings.save();
                 createNewGame(true);
             }
 
             // -- назад --
-            if (fieldBack.contains(x, y)) {
-                screenSettings.hide();
+            if (mRectBack.contains(x, y)) {
+                mScreenSettings.hide();
             }
 
             return true;
         }
 
         public boolean show() {
-            return (show = true);
+            return (mShow = true);
         }
 
         public boolean hide() {
-            return (show = false);
+            return (mShow = false);
         }
 
         public boolean isShown() {
-            return show;
+            return mShow;
         }
 
         public void draw(Canvas canvas) {
@@ -681,109 +683,109 @@ public class GameView extends SurfaceView {
             canvas.drawColor(Colors.getOverlayColor());
 
             // чтение настроек игры
-            textWidthValue = Integer.toString(Settings.gameWidth);
-            textHeightValue = Integer.toString(Settings.gameHeight);
+            mTextWidthValue = Integer.toString(Settings.gameWidth);
+            mTextHeightValue = Integer.toString(Settings.gameHeight);
 
             // ширина поля
-            canvas.drawText(textWidth, left, fieldWidth.bottom - s, paintText);
-            canvas.drawText(textWidthValue, right, fieldWidth.bottom - s, paintValue);
+            canvas.drawText(mTextWidth, left, mRectWidth.bottom - s, mPaintText);
+            canvas.drawText(mTextWidthValue, right, mRectWidth.bottom - s, mPaintValue);
 
             // высота поля
-            canvas.drawText(textHeight, left, fieldHeight.bottom - s, paintText);
-            canvas.drawText(textHeightValue, right, fieldHeight.bottom - s, paintValue);
+            canvas.drawText(mTextHeight, left, mRectHeight.bottom - s, mPaintText);
+            canvas.drawText(mTextHeightValue, right, mRectHeight.bottom - s, mPaintValue);
 
             // анимации
-            canvas.drawText(textAnimations, left, fieldAnimations.bottom - s, paintText);
-            canvas.drawText(textAnimationsValue[Settings.animationEnabled ? 1 : 0], right, fieldAnimations.bottom - s, paintValue);
+            canvas.drawText(mTextAnimations, left, mRectAnimations.bottom - s, mPaintText);
+            canvas.drawText(mTextAnimationsValue[Settings.animationEnabled ? 1 : 0], right, mRectAnimations.bottom - s, mPaintValue);
 
             // цвет
-            canvas.drawText(textColor, left, fieldColor.bottom - s, paintText);
-            paintIcon.setColor(Colors.getTileColor());
-            canvas.drawRect(iconColor, paintIcon);
+            canvas.drawText(mTextColor, left, mRectColor.bottom - s, mPaintText);
+            mPaintIcon.setColor(Colors.getTileColor());
+            canvas.drawRect(mRectColorIcon, mPaintIcon);
 
             // цвет фона
-            canvas.drawText(textColorMode, left, fieldColorMode.bottom - s, paintText);
-            canvas.drawText(textColorModeValue[Settings.colorMode], right, fieldColorMode.bottom - s, paintValue);
+            canvas.drawText(mTextColorMode, left, mRectColorMode.bottom - s, mPaintText);
+            canvas.drawText(mTextColorModeValue[Settings.colorMode], right, mRectColorMode.bottom - s, mPaintValue);
 
             // режим
-            canvas.drawText(textMode, left, fieldMode.bottom - s, paintText);
-            canvas.drawText(textModeValue[Settings.gameMode], right, fieldMode.bottom - s, paintValue);
+            canvas.drawText(mTextMode, left, mRectMode.bottom - s, mPaintText);
+            canvas.drawText(mTextModeValue[Settings.gameMode], right, mRectMode.bottom - s, mPaintValue);
 
             // кнопка "назад"
-            canvas.drawText(textBack, Constraints.surfaceWidth / 2, fieldBack.bottom - s, paintControls);
+            canvas.drawText(mTextBack, Constraints.surfaceWidth / 2, mRectBack.bottom - s, mPaintControls);
         }
 
         public void update() {
-            paintText.setColor(Colors.getOverlayTextColor());
-            paintControls.setColor(Colors.getOverlayTextColor());
-            paintValue.setColor(Colors.menuTextValue);
+            mPaintText.setColor(Colors.getOverlayTextColor());
+            mPaintControls.setColor(Colors.getOverlayTextColor());
+            mPaintValue.setColor(Colors.menuTextValue);
         }
 
     }
 
     public class FieldOverlay {
 
-        private Paint paintField;                       // Paint для отрисовки фона
-        private Paint paintText;                        // Paint для отрисовки текста
+        private Paint mPaintBg;                         // Paint для отрисовки фона
+        private Paint mPaintText;                       // Paint для отрисовки текста
 
-        private Rect boundsText;                        // рассчет границ текста
+        private Rect mRectBounds;                       // рассчет границ текста
 
-        private String message;                         // отображаемый текст
-        private int animationFrames = 0;                // кол-во кадров анимации
-        private boolean show = false;                   // видимость
+        private String mCaption;                        // отображаемый текст
+        private int mAnimFrames = 0;                    // кол-во кадров анимации
+        private boolean mShow = false;                  // видимость
 
         public FieldOverlay(String s) {
-            message = s;
-            paintField = new Paint();
-            paintField.setAntiAlias(Settings.antiAlias);
-            paintField.setColor(Colors.getOverlayColor());
+            mCaption = s;
+            mPaintBg = new Paint();
+            mPaintBg.setAntiAlias(Settings.antiAlias);
+            mPaintBg.setColor(Colors.getOverlayColor());
 
-            paintText = new Paint();
-            paintText.setAntiAlias(Settings.antiAlias);
-            paintText.setColor(Colors.getOverlayTextColor());
-            paintText.setTypeface(Settings.typeface);
-            paintText.setTextAlign(Paint.Align.CENTER);
-            paintText.setTextSize(2.3f * Constraints.interfaceFontSize);
+            mPaintText = new Paint();
+            mPaintText.setAntiAlias(Settings.antiAlias);
+            mPaintText.setColor(Colors.getOverlayTextColor());
+            mPaintText.setTypeface(Settings.typeface);
+            mPaintText.setTextAlign(Paint.Align.CENTER);
+            mPaintText.setTextSize(2.3f * Constraints.interfaceFontSize);
 
-            boundsText = new Rect();
-            paintText.getTextBounds(message, 0, message.length(), boundsText);
+            mRectBounds = new Rect();
+            mPaintText.getTextBounds(mCaption, 0, mCaption.length(), mRectBounds);
         }
 
         public void show() {
             if (Settings.animationEnabled) {
-                animationFrames = Settings.screenAnimFrames;
+                mAnimFrames = Settings.screenAnimFrames;
             }
-            show = true;
+            mShow = true;
         }
 
         public void hide() {
-            show = false;
+            mShow = false;
         }
 
         public boolean isShown() {
-            return show;
+            return mShow;
         }
 
         public void draw(Canvas canvas) {
-            if (animationFrames > 0) {
-                animationFrames--;
+            if (mAnimFrames > 0) {
+                mAnimFrames--;
             }
-            float alpha = (float) Tools.easeOut(animationFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
-            paintField.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
-            paintText.setAlpha((int) (255 * alpha));
+            float alpha = (float) Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
+            mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
+            mPaintText.setAlpha((int) (255 * alpha));
 
-            canvas.drawRect(rectField, paintField);
+            canvas.drawRect(mRectField, mPaintBg);
             canvas.drawText(
-                    message,
+                    mCaption,
                     Constraints.fieldMarginLeft + Constraints.fieldWidth / 2.0f,
-                    Constraints.fieldMarginTop + Constraints.fieldHeight / 2.0f - boundsText.centerY(),
-                    paintText
+                    Constraints.fieldMarginTop + Constraints.fieldHeight / 2.0f - mRectBounds.centerY(),
+                    mPaintText
             );
         }
 
         public void update() {
-            paintField.setColor(Colors.getOverlayColor());
-            paintText.setColor(Colors.getOverlayTextColor());
+            mPaintBg.setColor(Colors.getOverlayColor());
+            mPaintText.setColor(Colors.getOverlayTextColor());
         }
 
     }

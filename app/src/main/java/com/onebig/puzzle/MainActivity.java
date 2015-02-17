@@ -7,7 +7,7 @@ import android.view.Window;
 
 public class MainActivity extends Activity {
 
-    public GameView gameView;                           // главный экран
+    private GameView sGameView;                           // главный экран
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         Settings.save();
-        gameView.onPause();
+        sGameView.onPause();
         super.onPause();
     }
 
@@ -27,13 +27,13 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         Settings.load();
-        gameView = new GameView(this);
-        setContentView(gameView);
+        sGameView = new GameView(this);
+        setContentView(sGameView);
     }
 
     @Override
     public void onBackPressed() {
-        if (gameView.onBackPressed()) {
+        if (sGameView.onBackPressed()) {
             super.onBackPressed();
         }
     }

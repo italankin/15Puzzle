@@ -9,10 +9,11 @@ public class Game {
     public static final int MODE_CLASSIC = 0;
     public static final int MODE_SNAKE = 1;
 
-    public static Game instance;                        // статический экземпляр класса
+    private static Game instance;                       // singleton
     private int width;                                  // ширина головоломки в ячейках
     private int height;                                 // высота головоломки в ячейках
     private ArrayList<Integer> grid = new ArrayList<Integer>(); // игровое поле
+
     private int zeroPos;                                // позиция пустой ячейки
     private int moves;                                  // счетчик количества ходов
     private long time;                                  // счетчик времени
@@ -322,7 +323,7 @@ public class Game {
     }
 
     // размер поля
-    public static int getGridSize() {
+    public static int getSize() {
         return instance.grid.size();
     }
 

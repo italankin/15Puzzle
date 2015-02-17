@@ -1,20 +1,21 @@
 package com.onebig.puzzle;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class GameManager extends Thread {
     static final long FPS = 30;                         // кадры в секунду
 
-    private GameView view;                              // главная область приложения
+    private GameView mView;                             // главная область приложения
 
-    private boolean running = false;                    // флаг работы потока
+    private boolean mRunning = false;                   // флаг работы потока
 
     public GameManager(GameView view) {
-        this.view = view;
+        this.mView = view;
     }
 
-    public void setRunning(boolean run) {
-        running = run;
+    public void setmRunning(boolean run) {
+        mRunning = run;
     }
 
     @Override
@@ -22,19 +23,19 @@ public class GameManager extends Thread {
         long ticksPS = 1000 / FPS;
         long startTime;
         long sleepTime;
-        while (running) {
+        while (mRunning) {
             Canvas c = null;
             startTime = System.currentTimeMillis();
             try {
-                c = view.getHolder().lockCanvas();
-                synchronized (view.getHolder()) {
+                c = mView.getHolder().lockCanvas();
+                synchronized (mView.getHolder()) {
                     if (c != null) {
-                        view.draw(c);
+                        mView.draw(c);
                     }
                 }
             } finally {
                 if (c != null) {
-                    view.getHolder().unlockCanvasAndPost(c);
+                    mView.getHolder().unlockCanvasAndPost(c);
                 }
             }
             sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
@@ -43,7 +44,8 @@ public class GameManager extends Thread {
                     sleepTime = 10;
                 }
                 sleep(sleepTime);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
+                Log.e("GameManager", e.toString());
             }
         }
     }

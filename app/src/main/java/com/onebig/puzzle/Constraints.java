@@ -25,7 +25,9 @@ public class Constraints {
         fieldMarginTop = 0.32f * surfaceHeight;
 
         int sideMax = Math.max(Settings.gameWidth, Settings.gameHeight);
-        float spriteSize = Math.min(surfaceWidth, surfaceHeight - fieldMarginTop) - 2.0f * spacing - spacing * (sideMax - 1);
+        float spriteSize = Math.min(surfaceWidth, surfaceHeight - fieldMarginTop)
+                - spacing * (sideMax + 1);
+
         tileWidth = spriteSize / sideMax;
         tileHeight = spriteSize / sideMax;
 
