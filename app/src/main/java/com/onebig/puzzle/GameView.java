@@ -341,9 +341,9 @@ public class GameView extends SurfaceView {
         private RectF mRectInfo;                        // ... инфо
         private RectF mRectMode;                        // режим игры
 
-        private Rect mBoundsButton = new Rect();        // границы текста на кнопках
-        private Rect mBoundsValue = new Rect();         // границы текста инфо панели (режим игры)
-        private Rect mBoundsCaption = new Rect();       // границы надписей инфо панели
+        private int mButtonTextOffset;
+        private int mValueTextOffset;
+        private int mCaptionTextOffset;
 
         private ArrayList<Button> mButtons = new ArrayList<Button>(); // кнопки вверху экрана
         private float mButtonHeight;
@@ -386,9 +386,13 @@ public class GameView extends SurfaceView {
             mRectInfo = new RectF(0.0f, center - height / 2.0f, Constraints.surfaceWidth, center + height / 2.0f);
             mRectMode = new RectF(0.0f, center - height / 4.0f, Constraints.surfaceWidth * 0.5f, center + height / 4.0f);
 
-            mPaintTextButton.getTextBounds("A", 0, 1, mBoundsButton);
-            mPaintTextValue.getTextBounds("A", 0, 1, mBoundsValue);
-            mPaintTextCaption.getTextBounds("A", 0, 1, mBoundsCaption);
+            Rect r = new Rect();
+            mPaintTextButton.getTextBounds("A", 0, 1, r);
+            mButtonTextOffset = r.height() / 2;
+            mPaintTextValue.getTextBounds("A", 0, 1, r);
+            mValueTextOffset = r.height() / 2;
+            mPaintTextCaption.getTextBounds("A", 0, 1, r);
+            mCaptionTextOffset = r.height() / 2;
 
             mTextMode = getResources().getStringArray(R.array.game_modes);
             mTextMoves = getResources().getString(R.string.info_moves);
@@ -454,14 +458,14 @@ public class GameView extends SurfaceView {
                     mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
                     canvas.drawRect(b.rect, mPaintOverlay);
                 }
-                canvas.drawText(b.caption, b.rect.centerX(), b.rect.centerY() - mBoundsButton.centerY(), mPaintTextButton);
+                canvas.drawText(b.caption, b.rect.centerX(), b.rect.centerY() - mButtonTextOffset, mPaintTextButton);
             }
 
             // режим игры
-            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase(), Constraints.surfaceWidth * 0.25f, mRectInfo.centerY() - mBoundsValue.centerY(), mPaintTextValue);
+            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase(), Constraints.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
 
-            float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mBoundsCaption.centerY();
-            float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mBoundsCaption.centerY();
+            float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
+            float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
             // надписи
             mPaintTextCaption.setColor(Colors.getTileTextColor());
             mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
