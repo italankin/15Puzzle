@@ -142,7 +142,7 @@ public class Tile {
 
             return true;
 
-        } // if mIndex
+        } // if index
 
         return false;
     }
@@ -207,7 +207,7 @@ public class Tile {
                     p.transform(m);
                     break; // TRANSLATE
 
-            }
+            } // switch
 
             if (frames > 0) {
                 frames--;

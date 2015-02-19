@@ -21,6 +21,8 @@ import java.util.TimerTask;
 
 public class GameView extends SurfaceView {
 
+    private static int instances = 0;
+
     private Context mContext;                           // контекст приложения
 
     private GameManager mGameLoopThread;                // главный поток
@@ -47,6 +49,7 @@ public class GameView extends SurfaceView {
         super(context);
         this.mContext = context;
         mGameLoopThread = new GameManager(this);
+        instances++;
 
         SurfaceHolder holder = getHolder();
 
@@ -60,7 +63,7 @@ public class GameView extends SurfaceView {
                         mGameLoopThread.join();
                         retry = false;
                     } catch (InterruptedException e) {
-                        Log.e("GameView.surfaceDestroyed", e.toString());
+                        Log.e("surfaceDestroyed", e.toString());
                     }
                 }
             }
@@ -77,7 +80,7 @@ public class GameView extends SurfaceView {
                 try {
                     mGameLoopThread.start();
                 } catch (IllegalThreadStateException e) {
-                    Log.e("GameView.surfaceCreated", e.toString());
+                    Log.e("surfaceCreated", e.toString());
                 }
             }
 
@@ -388,11 +391,11 @@ public class GameView extends SurfaceView {
 
             Rect r = new Rect();
             mPaintTextButton.getTextBounds("A", 0, 1, r);
-            mButtonTextOffset = r.height() / 2;
+            mButtonTextOffset = r.centerY();
             mPaintTextValue.getTextBounds("A", 0, 1, r);
-            mValueTextOffset = r.height() / 2;
+            mValueTextOffset = r.centerY();
             mPaintTextCaption.getTextBounds("A", 0, 1, r);
-            mCaptionTextOffset = r.height() / 2;
+            mCaptionTextOffset = r.centerY();
 
             mTextMode = getResources().getStringArray(R.array.game_modes);
             mTextMoves = getResources().getString(R.string.info_moves);

@@ -9,7 +9,7 @@ public class Game {
     public static final int MODE_CLASSIC = 0;
     public static final int MODE_SNAKE = 1;
 
-    private static Game instance;                       // singleton
+    private static Game instance;
     private int width;                                  // ширина головоломки в ячейках
     private int height;                                 // высота головоломки в ячейках
     private ArrayList<Integer> grid = new ArrayList<Integer>(); // игровое поле
@@ -132,7 +132,7 @@ public class Game {
                 return summ % 2 == 0;
             // MODE_SNAKE
 
-        }
+        } // switch
 
         return false;
     }
@@ -174,7 +174,7 @@ public class Game {
                 }
                 break; // MODE_SNAKE
 
-        }
+        } // switch
 
         return true;
     }
