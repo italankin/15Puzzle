@@ -7,7 +7,7 @@ import android.view.Window;
 
 public class MainActivity extends Activity {
 
-    private GameView mGameView;                           // главный экран
+    private GameView mGameView;                         // главный экран
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

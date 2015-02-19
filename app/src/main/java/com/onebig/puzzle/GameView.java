@@ -21,8 +21,6 @@ import java.util.TimerTask;
 
 public class GameView extends SurfaceView {
 
-    private static int instances = 0;
-
     private Context mContext;                           // контекст приложения
 
     private GameManager mGameLoopThread;                // главный поток
@@ -49,7 +47,6 @@ public class GameView extends SurfaceView {
         super(context);
         this.mContext = context;
         mGameLoopThread = new GameManager(this);
-        instances++;
 
         SurfaceHolder holder = getHolder();
 
