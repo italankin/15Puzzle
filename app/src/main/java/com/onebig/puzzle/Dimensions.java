@@ -1,6 +1,6 @@
 package com.onebig.puzzle;
 
-public class Constraints {
+public class Dimensions {
 
     public static float surfaceWidth;                   // ширина области рисования
     public static float surfaceHeight;                  // высота области рисования

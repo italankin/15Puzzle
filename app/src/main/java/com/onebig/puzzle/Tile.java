@@ -46,18 +46,18 @@ public class Tile {
         mRectBounds = new Rect();
         mShape = new Path();
 
-        mCanvasX = Constraints.fieldMarginLeft + (Constraints.tileWidth + Constraints.spacing) * (mIndex % Settings.gameWidth);
-        mCanvasY = Constraints.fieldMarginTop + (Constraints.tileHeight + Constraints.spacing) * (mIndex / Settings.gameWidth);
+        mCanvasX = Dimensions.fieldMarginLeft + (Dimensions.tileWidth + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+        mCanvasY = Dimensions.fieldMarginTop + (Dimensions.tileHeight + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
         mShape.addRoundRect(
                 new RectF(
                         mCanvasX,
                         mCanvasY,
-                        mCanvasX + Constraints.tileWidth,
-                        mCanvasY + Constraints.tileHeight
+                        mCanvasX + Dimensions.tileWidth,
+                        mCanvasY + Dimensions.tileHeight
                 ),
-                Constraints.tileCornerRadius,
-                Constraints.tileCornerRadius,
+                Dimensions.tileCornerRadius,
+                Dimensions.tileCornerRadius,
                 Path.Direction.CW
         );
     }
@@ -70,8 +70,8 @@ public class Tile {
             return;
         }
 
-        mCanvasX = Constraints.fieldMarginLeft + (Constraints.tileWidth + Constraints.spacing) * (mIndex % Settings.gameWidth);
-        mCanvasY = Constraints.fieldMarginTop + (Constraints.tileHeight + Constraints.spacing) * (mIndex / Settings.gameWidth);
+        mCanvasX = Dimensions.fieldMarginLeft + (Dimensions.tileWidth + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+        mCanvasY = Dimensions.fieldMarginTop + (Dimensions.tileHeight + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
         if (mAnimation.isPlaying()) {
             mShape = mAnimation.getTransformPath(mShape);
@@ -81,10 +81,10 @@ public class Tile {
         canvas.drawPath(mShape, sPaintPath);
 
         if (!mRootView.paused) {
-            mRectShape.inset(-Constraints.spacing / 2.0f, -Constraints.spacing / 2.0f);
+            mRectShape.inset(-Dimensions.spacing / 2.0f, -Dimensions.spacing / 2.0f);
             String text = Integer.toString(mData);
             mShape.computeBounds(mRectShape, true);
-            sPaintText.setTextSize(mAnimation.getScale() * Constraints.tileFontSize);
+            sPaintText.setTextSize(mAnimation.getScale() * Dimensions.tileFontSize);
             sPaintText.getTextBounds(text, 0, text.length(), mRectBounds);
             sPaintText.setColor(Colors.getTileTextColor());
             canvas.drawText(Integer.toString(mData), mRectShape.centerX(), mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
@@ -118,24 +118,24 @@ public class Tile {
                 x = mIndex % Settings.gameWidth;
                 y = mIndex / Settings.gameWidth;
 
-                mAnimation.dx = Constraints.fieldMarginLeft + (Constraints.tileWidth + Constraints.spacing) * x - mCanvasX;
-                mAnimation.dy = Constraints.fieldMarginTop + (Constraints.tileHeight + Constraints.spacing) * y - mCanvasY;
+                mAnimation.dx = Dimensions.fieldMarginLeft + (Dimensions.tileWidth + Dimensions.spacing) * x - mCanvasX;
+                mAnimation.dy = Dimensions.fieldMarginTop + (Dimensions.tileHeight + Dimensions.spacing) * y - mCanvasY;
                 mAnimation.type = Animation.TRANSLATE;
                 mAnimation.frames = Settings.tileAnimFrames;
             } else {
-                mCanvasX = Constraints.fieldMarginLeft + (Constraints.tileWidth + Constraints.spacing) * (mIndex % Settings.gameWidth);
-                mCanvasY = Constraints.fieldMarginTop + (Constraints.tileHeight + Constraints.spacing) * (mIndex / Settings.gameWidth);
+                mCanvasX = Dimensions.fieldMarginLeft + (Dimensions.tileWidth + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+                mCanvasY = Dimensions.fieldMarginTop + (Dimensions.tileHeight + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
                 mShape.reset();
                 mShape.addRoundRect(
                         new RectF(
                                 mCanvasX,
                                 mCanvasY,
-                                mCanvasX + Constraints.tileWidth,
-                                mCanvasY + Constraints.tileHeight
+                                mCanvasX + Dimensions.tileWidth,
+                                mCanvasY + Dimensions.tileHeight
                         ),
-                        Constraints.tileCornerRadius,
-                        Constraints.tileCornerRadius,
+                        Dimensions.tileCornerRadius,
+                        Dimensions.tileCornerRadius,
                         Path.Direction.CW
                 );
             } // if
@@ -184,13 +184,13 @@ public class Tile {
                 case SCALE:
                     m = new Matrix();
                     ds = (float) Tools.easeOut(frames, 0.0f, 1.0f, Settings.tileAnimFrames);
-                    tx = (1 - ds) * (mCanvasX + Constraints.tileWidth / 2.0f);
-                    ty = (1 - ds) * (mCanvasY + Constraints.tileHeight / 2.0f);
+                    tx = (1 - ds) * (mCanvasX + Dimensions.tileWidth / 2.0f);
+                    ty = (1 - ds) * (mCanvasY + Dimensions.tileHeight / 2.0f);
                     m.postScale(ds, ds);
                     m.postTranslate(tx, ty);
                     p.reset();
-                    p.addRoundRect(new RectF(mCanvasX, mCanvasY, mCanvasX + Constraints.tileWidth, mCanvasY
-                                    + Constraints.tileHeight), Constraints.tileCornerRadius, Constraints.tileCornerRadius,
+                    p.addRoundRect(new RectF(mCanvasX, mCanvasY, mCanvasX + Dimensions.tileWidth, mCanvasY
+                                    + Dimensions.tileHeight), Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                             Path.Direction.CW);
                     p.transform(m);
                     break; // SCALE
