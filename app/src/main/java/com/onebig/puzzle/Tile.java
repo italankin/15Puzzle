@@ -11,17 +11,17 @@ public class Tile {
 
     private static Paint sPaintText;                    // Paint для рисования текста
     private static Paint sPaintPath;                    // Paint для рисования фона плитка
+    private static Rect mRectBounds = new Rect();       // определение границ текста
 
     private GameView mRootView;
 
     private Path mShape;                                // путь для рисования фона плитки
-    private RectF mRectShape;                            // используется для определения границ плитки и создания пути
-    private Rect mRectBounds;                           // используется для определения границ текста и т.д.
+    private RectF mRectShape;                           // определение границ плитки и создания пути
 
-    private int mData;                                   // отображаемое число на плитке
-    private int mIndex;                                  // индекс плитки в общем массиве
-    private float mCanvasX = 0.0f;                       // позиция плитки
-    private float mCanvasY = 0.0f;                       // на поле (canvas)
+    private int mData;                                  // отображаемое число на плитке
+    private int mIndex;                                 // индекс плитки в общем массиве
+    private float mCanvasX = 0.0f;                      // позиция плитки
+    private float mCanvasY = 0.0f;                      // на поле (canvas)
 
     private Animation mAnimation = new Animation();
 
@@ -43,7 +43,6 @@ public class Tile {
         }
 
         mRectShape = new RectF();
-        mRectBounds = new Rect();
         mShape = new Path();
 
         mCanvasX = Dimensions.fieldMarginLeft + (Dimensions.tileWidth + Dimensions.spacing) * (mIndex % Settings.gameWidth);

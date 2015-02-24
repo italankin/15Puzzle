@@ -16,8 +16,7 @@ public class Dimensions {
     public static float menuFontSize;                   // размер шрифта меню
     public static float spacing;                        // отступ между ячейками на поле
 
-    // вычисление размеров и границ элементов
-    public static void compute(int width, int height, float scale) {
+    public static void update(int width, int height, float scale) {
         surfaceWidth = width * scale;
         surfaceHeight = height * scale;
 
@@ -28,8 +27,7 @@ public class Dimensions {
         float spriteSize = Math.min(surfaceWidth, surfaceHeight - fieldMarginTop)
                 - spacing * (sideMax + 1);
 
-        tileWidth = spriteSize / sideMax;
-        tileHeight = spriteSize / sideMax;
+        tileHeight = (tileWidth = spriteSize / sideMax);
 
         fieldWidth = (tileWidth + spacing) * Settings.gameWidth - spacing;
         fieldHeight = (tileHeight + spacing) * Settings.gameHeight - spacing;

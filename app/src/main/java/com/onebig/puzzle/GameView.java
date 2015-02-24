@@ -176,7 +176,7 @@ public class GameView extends SurfaceView {
         solved = false;
 
         // вычисление размеров
-        Dimensions.compute(this.getWidth(), this.getHeight(), 1.0f);
+        Dimensions.update(this.getWidth(), this.getHeight(), 1.0f);
         mRectField = new RectF(
                 Dimensions.fieldMarginLeft - Dimensions.spacing,
                 Dimensions.fieldMarginTop - Dimensions.spacing,
@@ -376,7 +376,7 @@ public class GameView extends SurfaceView {
             mPaintButton.setAntiAlias(Settings.antiAlias);
 
             mPaintOverlay = new Paint();
-            mPaintOverlay.setColor(Colors.getBgColor());
+            mPaintOverlay.setColor(Colors.getBackgroundColor());
 
             mButtonHeight = Dimensions.surfaceHeight * 0.07f;
             float w = (Dimensions.surfaceWidth / BTN_COUNT);
@@ -465,7 +465,7 @@ public class GameView extends SurfaceView {
         } // onClick
 
         public void draw(Canvas canvas) {
-            canvas.drawColor(Colors.getBgColor());
+            canvas.drawColor(Colors.getBackgroundColor());
             canvas.drawRect(mRectField, mPaintField);
             canvas.drawRect(mRectInfo, mPaintField);
             mPaintButton.setColor(Colors.getTileColor());
@@ -501,7 +501,7 @@ public class GameView extends SurfaceView {
             mPaintTextValue.setColor(Colors.getInfoTextColor());
             mPaintTextButton.setColor(Colors.getTileTextColor());
             mPaintField.setColor(Colors.backgroundField);
-            mPaintOverlay.setColor(Colors.getBgColor());
+            mPaintOverlay.setColor(Colors.getBackgroundColor());
         }
 
         //

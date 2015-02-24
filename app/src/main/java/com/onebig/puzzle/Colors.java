@@ -16,7 +16,7 @@ public class Colors {
             0xff979797
     };
 
-    public static int getBgColor() {
+    public static int getBackgroundColor() {
         return background[Settings.colorMode];
     }
 
