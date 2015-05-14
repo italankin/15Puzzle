@@ -29,5 +29,6 @@
         <item>классика</item>
         <item>змейка</item>
     </string-array>
+    <string name="pref_bf">Blindfolded</string>
 
 </resources>

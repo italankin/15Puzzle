@@ -329,7 +329,7 @@ public class GameView extends SurfaceView {
         private static final int BTN_NEW = 0;
         private static final int BTN_SETTINGS = 1;
         private static final int BTN_PAUSE = 2;
-        private final int OVERLAY_FRAMES = (int) 1.5 * Settings.screenAnimFrames;
+        private final int OVERLAY_FRAMES = (int) (1.5 * Settings.screenAnimFrames);
 
         private Paint mPaintButton;                     // Paint для рисования иконки приложения (вверху слева)
         private Paint mPaintField;                      // ... фон игрового поля
@@ -455,7 +455,7 @@ public class GameView extends SurfaceView {
 
             // -- режим игры --
             if (mRectMode.contains(x, y)) {
-                Settings.gameMode = (++Settings.gameMode % 2);
+                Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
                 Settings.save();
                 createNewGame(true);
                 return true;
@@ -481,7 +481,7 @@ public class GameView extends SurfaceView {
             }
 
             // режим игры
-            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase(), Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
+            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase() + (Settings.blindfolded ? "*" : ""), Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
 
             float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
             float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
@@ -538,6 +538,8 @@ public class GameView extends SurfaceView {
         private String mTextWidthValue;
         private String mTextHeight;                     // высота поля
         private String mTextHeightValue;
+        private String mTextBf;                         // blindfolded
+        private String mTextBfValue[];
         private String mTextAnimations;                 // анимации
         private String mTextAnimationsValue[];
         private String mTextColor;                      // цвет плиток
@@ -549,6 +551,7 @@ public class GameView extends SurfaceView {
 
         private RectF mRectWidth;                       // граница элемента настройки ширины
         private RectF mRectHeight;                      // ... высоты
+        private RectF mRectBf;                          // ... "слепого" режима
         private RectF mRectColor;                       // ... цвета
         private RectF mRectColorMode;                   // ... цвета фона
         private RectF mRectColorIcon;                   // ... визуальное представление цвета
@@ -593,6 +596,12 @@ public class GameView extends SurfaceView {
             mRectMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
 
             mTextModeValue = getResources().getStringArray(R.array.game_modes);
+
+            ch += h;
+            mTextBf = getResources().getString(R.string.pref_bf);
+            mRectBf = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+
+            mTextBfValue = getResources().getStringArray(R.array.animations);
 
             ch += h;
             mRectWidth = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
@@ -680,6 +689,12 @@ public class GameView extends SurfaceView {
                 createNewGame(true);
             }
 
+            // -- режим игры --
+            if (mRectBf.contains(x, y)) {
+                Settings.blindfolded = !Settings.blindfolded;
+                Settings.save();
+            }
+
             // -- назад --
             if (mRectBack.contains(x, y)) {
                 mScreenSettings.hide();
@@ -736,6 +751,10 @@ public class GameView extends SurfaceView {
             // режим
             canvas.drawText(mTextMode, left, mRectMode.bottom - s, mPaintText);
             canvas.drawText(mTextModeValue[Settings.gameMode], right, mRectMode.bottom - s, mPaintValue);
+
+            // bf
+            canvas.drawText(mTextBf, left, mRectBf.bottom - s, mPaintText);
+            canvas.drawText(mTextBfValue[Settings.blindfolded ? 1 : 0], right, mRectBf.bottom - s, mPaintValue);
 
             // кнопка "назад"
             canvas.drawText(mTextBack, Dimensions.surfaceWidth / 2, mRectBack.bottom - s, mPaintControls);

@@ -29,10 +29,11 @@ public final class R {
         public static final int info_time=0x7f040007;
         public static final int info_win=0x7f040008;
         public static final int pref_animation=0x7f040009;
-        public static final int pref_color=0x7f04000a;
-        public static final int pref_color_mode=0x7f04000b;
-        public static final int pref_height=0x7f04000c;
-        public static final int pref_mode=0x7f04000d;
-        public static final int pref_width=0x7f04000e;
+        public static final int pref_bf=0x7f04000a;
+        public static final int pref_color=0x7f04000b;
+        public static final int pref_color_mode=0x7f04000c;
+        public static final int pref_height=0x7f04000d;
+        public static final int pref_mode=0x7f04000e;
+        public static final int pref_width=0x7f04000f;
     }
 }

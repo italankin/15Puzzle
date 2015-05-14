@@ -86,7 +86,9 @@ public class Tile {
             sPaintText.setTextSize(mAnimation.getScale() * Dimensions.tileFontSize);
             sPaintText.getTextBounds(text, 0, text.length(), mRectBounds);
             sPaintText.setColor(Colors.getTileTextColor());
-            canvas.drawText(Integer.toString(mData), mRectShape.centerX(), mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
+            if (!Settings.blindfolded || Game.move(0) == 0 || mRootView.solved) {
+                canvas.drawText(Integer.toString(mData), mRectShape.centerX(), mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
+            }
         }
     }
 
