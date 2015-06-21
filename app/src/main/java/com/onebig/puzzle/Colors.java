@@ -10,10 +10,13 @@ public class Colors {
     public static int textInfo[] = {0xffcacaca, 0xff787878};        // цвет текста инфо
     public static int menuTextValue = 0xfffefefe;                   // цвет текста значений в меню
     public static int tiles[] = {                                   // цвета спрайтов
-            0xffe39836, 0xff5e7bbf,
-            0xffe74c3c, 0xff2ecc71,
-            0xff6cc0d4, 0xff9b59b6,
-            0xff979797
+            0xffe39836, // оранжевый
+            0xff5e7bbf, // синий
+            0xffe74c3c, // красный
+            0xff2ecc71, // зеленый
+            0xff6cc0d4, // голубой
+            0xff9b59b6, // фиолетовый
+            0xff979797  // серый
     };
 
     public static int getBackgroundColor() {

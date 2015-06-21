@@ -38,7 +38,6 @@ public class GameView extends SurfaceView {
 
     private int mStartX;                                // координата x и y начальной точки
     private int mStartY;                                // вектора перемещения
-    private boolean mButtonResult = false;              // результат взаимодействия нажатия с элементом интерфейса
 
     public Timer gameClock;                             // таймер для отслеживания затраченного времени
 
@@ -98,23 +97,22 @@ public class GameView extends SurfaceView {
             case MotionEvent.ACTION_DOWN:
                 mStartX = x;
                 mStartY = y;
-                if (mScreenSettings.isShown()) {
-                    mButtonResult = mScreenSettings.onClick(x, y);
+
+                if (solved && mRectField.contains(x, y)) {
+                    solved = false;
+                    createNewGame(true);
                 } else {
-                    if (solved && mRectField.contains(x, y)) {
-                        solved = false;
-                        createNewGame(true);
-                    } else {
-                        mButtonResult = mScreenInterface.onClick(x, y);
-                    }
+                    mScreenInterface.onClick(x, y);
                 }
+
                 break; // ACTION_DOWN
 
             case MotionEvent.ACTION_UP:
                 int dx = x - mStartX;
                 int dy = y - mStartY;
 
-                if (mButtonResult) {
+                if (mScreenSettings.isShown()) {
+                    mScreenSettings.onClick(x, y, dx);
                     return true;
                 }
 
@@ -564,6 +562,7 @@ public class GameView extends SurfaceView {
         public SettingsScreen() {
             int h = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
             int ch = (int) (Dimensions.surfaceHeight * 0.15f); // отступ от верхнего края экрана
+            int sp = -h / 4;
 
             mPaintText = new Paint();
             mPaintText.setAntiAlias(Settings.antiAlias);
@@ -594,67 +593,100 @@ public class GameView extends SurfaceView {
             ch += h;
             mTextMode = getResources().getString(R.string.pref_mode);
             mRectMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectMode.inset(0, sp);
 
             mTextModeValue = getResources().getStringArray(R.array.game_modes);
 
             ch += h;
             mTextBf = getResources().getString(R.string.pref_bf);
             mRectBf = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectBf.inset(0, sp);
 
             mTextBfValue = getResources().getStringArray(R.array.animations);
 
             ch += h;
             mRectWidth = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectWidth.inset(0, sp);
 
             mTextWidthValue = Integer.toString(Settings.gameWidth);
 
             ch += h;
             mTextHeight = getResources().getString(R.string.pref_height);
             mRectHeight = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectHeight.inset(0, sp);
 
             mTextHeightValue = Integer.toString(Settings.gameHeight);
 
             ch += h;
             mTextAnimations = getResources().getString(R.string.pref_animation);
             mRectAnimations = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectAnimations.inset(0, sp);
 
             mTextAnimationsValue = getResources().getStringArray(R.array.animations);
 
             ch += h;
             mTextColorMode = getResources().getString(R.string.pref_color_mode);
             mRectColorMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+            mRectColorMode.inset(0, sp);
 
             mTextColorModeValue = getResources().getStringArray(R.array.color_mode);
 
             ch += h;
             mTextColor = getResources().getString(R.string.pref_color);
             mRectColor = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-            mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing, mRectColor.top, Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(), mRectColor.bottom);
+            mRectColor.inset(0, sp);
+            mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing, mRectColor.top - sp, Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(), mRectColor.bottom + sp);
             mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
             // -- элементы управления --
 
             mTextBack = getResources().getString(R.string.back);
             mRectBack = new RectF(0, Dimensions.surfaceHeight - h, Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
+            mRectBack.inset(0, sp);
         }
 
-        public boolean onClick(int x, int y) {
+        public boolean onClick(int x, int y, int dx) {
+
+            if (Math.abs(dx) < 10) {
+                dx = 0;
+            }
+
             // -- ширина поля --
             if (mRectWidth.contains(x, y)) {
-                Settings.gameWidth++;
-                if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
-                    Settings.gameWidth = (Settings.gameHeight > 2) ? 2 : 3;
+
+                if (dx < 0) {
+                    Settings.gameWidth--;
+                } else {
+                    Settings.gameWidth++;
                 }
+
+                if (Settings.gameWidth < 2) {
+                    Settings.gameWidth = Settings.MAX_GAME_WIDTH;
+                }
+                if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
+                    Settings.gameWidth = 2;
+                }
+
                 Settings.save();
                 createNewGame(true);
             }
 
             // -- высота поля --
             if (mRectHeight.contains(x, y)) {
-                Settings.gameHeight++;
-                if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
-                    Settings.gameHeight = (Settings.gameWidth > 2) ? 2 : 3;
+
+                if (dx < 0) {
+                    Settings.gameHeight--;
+                } else {
+                    Settings.gameHeight++;
                 }
+
+                if (Settings.gameHeight < 2) {
+                    Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
+                }
+                if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
+                    Settings.gameHeight = 2;
+                }
+
                 Settings.save();
                 createNewGame(true);
             }
@@ -667,7 +699,13 @@ public class GameView extends SurfaceView {
 
             // -- цвет спрайтов --
             if (mRectColor.contains(x, y)) {
-                Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
+                if (dx < 0) {
+                    if (--Settings.tileColor < 0) {
+                        Settings.tileColor += Colors.tiles.length;
+                    }
+                } else {
+                    Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
+                }
                 Settings.save();
             }
 
@@ -718,7 +756,7 @@ public class GameView extends SurfaceView {
         public void draw(Canvas canvas) {
             float right = Dimensions.surfaceWidth / 2 + Dimensions.spacing; // отступ от центра
             float left = Dimensions.surfaceWidth / 2 - Dimensions.spacing;  // для выравнивания элементов
-            float s = Dimensions.spacing / 2.0f;       // смещение по вертикали
+            float s = (int) (Dimensions.surfaceHeight * 0.02f);       // смещение по вертикали
 
             // фон
             canvas.drawColor(Colors.getOverlayColor());
