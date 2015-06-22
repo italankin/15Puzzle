@@ -24,6 +24,7 @@ public class GameView extends SurfaceView {
     private Context mContext;                           // контекст приложения
 
     private GameManager mGameLoopThread;                // главный поток
+    private DBHelper dbHelper;
 
     private Tiles mTiles = new Tiles();                 // массив спрайтов
 
@@ -34,12 +35,13 @@ public class GameView extends SurfaceView {
     private RectF mRectField;                           // область игрового поля
 
     public boolean solved = false;                      // состояние головоломки (решено/не решено)
-    public boolean paused = false;                      // пауза
+    public boolean paused = false;                      // состояние паузы
 
     private int mStartX;                                // координата x и y начальной точки
     private int mStartY;                                // вектора перемещения
 
     public Timer gameClock;                             // таймер для отслеживания затраченного времени
+    public static final int TIME_CLOCK = 20;
 
     // конструктор
     public GameView(Context context) {
@@ -58,6 +60,36 @@ public class GameView extends SurfaceView {
                 mScreenInterface = new InterfaceScreen();
                 mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
                 mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
+
+                Game.setGameEventListener(new Game.GameEventListener() {
+
+                    @Override
+                    public void onCreate(int width, int height) {
+                        Log.d("GameEventListener", "onCreate");
+                    }
+
+                    @Override
+                    public void onLoad() {
+                        Log.d("GameEventListener", "onLoad");
+                    }
+
+                    @Override
+                    public void onMove() {
+                        Log.d("GameEventListener", "onMove");
+                    }
+
+                    @Override
+                    public void onSolve() {
+                        solved = true;
+                        if (gameClock != null) {
+                            gameClock.cancel();
+                            gameClock = null;
+                        }
+                        mOverlaySolved.show();
+                        Log.v("onGameSolve", "moves=" + (Game.getMoves() + 1) + ", time=" + Game.getTime() + " [" + Tools.timeToString(Game.getTime()) + "]");
+                    }
+
+                });
 
                 mGameLoopThread.setRunning(true);
                 try {
@@ -87,7 +119,9 @@ public class GameView extends SurfaceView {
 
     }
 
-    //
+    /**
+     * Обработка событий нажатия на экран
+     */
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         int x = (int) event.getX();
@@ -131,12 +165,16 @@ public class GameView extends SurfaceView {
         return true;
     }
 
-    //
+    /**
+     * Нажатие клавиши "Назад" на устройстве
+     */
     public boolean onBackPressed() {
         return !mScreenSettings.isShown() || mScreenSettings.hide();
     }
 
-    //
+    /**
+     * Приостановка {@link android.app.Activity}
+     */
     public void onPause() {
         if (gameClock != null) {
             gameClock.cancel();
@@ -144,7 +182,11 @@ public class GameView extends SurfaceView {
         }
     }
 
-    //
+    /**
+     * Создание новой игры
+     *
+     * @param isUser <b>true</b>, если действие было вызвано пользователем
+     */
     private void createNewGame(boolean isUser) {
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
@@ -164,7 +206,7 @@ public class GameView extends SurfaceView {
             editor.remove(Settings.KEY_GAME_TIME);
             editor.commit();
 
-            if (Game.move(0) > 0) {
+            if (Game.getMoves() > 0) {
                 paused = true;
             }
         } else {
@@ -248,10 +290,13 @@ public class GameView extends SurfaceView {
         gameClock = new Timer();
         GameClock gameClockTask = new GameClock();
 
-        gameClock.schedule(gameClockTask, 100, 100);
+        gameClock.schedule(gameClockTask, TIME_CLOCK, TIME_CLOCK);
 
-    } // createNewGame
+    } // END createNewGame
 
+    /**
+     * Рендер изображения
+     */
     public void draw(Canvas canvas) {
         mScreenInterface.draw(canvas);                   // рисование элементов интерфейса
 
@@ -267,9 +312,18 @@ public class GameView extends SurfaceView {
         }
     }
 
-    //
+    /**
+     * Массив элементов {@link Tile}
+     */
     class Tiles extends ArrayList<Tile> {
 
+        /**
+         * Определяет спрайт, находящийся по координатам
+         *
+         * @param x координата x на экране
+         * @param y координата y на экране
+         * @return индекс элемента в игровом массиве
+         */
         public int at(float x, float y) {
             for (Tile t : this) {
                 if (t.isCollision(x, y)) {
@@ -279,6 +333,13 @@ public class GameView extends SurfaceView {
             return -1;
         }
 
+        /**
+         * Перемещение элементов
+         *
+         * @param sx        координата x начальной ячейки в массиве
+         * @param sy        координата y начальной ячейки в массиве
+         * @param direction направление перемещения
+         */
         public void move(float sx, float sy, int direction) {
             int startIndex = at(sx, sy);
             if (startIndex >= 0) {
@@ -286,7 +347,7 @@ public class GameView extends SurfaceView {
                     direction = Game.getDirection(startIndex);
                 }
                 // вычисляем индексы ячеек, которые нам нужно переместить
-                ArrayList<Integer> numbersToMove = Game.slide(direction, startIndex);
+                ArrayList<Integer> numbersToMove = Game.getSlidingElements(direction, startIndex);
                 // перемещаем выбранные ячейки, если таковые есть
                 for (int i : numbersToMove) {
                     for (Tile s : this) {
@@ -296,27 +357,25 @@ public class GameView extends SurfaceView {
                     }
                 }
 
-                Game.move(1);
-
-                if (solved = Game.isSolved()) {
-                    if (gameClock != null) {
-                        gameClock.cancel();
-                        gameClock = null;
-                    }
-                    mOverlaySolved.show();
-                }
+                Game.incMoves();
 
             } // if
-        } // move
+        } // END move
 
+        /**
+         * Отрисовка спрайтов
+         */
         public void draw(Canvas canvas) {
             for (int i = 0; i < size(); i++) {
                 get(i).draw(canvas);
             }
         }
 
-    } // Tiles
+    } // END Tiles
 
+    /**
+     * Класс объединяет элементы интерфейса и управляет их отрисовкой и поведением
+     */
     public class InterfaceScreen {
 
         private static final int MENU_BUTTON_COUNT = 4;
@@ -345,7 +404,7 @@ public class GameView extends SurfaceView {
         private int mValueTextOffset;
         private int mCaptionTextOffset;
 
-        private ArrayList<Button> mButtons = new ArrayList<Button>(); // кнопки вверху экрана
+        private ArrayList<TopBarButton> mButtons = new ArrayList<TopBarButton>(); // кнопки вверху экрана
         private float mButtonHeight;
 
         public InterfaceScreen() {
@@ -378,28 +437,28 @@ public class GameView extends SurfaceView {
             float w = (Dimensions.surfaceWidth / MENU_BUTTON_COUNT);
 
             mButtons.add(
-                    new Button(
+                    new TopBarButton(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
                             getResources().getString(R.string.action_new),
                             BTN_NEW
                     )
             );
             mButtons.add(
-                    new Button(
+                    new TopBarButton(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
                             getResources().getString(R.string.action_settings),
                             BTN_SETTINGS
                     )
             );
             mButtons.add(
-                    new Button(
+                    new TopBarButton(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
                             getResources().getString(R.string.action_lb),
                             BTN_LB
                     )
             );
             mButtons.add(
-                    new Button(
+                    new TopBarButton(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
                             getResources().getString(R.string.action_about),
                             BTN_PAUSE
@@ -424,9 +483,16 @@ public class GameView extends SurfaceView {
             mTextTime = getResources().getString(R.string.info_time);
         } // constructor
 
+        /**
+         * Обработка событий нажатия
+         *
+         * @param x координата x нажатия
+         * @param y координата y нажатия
+         * @return <b>true</b>, если событие было обработано, иначе <b>false</b>
+         */
         public boolean onClick(float x, float y) {
             int id = -1;
-            Button b;
+            TopBarButton b;
 
             for (int i = 0; i < MENU_BUTTON_COUNT; i++) {
                 b = mButtons.get(i);
@@ -445,7 +511,7 @@ public class GameView extends SurfaceView {
                     return true;
 
                 case BTN_SETTINGS:
-                    paused = Game.move(0) > 0;
+                    paused = Game.getMoves() > 0;
                     mScreenSettings.show();
                     return true;
 
@@ -481,7 +547,7 @@ public class GameView extends SurfaceView {
             mPaintButton.setColor(Colors.getTileColor());
             canvas.drawRect(0.0f, 0.0f, Dimensions.surfaceWidth, mButtonHeight, mPaintButton);
 
-            for (Button b : mButtons) {
+            for (TopBarButton b : mButtons) {
                 if (b.frame > 5) {
                     float a = (float) Tools.easeOut(b.frame--, 0.0f, 1.0f, OVERLAY_FRAMES);
                     mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
@@ -503,9 +569,9 @@ public class GameView extends SurfaceView {
             // значения
             mPaintTextCaption.setColor(Colors.getInfoTextColor());
             mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText(Integer.toString(Game.move(0)), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row1, mPaintTextCaption);
-            canvas.drawText(Tools.timeToString(Game.time(0)), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
-        } // draw
+            canvas.drawText(Integer.toString(Game.getMoves()), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row1, mPaintTextCaption);
+            canvas.drawText(Tools.timeToString(Game.getTime()), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
+        } // END draw
 
         public void update() {
             mPaintTextValue.setColor(Colors.getInfoTextColor());
@@ -514,14 +580,13 @@ public class GameView extends SurfaceView {
             mPaintOverlay.setColor(Colors.getBackgroundColor());
         }
 
-        //
-        private class Button {
+        private class TopBarButton {
             public RectF rect;
             public String caption;
             public int id;
             public int frame = 0;
 
-            Button(RectF r, String s, int id) {
+            TopBarButton(RectF r, String s, int id) {
                 rect = r;
                 caption = s;
                 this.id = id;
@@ -539,6 +604,9 @@ public class GameView extends SurfaceView {
 
     } // InterfaceScreen
 
+    /**
+     * Класс объединяет элементы интерфейса настроек и управляет их отрисовкой и поведением
+     */
     public class SettingsScreen {
 
         private Paint mPaintText;                       // заголовок элемента настроек
@@ -659,6 +727,13 @@ public class GameView extends SurfaceView {
             mRectBack.inset(0, sp);
         }
 
+        /**
+         * Обработка событий нажатия
+         *
+         * @param x  координата x нажатия
+         * @param y  координата y нажатия
+         * @param dx направление жеста
+         */
         public boolean onClick(int x, int y, int dx) {
 
             if (Math.abs(dx) < 10) {
@@ -820,6 +895,9 @@ public class GameView extends SurfaceView {
 
     }
 
+    /**
+     * Вспомогательный класс для отображения оверлеев
+     */
     public class FieldOverlay {
 
         private Paint mPaintBg;                         // Paint для отрисовки фона
@@ -831,6 +909,9 @@ public class GameView extends SurfaceView {
         private int mAnimFrames = 0;                    // кол-во кадров анимации
         private boolean mShow = false;                  // видимость
 
+        /**
+         * @param s текст надписи на оверлее
+         */
         public FieldOverlay(String s) {
             mCaption = s;
             mPaintBg = new Paint();
@@ -893,7 +974,7 @@ public class GameView extends SurfaceView {
         @Override
         public void run() {
             if (!paused && !solved) {
-                Game.time(100);
+                Game.incTime(TIME_CLOCK);
             }
         }
     }

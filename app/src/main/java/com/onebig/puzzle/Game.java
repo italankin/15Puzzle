@@ -9,38 +9,91 @@ public class Game {
     public static final int MODE_CLASSIC = 0;
     public static final int MODE_SNAKE = 1;
 
+    /**
+     * Singleton
+     */
     private static Game instance;
-    private int width;                                  // ширина головоломки в ячейках
-    private int height;                                 // высота головоломки в ячейках
-    private ArrayList<Integer> grid = new ArrayList<Integer>(); // игровое поле
+    /**
+     * ширина головоломки в ячейках
+     */
+    private int width;
+    /**
+     * высота головоломки в ячейках
+     */
+    private int height;
+    /**
+     * массив игрового поля
+     */
+    private ArrayList<Integer> grid = new ArrayList<Integer>();
 
-    private int zeroPos;                                // позиция пустой ячейки
-    private int moves;                                  // счетчик количества ходов
-    private long time;                                  // счетчик времени
-    private boolean stateChanged = false;               // изменение состояния
+    /**
+     * позиция нулевой (пустой) ячейки на поле
+     */
+    private int zeroPos;
+    /**
+     * счетчик ходов
+     */
+    private int moves;
+    /**
+     * счетчик времени
+     */
+    private long time;
+    private boolean stateChanged = false;
+    private boolean solved = false;
 
-    // создание класса с параметрами
+    /**
+     * обработчик событий
+     */
+    private GameEventListener eventListener = null;
+
+    /**
+     * Конструктор
+     *
+     * @param w ширина головоломки
+     * @param h высота головоломки
+     * @return объект класса Game
+     */
     public static Game create(int w, int h) {
         if (instance == null) {
             instance = new Game();
         }
         instance.init(w, h);
+
+        if (instance.eventListener != null) {
+            instance.eventListener.onCreate(w, h);
+        }
+
         return instance;
     }
 
-    // инициализация с помощью сохраненного массива
+    /**
+     * Инициализация игры с помощью сохраненного массива
+     *
+     * @param savedGrid  сохраненный массив
+     * @param savedMoves количество сделанных ходов
+     * @param savedTime  прошедшее время
+     */
     public static void load(ArrayList<Integer> savedGrid, int savedMoves, long savedTime) {
         instance.grid = savedGrid;
         instance.moves = savedMoves;
         instance.time = savedTime;
         instance.zeroPos = savedGrid.indexOf(0);
+
+        if (instance.eventListener != null) {
+            instance.eventListener.onLoad();
+        }
     }
 
-    // инициализация новой игры
+    /**
+     * Инициализация новой игры
+     *
+     * @param w ширина головоломки
+     * @param h высота головоломки
+     */
     public void init(int w, int h) {
-        height = h;                                     // сохраняем размер
-        width = w;                                      // поля
-        int size = height * width;                      // рассчет размер поля
+        height = h;
+        width = w;
+        int size = height * width;                      // рассчет размера поля
 
         grid.clear();
 
@@ -49,12 +102,13 @@ public class Game {
             grid.add(i);
         }
 
-        Collections.shuffle(grid, new Random());        // перемешиваем поле
+        Collections.shuffle(grid, new Random());        // перемешивание
 
-        zeroPos = grid.indexOf(0);                      // записываем позицию нулевой ячейки
+        zeroPos = grid.indexOf(0);                      // позиция нулевой ячейки
 
-        moves = 0;                                      // обнуление счетчика ходов
-        time = 0;                                       // обнуление счетчика времени
+        moves = 0;
+        time = 0;
+        solved = false;
 
         // проверка на возможность решения данной раскладки
         if (!isSolvable()) {
@@ -62,16 +116,21 @@ public class Game {
             // последнее и предпоследнее число
             Collections.swap(grid, grid.indexOf(size - 1), grid.indexOf(size - 2));
         }
+
         // редкий случай, когда после всех перемещений получается собранный паззл
-        if (isSolved() && size > 3) {
+        if (checkSolution() && size > 3) {
             // в этом случае мы создаем поле заного
             init(width, height);
         }
     }
 
-    // проверка решаемости головоломки
-    public static boolean isSolvable() {
-        int summ = 0, size = instance.height * instance.width;
+    /**
+     * Проверка решаемости головоломки
+     *
+     * @return <b>true</b>, если головоломка решаема, иначе <b>false</b>
+     */
+    private boolean isSolvable() {
+        int summ = 0, size = height * width;
         int n, m, s;
         switch (Settings.gameMode) {
             case MODE_CLASSIC:
@@ -79,10 +138,10 @@ public class Game {
                 // 1) меньше данного числа
                 // 2) стоят после него (по строкам)
                 for (int i = 0; i < size; i++) {
-                    n = instance.grid.get(i);
+                    n = grid.get(i);
                     s = 0;
                     for (int j = i + 1; j < size; j++) {
-                        m = instance.grid.get(j);
+                        m = grid.get(j);
                         if (n > m && m > 0) {
                             s++;
                         }
@@ -92,8 +151,8 @@ public class Game {
 
                 // для головоломок с четным количеством столбцов нужно прибавить номер
                 // строки (считая снизу), в которой находится нулевая ячейка
-                if (instance.width % 2 == 0) {
-                    int z = instance.height - instance.zeroPos / instance.width;
+                if (width % 2 == 0) {
+                    int z = height - zeroPos / width;
                     if (z % 2 == 0) {
                         return summ % 2 == 1;
                     }
@@ -107,19 +166,19 @@ public class Game {
                 // является ли номер текущей строки четным
                 for (int i = 0; i < size; i++) {
                     // если строка имеет четный номер, элементы массива нужно перебирать в обратном порядке
-                    if ((i / instance.width) % 2 == 0) {
-                        n = instance.grid.get(i);
+                    if ((i / width) % 2 == 0) {
+                        n = grid.get(i);
                     } else {
-                        n = instance.grid.get(instance.width * (1 + i / instance.width) - i % instance.width - 1);
+                        n = grid.get(width * (1 + i / width) - i % width - 1);
                     }
 
                     s = 0;
                     for (int j = i + 1; j < size; j++) {
 
-                        if ((j / instance.width) % 2 == 0) {
-                            m = instance.grid.get(j);
+                        if ((j / width) % 2 == 0) {
+                            m = grid.get(j);
                         } else {
-                            m = instance.grid.get(instance.width * (1 + j / instance.width) - j % instance.width - 1);
+                            m = grid.get(width * (1 + j / width) - j % width - 1);
                         }
 
                         if (n > m && m > 0) {
@@ -135,21 +194,21 @@ public class Game {
         } // switch
 
         return false;
-    }
+    } // END isSolvable
 
-    // проверка решения
-    public static boolean isSolved() {
-        if (instance == null) {
-            return false;
-        }
-
-        int size = instance.height * instance.width;
+    /**
+     * Проверка решения
+     *
+     * @return <b>true</b>, если головоломка решена, иначе <b>false</b>
+     */
+    private boolean checkSolution() {
+        int size = height * width;
         int v, i;
 
         switch (Settings.gameMode) {
             case MODE_CLASSIC:
                 for (i = 0; i < size - 1; i++) {
-                    if (instance.grid.get(i) != (i + 1)) {
+                    if (grid.get(i) != (i + 1)) {
                         return false;
                     }
                 }
@@ -157,17 +216,17 @@ public class Game {
 
             case MODE_SNAKE:
                 for (i = 0; i < size - 1; i++) {
-                    if ((i / instance.width) % 2 == 0) {
+                    if ((i / width) % 2 == 0) {
                         v = i + 1;
-                        if (instance.grid.get(i) != v) {
+                        if (grid.get(i) != v) {
                             return false;
                         }
                     } else {
-                        v = (instance.width * (1 + i / instance.width) - i % instance.width);
+                        v = (width * (1 + i / width) - i % width);
                         if (v == size) {
                             v = 0;
                         }
-                        if (instance.grid.get(i) != v) {
+                        if (grid.get(i) != v) {
                             return false;
                         }
                     }
@@ -177,9 +236,15 @@ public class Game {
         } // switch
 
         return true;
-    }
+    } // END checkSolution
 
-    // перемещение ячеек на поле
+    /**
+     * Перемещение ячейки (базовый ход)
+     *
+     * @param x координата x ячейки
+     * @param y координа y ячейки
+     * @return конечная позиция ячейки
+     */
     public static int move(int x, int y) {
         int pos = y * instance.width + x;               // вычисление позиции ячейки в массиве
 
@@ -189,28 +254,39 @@ public class Game {
         int x0 = instance.zeroPos % instance.width;     // вычисление координат
         int y0 = instance.zeroPos / instance.width;     // пустой ячейки
 
-        if (manhattan(x0, y0, x, y) > 1) {        // проверка дистанции
+        if (Tools.manhattan(x0, y0, x, y) > 1) {              // проверка дистанции
             return pos;
         }
 
-        // меняем местами пустую и выбранную ячейку
+        // меняются местами пустая и выбранная ячейка
         Collections.swap(instance.grid, pos, instance.zeroPos);
         instance.stateChanged = true;
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 
+        // обработка событий
+        if (instance.eventListener != null) {
+            // вызов обработчика событий при перемещении
+            instance.eventListener.onMove();
+
+            // решение головоломки
+            if (instance.checkSolution()) {
+                instance.solved = true;
+                instance.eventListener.onSolve();
+            }
+        }
+
         return newPos;
-    }
+    } // END move
 
-    // вычисление расстояния между клетками на игровом поле
-    public static int manhattan(int x1, int y1, int x2, int y2) {
-        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
-    }
-
-    // функция перемещает выбранный столбец (строку)
-    // относительно выбранного направления
-    // возвращает массив индексов плиток, которые требуется переместить
-    public static ArrayList<Integer> slide(int direction, int index) {
+    /**
+     * Определяет элементы, которые необходимо переместить в выбранном жестом направлении
+     *
+     * @param direction направление перемещения
+     * @param index     индекс начального элемента
+     * @return массив элементов, которые требуется переместить
+     */
+    public static ArrayList<Integer> getSlidingElements(int direction, int index) {
         // массив индексов ячеек, которые будут перемещены
         ArrayList<Integer> result = new ArrayList<Integer>();
 
@@ -275,44 +351,103 @@ public class Game {
         }
 
         return result;
-    } // end slide
+    } // END getSlidingElements
 
-    // возвращает число с индексом index
+    /**
+     * Возвращает число в ячейке по его индексу в массиве
+     *
+     * @param index индекс элемента в массиве
+     * @return элемент массива
+     */
     public static int getAt(int index) {
         return instance.grid.get(index);
     }
 
-    // вычисляет направление вектора с началом index и концом zeroPos
+    /**
+     * Вычисляет направление вектора перемещения с концом в {@link #zeroPos}
+     *
+     * @param index начальный индекс
+     * @return идентификатор направления
+     * @see {@link Tools}
+     */
     public static int getDirection(int index) {
         return Tools.direction(instance.zeroPos % instance.width - index % instance.width,
                 instance.zeroPos / instance.width - index / instance.width);
     }
 
-    // количество ходов
-    public static int move(int m) {
-        if (instance.stateChanged && m > 0) {
-            instance.stateChanged = false;
-            instance.moves++;
-        }
+    public static void incMoves() {
+        instance.moves++;
+    }
+
+    public static int getMoves() {
         return instance.moves;
     }
 
-    // затраченное время
-    public static long time(long t) {
-        if (instance.moves > 0 && t > 0) {
-            instance.time += t;
+    public static void incTime(long time) {
+        if (instance.moves > 0) {
+            instance.time += time;
         }
+    }
+
+    public static long getTime() {
         return instance.time;
     }
 
-    // поле как массив чисел
+    public static boolean isSolved() {
+        return instance.solved;
+    }
+
+
+    /**
+     * @return массив элементов поля
+     */
     public static ArrayList<Integer> getGrid() {
         return instance.grid;
     }
 
-    // размер поля
+    /**
+     * @return размер поля (высота * ширина)
+     */
     public static int getSize() {
         return instance.grid.size();
+    }
+
+    /* Other */
+
+    public interface GameEventListener {
+
+        /**
+         * Вызывается при создании новой игры
+         *
+         * @param width  ширина поля
+         * @param height высота поля
+         */
+        void onCreate(int width, int height);
+
+        /**
+         * Вызывается при загрузке игры из памяти
+         */
+        void onLoad();
+
+        /**
+         * Вызывается при совершении легального хода
+         */
+        void onMove();
+
+        /**
+         * Вызывается при решении головоломки
+         */
+        void onSolve();
+
+    }
+
+    /**
+     * Привязывает обработчик событий к игре
+     *
+     * @param listener обработчик событий
+     */
+    public static void setGameEventListener(GameEventListener listener) {
+        instance.eventListener = listener;
     }
 
 }

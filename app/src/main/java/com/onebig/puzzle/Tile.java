@@ -86,13 +86,15 @@ public class Tile {
             sPaintText.setTextSize(mAnimation.getScale() * Dimensions.tileFontSize);
             sPaintText.getTextBounds(text, 0, text.length(), mRectBounds);
             sPaintText.setColor(Colors.getTileTextColor());
-            if (!Settings.blindfolded || Game.move(0) == 0 || mRootView.solved) {
+            if (!Settings.blindfolded || Game.getMoves() == 0 || mRootView.solved) {
                 canvas.drawText(Integer.toString(mData), mRectShape.centerX(), mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
         }
     }
 
-    // возвращает индекс данного спрайта в общем массиве
+    /**
+     * @return индекс данного спрайта в общем массиве
+     */
     public int getIndex() {
         return mIndex;
     }
@@ -148,6 +150,12 @@ public class Tile {
         return false;
     }
 
+    /**
+     * Устанавливает анимацию для спрайта
+     *
+     * @param type  тип анимации
+     * @param delay задержка отображения анимации
+     */
     public Tile setAnimation(int type, int delay) {
         if (Settings.animationEnabled) {
             mAnimation.delay = delay;
@@ -176,7 +184,9 @@ public class Tile {
             this.delay = 0;
         }
 
-        // производит преобразование фигуры исходя из выбранного типа анимации
+        /**
+         * Производит преобразование фигуры исходя из выбранного типа анимации
+         */
         public Path getTransformPath(Path p) {
             float ds, ds2, tx, ty;
             Matrix m;

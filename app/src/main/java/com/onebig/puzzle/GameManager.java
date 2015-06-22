@@ -4,7 +4,8 @@ import android.graphics.Canvas;
 import android.util.Log;
 
 public class GameManager extends Thread {
-    static final long FPS = 30;                         // кадры в секунду
+
+    public static final long FPS = 30;                  // кадры в секунду
 
     private GameView mView;                             // главная область приложения
 

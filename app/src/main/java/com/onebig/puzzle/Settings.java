@@ -59,8 +59,8 @@ public class Settings {
         if (!Game.isSolved() && saveGame) {
             String string_array = Game.getGrid().toString();
             editor.putString(KEY_GAME_ARRAY, string_array.substring(1, string_array.length() - 1));
-            editor.putInt(KEY_GAME_MOVES, Game.move(0));
-            editor.putLong(KEY_GAME_TIME, Game.time(0));
+            editor.putInt(KEY_GAME_MOVES, Game.getMoves());
+            editor.putLong(KEY_GAME_TIME, Game.getTime());
         } else {
             editor.remove(KEY_GAME_ARRAY);
             editor.remove(KEY_GAME_MOVES);
