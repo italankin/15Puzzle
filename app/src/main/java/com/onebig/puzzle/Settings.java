@@ -22,14 +22,12 @@ public class Settings {
     public static final String KEY_GAME_BF = "blind";
     public static final String KEY_GAME_ANTI_ALIAS = "antialias";
     public static final String KEY_GAME_ANIMATION = "animation";
-    public static final String KEY_GAME_SOUND = "sound";
 
     public static int gameWidth = 4;                    // ширина игры (в ячейках)
     public static int gameHeight = 4;                   // высота игры
     public static boolean blindfolded = false;
     public static boolean saveGame = true;              // сохранение игр между сессиями
     public static boolean animationEnabled = true;      // анимации (вкл/выкл)
-    public static boolean sounds = true;                // звук (вкл/выкл)
     public static boolean antiAlias = true;             // сглаживание (вкл/выкл)
     public static int tileAnimFrames = 13;              // количество кадров для анимирования плиток
     public static int screenAnimFrames = 10;            // кол-во кадров для анимирования элементов интерфейса
@@ -50,7 +48,6 @@ public class Settings {
         gameMode = prefs.getInt(KEY_GAME_MODE, gameMode);
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         animationEnabled = prefs.getBoolean(KEY_GAME_ANIMATION, animationEnabled);
-        sounds = prefs.getBoolean(KEY_GAME_SOUND, sounds);
         blindfolded = prefs.getBoolean(KEY_GAME_BF, blindfolded);
     }
 
@@ -75,7 +72,6 @@ public class Settings {
         editor.putInt(KEY_GAME_MODE, gameMode);
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animationEnabled);
-        editor.putBoolean(KEY_GAME_SOUND, sounds);
         editor.putBoolean(KEY_GAME_BF, blindfolded);
         editor.commit();
     }

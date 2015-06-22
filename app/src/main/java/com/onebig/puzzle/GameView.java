@@ -101,7 +101,7 @@ public class GameView extends SurfaceView {
                 if (solved && mRectField.contains(x, y)) {
                     solved = false;
                     createNewGame(true);
-                } else {
+                } else if (!mScreenSettings.isShown()) {
                     mScreenInterface.onClick(x, y);
                 }
 
@@ -306,10 +306,6 @@ public class GameView extends SurfaceView {
                     mOverlaySolved.show();
                 }
 
-                if (Settings.sounds) {
-                    Sound.playSound();
-                }
-
             } // if
         } // move
 
@@ -323,10 +319,12 @@ public class GameView extends SurfaceView {
 
     public class InterfaceScreen {
 
-        private static final int BTN_COUNT = 3;
+        private static final int MENU_BUTTON_COUNT = 4;
         private static final int BTN_NEW = 0;
         private static final int BTN_SETTINGS = 1;
-        private static final int BTN_PAUSE = 2;
+        private static final int BTN_LB = 2;
+        private static final int BTN_PAUSE = 3;
+
         private final int OVERLAY_FRAMES = (int) (1.5 * Settings.screenAnimFrames);
 
         private Paint mPaintButton;                     // Paint для рисования иконки приложения (вверху слева)
@@ -377,24 +375,34 @@ public class GameView extends SurfaceView {
             mPaintOverlay.setColor(Colors.getBackgroundColor());
 
             mButtonHeight = Dimensions.surfaceHeight * 0.07f;
-            float w = (Dimensions.surfaceWidth / BTN_COUNT);
+            float w = (Dimensions.surfaceWidth / MENU_BUTTON_COUNT);
 
             mButtons.add(
                     new Button(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_new)
+                            getResources().getString(R.string.action_new),
+                            BTN_NEW
                     )
             );
             mButtons.add(
                     new Button(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_settings)
+                            getResources().getString(R.string.action_settings),
+                            BTN_SETTINGS
                     )
             );
             mButtons.add(
                     new Button(
                             new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_about)
+                            getResources().getString(R.string.action_lb),
+                            BTN_LB
+                    )
+            );
+            mButtons.add(
+                    new Button(
+                            new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
+                            getResources().getString(R.string.action_about),
+                            BTN_PAUSE
                     )
             );
 
@@ -417,38 +425,42 @@ public class GameView extends SurfaceView {
         } // constructor
 
         public boolean onClick(float x, float y) {
+            int id = -1;
+            Button b;
 
-            // -- создание новой игры --
-            if (mButtons.get(BTN_NEW).contains(x, y)) {
-                createNewGame(true);
-                if (Settings.animationEnabled) {
-                    mButtons.get(BTN_NEW).setOverlay();
+            for (int i = 0; i < MENU_BUTTON_COUNT; i++) {
+                b = mButtons.get(i);
+                if (b.contains(x, y)) {
+                    id = b.id;
+                    if (Settings.animationEnabled) {
+                        b.setOverlay();
+                    }
+                    break;
                 }
-                return true;
             }
 
-            // -- отображение настроек --
-            if (mButtons.get(BTN_SETTINGS).contains(x, y)) {
-                paused = Game.move(0) > 0;
-                mScreenSettings.show();
-                if (Settings.animationEnabled) {
-                    mButtons.get(BTN_SETTINGS).setOverlay();
-                }
-                return true;
-            }
+            switch (id) {
+                case BTN_NEW:
+                    createNewGame(true);
+                    return true;
 
-            // -- о программе --
-            if (mButtons.get(BTN_PAUSE).contains(x, y)) {
-                if (!solved) {
-                    paused = true;
-                }
-                if (!mOverlayPause.isShown()) {
-                    mOverlayPause.show();
-                }
-                if (Settings.animationEnabled) {
-                    mButtons.get(BTN_PAUSE).setOverlay();
-                }
-                return true;
+                case BTN_SETTINGS:
+                    paused = Game.move(0) > 0;
+                    mScreenSettings.show();
+                    return true;
+
+                case BTN_LB:
+                    // TODO show leaderboard
+                    return true;
+
+                case BTN_PAUSE:
+                    if (!solved) {
+                        paused = true;
+                    }
+                    if (!mOverlayPause.isShown()) {
+                        mOverlayPause.show();
+                    }
+                    return true;
             }
 
             // -- режим игры --
@@ -506,11 +518,13 @@ public class GameView extends SurfaceView {
         private class Button {
             public RectF rect;
             public String caption;
+            public int id;
             public int frame = 0;
 
-            Button(RectF r, String s) {
+            Button(RectF r, String s, int id) {
                 rect = r;
                 caption = s;
+                this.id = id;
             }
 
             public boolean contains(float x, float y) {
