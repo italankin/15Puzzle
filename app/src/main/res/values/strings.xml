@@ -16,10 +16,12 @@
     <string name="pref_color_mode">Color theme</string>
     <string name="pref_mode">Mode</string>
     <string name="pref_animation">Animation</string>
-    <string name="pref_bf">Blindfolded</string>
+    <string name="pref_bf">Hard</string>
+    <string name="pref_sort">Sort</string>
     <string name="back">back</string>
+    <string name="info_no_data">no data</string>
 
-    <string-array name="animations">
+    <string-array name="toggle">
         <item>off</item>
         <item>on</item>
     </string-array>
@@ -30,6 +32,10 @@
     <string-array name="game_modes">
         <item>classic</item>
         <item>snake</item>
+    </string-array>
+    <string-array name="sort_types">
+        <item>fewer moves</item>
+        <item>less time</item>
     </string-array>
 
 </resources>

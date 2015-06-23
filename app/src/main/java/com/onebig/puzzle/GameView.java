@@ -2,6 +2,7 @@ package com.onebig.puzzle;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,8 +14,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,12 +28,13 @@ public class GameView extends SurfaceView {
     private Context mContext;                           // контекст приложения
 
     private GameManager mGameLoopThread;                // главный поток
-    private DBHelper dbHelper;
+    private DBHelper dbHelper;                          // БД для сохранения результатов
 
     private Tiles mTiles = new Tiles();                 // массив спрайтов
 
     private SettingsScreen mScreenSettings;             // настройки
     private InterfaceScreen mScreenInterface;           // элементы интерфейса
+    private LeaderboardScreen mScreenLeaderboard;       // рекорды
     private FieldOverlay mOverlaySolved;                // экран конца игры
     private FieldOverlay mOverlayPause;                 // экран паузы
     private RectF mRectField;                           // область игрового поля
@@ -46,8 +51,10 @@ public class GameView extends SurfaceView {
     // конструктор
     public GameView(Context context) {
         super(context);
-        this.mContext = context;
+        mContext = context;
         mGameLoopThread = new GameManager(this);
+
+        dbHelper = new DBHelper(context);
 
         SurfaceHolder holder = getHolder();
 
@@ -58,6 +65,7 @@ public class GameView extends SurfaceView {
 
                 mScreenSettings = new SettingsScreen();
                 mScreenInterface = new InterfaceScreen();
+                mScreenLeaderboard = new LeaderboardScreen();
                 mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
                 mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
 
@@ -65,17 +73,17 @@ public class GameView extends SurfaceView {
 
                     @Override
                     public void onCreate(int width, int height) {
-                        Log.d("GameEventListener", "onCreate");
+
                     }
 
                     @Override
                     public void onLoad() {
-                        Log.d("GameEventListener", "onLoad");
+
                     }
 
                     @Override
                     public void onMove() {
-                        Log.d("GameEventListener", "onMove");
+
                     }
 
                     @Override
@@ -86,7 +94,7 @@ public class GameView extends SurfaceView {
                             gameClock = null;
                         }
                         mOverlaySolved.show();
-                        Log.v("onGameSolve", "moves=" + (Game.getMoves() + 1) + ", time=" + Game.getTime() + " [" + Tools.timeToString(Game.getTime()) + "]");
+                        dbHelper.insert(Settings.gameMode, Settings.gameWidth, Settings.gameHeight, Settings.blindfolded ? 1 : 0, Game.getMoves() + 1, Game.getTime());
                     }
 
                 });
@@ -135,7 +143,7 @@ public class GameView extends SurfaceView {
                 if (solved && mRectField.contains(x, y)) {
                     solved = false;
                     createNewGame(true);
-                } else if (!mScreenSettings.isShown()) {
+                } else if (!mScreenSettings.isShown() && !mScreenLeaderboard.isShown()) {
                     mScreenInterface.onClick(x, y);
                 }
 
@@ -145,8 +153,12 @@ public class GameView extends SurfaceView {
                 int dx = x - mStartX;
                 int dy = y - mStartY;
 
+                if (mScreenLeaderboard.isShown()) {
+                    mScreenLeaderboard.onClick(mStartX, mStartY, dx);
+                    return true;
+                }
                 if (mScreenSettings.isShown()) {
-                    mScreenSettings.onClick(x, y, dx);
+                    mScreenSettings.onClick(mStartX, mStartY, dx);
                     return true;
                 }
 
@@ -169,7 +181,7 @@ public class GameView extends SurfaceView {
      * Нажатие клавиши "Назад" на устройстве
      */
     public boolean onBackPressed() {
-        return !mScreenSettings.isShown() || mScreenSettings.hide();
+        return mScreenSettings.hide() || mScreenLeaderboard.hide();
     }
 
     /**
@@ -305,7 +317,9 @@ public class GameView extends SurfaceView {
         if (solved) {
             mOverlaySolved.draw(canvas);                 // оверлей "solved"
         }
-        if (mScreenSettings.isShown()) {
+        if (mScreenLeaderboard.isShown()) {
+            mScreenLeaderboard.draw(canvas);
+        } else if (mScreenSettings.isShown()) {
             mScreenSettings.draw(canvas);                // экран настроек
         } else if (paused && !solved) {
             mOverlayPause.draw(canvas);                  // оверлей "paused"
@@ -357,7 +371,9 @@ public class GameView extends SurfaceView {
                     }
                 }
 
-                Game.incMoves();
+                if (numbersToMove.size() > 0) {
+                    Game.incMoves();
+                }
 
             } // if
         } // END move
@@ -374,9 +390,35 @@ public class GameView extends SurfaceView {
     } // END Tiles
 
     /**
+     * Базовый класс элемента интерфейса
+     */
+    public abstract class BaseScreen {
+
+        protected boolean mShow = false;
+
+        public boolean show() {
+            return (mShow = true);
+        }
+
+        /**
+         * @return <b>false</b>, если элемент не отображался, иначе <b>true</b>
+         */
+        public boolean hide() {
+            return mShow && !(mShow = false);
+        }
+
+        public boolean isShown() {
+            return mShow;
+        }
+
+        public abstract void draw(Canvas canvas);
+
+    }
+
+    /**
      * Класс объединяет элементы интерфейса и управляет их отрисовкой и поведением
      */
-    public class InterfaceScreen {
+    public class InterfaceScreen extends BaseScreen {
 
         private static final int MENU_BUTTON_COUNT = 4;
         private static final int BTN_NEW = 0;
@@ -516,7 +558,8 @@ public class GameView extends SurfaceView {
                     return true;
 
                 case BTN_LB:
-                    // TODO show leaderboard
+                    paused = Game.getMoves() > 0;
+                    mScreenLeaderboard.show();
                     return true;
 
                 case BTN_PAUSE:
@@ -607,7 +650,7 @@ public class GameView extends SurfaceView {
     /**
      * Класс объединяет элементы интерфейса настроек и управляет их отрисовкой и поведением
      */
-    public class SettingsScreen {
+    public class SettingsScreen extends BaseScreen {
 
         private Paint mPaintText;                       // заголовок элемента настроек
         private Paint mPaintValue;                      // значение элемента настроек
@@ -639,8 +682,6 @@ public class GameView extends SurfaceView {
         private RectF mRectMode;                        // ... режим игры
         private RectF mRectBack;                        // ... "назад"
 
-        private boolean mShow = false;
-
         public SettingsScreen() {
             int h = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
             int ch = (int) (Dimensions.surfaceHeight * 0.15f); // отступ от верхнего края экрана
@@ -666,63 +707,55 @@ public class GameView extends SurfaceView {
             mPaintIcon = new Paint();
             mPaintIcon.setAntiAlias(Settings.antiAlias);
 
-            Rect r = new Rect();
+            mTextHeight = getResources().getString(R.string.pref_height);
+            mTextHeightValue = Integer.toString(Settings.gameHeight);
             mTextWidth = getResources().getString(R.string.pref_width);
+            mTextWidthValue = Integer.toString(Settings.gameWidth);
+            mTextMode = getResources().getString(R.string.pref_mode);
+            mTextModeValue = getResources().getStringArray(R.array.game_modes);
+            mTextBf = getResources().getString(R.string.pref_bf);
+            mTextBfValue = getResources().getStringArray(R.array.toggle);
+            mTextAnimations = getResources().getString(R.string.pref_animation);
+            mTextAnimationsValue = getResources().getStringArray(R.array.toggle);
+            mTextColorMode = getResources().getString(R.string.pref_color_mode);
+            mTextColorModeValue = getResources().getStringArray(R.array.color_mode);
+            mTextColor = getResources().getString(R.string.pref_color);
+            mTextBack = getResources().getString(R.string.back);
+
+            Rect r = new Rect();
             mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
 
-            // -- настройки --
-
             ch += h;
-            mTextMode = getResources().getString(R.string.pref_mode);
             mRectMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectMode.inset(0, sp);
 
-            mTextModeValue = getResources().getStringArray(R.array.game_modes);
-
             ch += h;
-            mTextBf = getResources().getString(R.string.pref_bf);
             mRectBf = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectBf.inset(0, sp);
-
-            mTextBfValue = getResources().getStringArray(R.array.animations);
 
             ch += h;
             mRectWidth = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectWidth.inset(0, sp);
 
-            mTextWidthValue = Integer.toString(Settings.gameWidth);
-
             ch += h;
-            mTextHeight = getResources().getString(R.string.pref_height);
             mRectHeight = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectHeight.inset(0, sp);
 
-            mTextHeightValue = Integer.toString(Settings.gameHeight);
-
             ch += h;
-            mTextAnimations = getResources().getString(R.string.pref_animation);
             mRectAnimations = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectAnimations.inset(0, sp);
 
-            mTextAnimationsValue = getResources().getStringArray(R.array.animations);
-
             ch += h;
-            mTextColorMode = getResources().getString(R.string.pref_color_mode);
             mRectColorMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectColorMode.inset(0, sp);
 
-            mTextColorModeValue = getResources().getStringArray(R.array.color_mode);
-
             ch += h;
-            mTextColor = getResources().getString(R.string.pref_color);
             mRectColor = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectColor.inset(0, sp);
             mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing, mRectColor.top - sp, Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(), mRectColor.bottom + sp);
             mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
-            // -- элементы управления --
 
-            mTextBack = getResources().getString(R.string.back);
             mRectBack = new RectF(0, Dimensions.surfaceHeight - h, Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
             mRectBack.inset(0, sp);
         }
@@ -736,54 +769,43 @@ public class GameView extends SurfaceView {
          */
         public boolean onClick(int x, int y, int dx) {
 
-            if (Math.abs(dx) < 10) {
+            if (Math.abs(dx) < 15) {
                 dx = 0;
             }
 
             // -- ширина поля --
             if (mRectWidth.contains(x, y)) {
-
-                if (dx < 0) {
-                    Settings.gameWidth--;
-                } else {
-                    Settings.gameWidth++;
-                }
-
+                Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
                 if (Settings.gameWidth < 2) {
                     Settings.gameWidth = Settings.MAX_GAME_WIDTH;
                 }
                 if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
                     Settings.gameWidth = 2;
                 }
-
                 Settings.save();
                 createNewGame(true);
+                return true;
             }
 
             // -- высота поля --
             if (mRectHeight.contains(x, y)) {
-
-                if (dx < 0) {
-                    Settings.gameHeight--;
-                } else {
-                    Settings.gameHeight++;
-                }
-
+                Settings.gameHeight += ((dx == 0) ? 1 : Math.signum(dx));
                 if (Settings.gameHeight < 2) {
                     Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
                 }
                 if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
                     Settings.gameHeight = 2;
                 }
-
                 Settings.save();
                 createNewGame(true);
+                return true;
             }
 
             // -- переключение анимаций --
             if (mRectAnimations.contains(x, y)) {
                 Settings.animationEnabled = !Settings.animationEnabled;
                 Settings.save();
+                return true;
             }
 
             // -- цвет спрайтов --
@@ -796,17 +818,18 @@ public class GameView extends SurfaceView {
                     Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
                 }
                 Settings.save();
+                return true;
             }
 
             // -- цвет фона --
             if (mRectColorMode.contains(x, y)) {
                 Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
                 Settings.save();
-
                 mScreenInterface.update();
                 mScreenSettings.update();
                 mOverlayPause.update();
                 mOverlaySolved.update();
+                return true;
             }
 
             // -- режим игры --
@@ -814,32 +837,23 @@ public class GameView extends SurfaceView {
                 Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
                 Settings.save();
                 createNewGame(true);
+                return true;
             }
 
             // -- режим игры --
             if (mRectBf.contains(x, y)) {
                 Settings.blindfolded = !Settings.blindfolded;
                 Settings.save();
+                return true;
             }
 
             // -- назад --
             if (mRectBack.contains(x, y)) {
-                mScreenSettings.hide();
+                hide();
+                return true;
             }
 
-            return true;
-        }
-
-        public boolean show() {
-            return (mShow = true);
-        }
-
-        public boolean hide() {
-            return (mShow = false);
-        }
-
-        public boolean isShown() {
-            return mShow;
+            return false;
         }
 
         public void draw(Canvas canvas) {
@@ -895,10 +909,250 @@ public class GameView extends SurfaceView {
 
     }
 
+    public class LeaderboardScreen extends BaseScreen {
+
+        private Paint mPaintText;
+        private Paint mPaintValue;
+        private Paint mPaintTable;
+
+        private String mTextWidth;                      // ширина поля
+        private String mTextHeight;                     // высота поля
+        private String mTextBf;                         // blindfolded
+        private String mTextBfValue[];
+        private String mTextMode;                       // режим игры
+        private String mTextModeValue[];
+        private String mTextSort;                       // сортировка
+        private String mTextSortValue[];
+        private String mTextBack;                       // кнопка "назад"
+
+        private Rect mRectWidth;
+        private Rect mRectHeight;
+        private Rect mRectMode;
+        private Rect mRectBf;
+        private Rect mRectSort;
+        private Rect mRectBack;
+
+        private ArrayList<TableItem> mTableItems = new ArrayList<TableItem>();
+
+        private float mTableGuides[] = {
+                Dimensions.surfaceWidth * 0.13f,
+                Dimensions.surfaceWidth * 0.28f,
+                Dimensions.surfaceWidth * 0.55f,
+                Dimensions.surfaceWidth * 0.95f
+        };
+        private int mSettingsGuides[] = {
+                (int) (Dimensions.surfaceWidth * 0.08f),
+                (int) (Dimensions.surfaceWidth * 0.31f),
+                (int) (Dimensions.surfaceWidth * 0.57f),
+                (int) (Dimensions.surfaceWidth * 0.82f)
+        };
+
+        private float mTableMarginTop;
+
+        private int mSortMode = 0;
+        private int mGameWidth = Settings.gameWidth;
+        private int mGameHeight = Settings.gameHeight;
+        private int mGameMode = Settings.gameMode;
+        private int mHardMode = Settings.blindfolded ? 1 : 0;
+
+        public LeaderboardScreen() {
+            mPaintText = new Paint();
+            mPaintText.setAntiAlias(Settings.antiAlias);
+            mPaintText.setColor(Colors.getOverlayTextColor());
+            mPaintText.setTextSize(Dimensions.menuFontSize);
+            mPaintText.setTypeface(Settings.typeface);
+            mPaintText.setTextAlign(Paint.Align.LEFT);
+
+            mPaintValue = new Paint();
+            mPaintValue.setAntiAlias(Settings.antiAlias);
+            mPaintValue.setColor(Colors.menuTextValue);
+            mPaintValue.setTextSize(Dimensions.menuFontSize);
+            mPaintValue.setTypeface(Settings.typeface);
+            mPaintValue.setTextAlign(Paint.Align.LEFT);
+
+            mPaintTable = new Paint();
+            mPaintTable.setAntiAlias(Settings.antiAlias);
+            mPaintTable.setTextSize(Dimensions.menuFontSize * 0.9f);
+            mPaintTable.setTypeface(Settings.typeface);
+            mPaintTable.setTextAlign(Paint.Align.RIGHT);
+
+            mTextWidth = getResources().getString(R.string.pref_width);
+            mTextHeight = getResources().getString(R.string.pref_height);
+            mTextBf = getResources().getString(R.string.pref_bf);
+            mTextBfValue = getResources().getStringArray(R.array.toggle);
+            mTextMode = getResources().getString(R.string.pref_mode);
+            mTextModeValue = getResources().getStringArray(R.array.game_modes);
+            mTextSort = getResources().getString(R.string.pref_sort);
+            mTextSortValue = getResources().getStringArray(R.array.sort_types);
+            mTextBack = getResources().getString(R.string.back);
+
+            Rect r = new Rect();
+            mPaintText.getTextBounds(mTextWidth, 0, 1, r);
+
+            int lineHeight = r.height();
+            int marginTop = (int) (Dimensions.surfaceHeight * 0.12f);
+            int mLineGap = (int) (Dimensions.surfaceHeight * 0.075f);
+            mTableMarginTop = marginTop + lineHeight + 3.4f * mLineGap;
+
+            mRectMode = new Rect(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
+            mRectMode.inset(0, -lineHeight / 3);
+            mRectWidth = new Rect(mSettingsGuides[2], marginTop, (int) Dimensions.surfaceWidth, marginTop + lineHeight);
+            mRectWidth.inset(0, -lineHeight / 3);
+            mRectBf = new Rect(0, marginTop + mLineGap, mSettingsGuides[2], marginTop + mLineGap + lineHeight);
+            mRectBf.inset(0, -lineHeight / 3);
+            mRectHeight = new Rect(mSettingsGuides[2], marginTop + mLineGap, (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
+            mRectHeight.inset(0, -lineHeight / 3);
+            mRectSort = new Rect(0, marginTop + 2 * mLineGap, (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
+            mRectSort.inset(0, -lineHeight / 3);
+            mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 2 * lineHeight, (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
+        }
+
+        public boolean onClick(int x, int y, int dx) {
+
+            if (Math.abs(dx) < 15) {
+                dx = 0;
+            }
+
+            if (mRectMode.contains(x, y)) {
+                mGameMode = ++mGameMode % Settings.GAME_MODES;
+                updateData();
+                return true;
+            }
+
+            if (mRectBf.contains(x, y)) {
+                mHardMode = ++mHardMode % 2;
+                updateData();
+                return true;
+            }
+
+            if (mRectSort.contains(x, y)) {
+                mSortMode = ++mSortMode % 2;
+                updateData();
+                return true;
+            }
+
+            if (mRectWidth.contains(x, y)) {
+                mGameWidth += ((dx == 0) ? 1 : Math.signum(dx));
+                if (mGameWidth < 2) {
+                    mGameWidth = Settings.MAX_GAME_WIDTH;
+                }
+                if (mGameWidth > Settings.MAX_GAME_WIDTH) {
+                    mGameWidth = 2;
+                }
+                updateData();
+                return true;
+            }
+
+            // -- высота поля --
+            if (mRectHeight.contains(x, y)) {
+                mGameHeight += ((dx == 0) ? 1 : Math.signum(dx));
+                if (mGameHeight < 2) {
+                    mGameHeight = Settings.MAX_GAME_HEIGHT;
+                }
+                if (mGameHeight > Settings.MAX_GAME_HEIGHT) {
+                    mGameHeight = 2;
+                }
+                updateData();
+                return true;
+            }
+
+            if (mRectBack.contains(x, y)) {
+                hide();
+                return true;
+            }
+
+            return false;
+        }
+
+        public void updateData() {
+            mTableItems.clear();
+
+            Cursor query = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
+
+            if (query.getCount() > 0) {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                query.moveToFirst();
+                do {
+                    TableItem item = new TableItem();
+                    item.id = Integer.toString(query.getPosition() + 1);
+                    item.moves = Integer.toString(query.getInt(query.getColumnIndex(DBHelper.KEY_MOVES)));
+                    item.time = Tools.timeToString(query.getInt(query.getColumnIndex(DBHelper.KEY_TIME)));
+                    Date d = new Date(query.getLong(query.getColumnIndex(DBHelper.KEY_TIMESTAMP)));
+                    item.timestamp = formatter.format(d);
+                    mTableItems.add(item);
+                } while (query.moveToNext());
+            }
+        }
+
+        @Override
+        public boolean show() {
+            mGameMode = Settings.gameMode;
+            mHardMode = Settings.blindfolded ? 1 : 0;
+            mGameWidth = Settings.gameWidth;
+            mGameHeight = Settings.gameHeight;
+            mSortMode = 0;
+            updateData();
+            return super.show();
+        }
+
+        public void draw(Canvas canvas) {
+            canvas.drawColor(Colors.getOverlayColor());
+
+            mPaintText.setTextAlign(Paint.Align.LEFT);
+
+            float s = Dimensions.menuFontSize * 0.29f;
+
+            canvas.drawText(mTextMode, mSettingsGuides[0], mRectMode.bottom - s, mPaintText);
+            canvas.drawText(mTextModeValue[mGameMode], mSettingsGuides[1], mRectMode.bottom - s, mPaintValue);
+            canvas.drawText(mTextBf, mSettingsGuides[0], mRectBf.bottom - s, mPaintText);
+            canvas.drawText(mTextBfValue[mHardMode], mSettingsGuides[1], mRectBf.bottom - s, mPaintValue);
+            canvas.drawText(mTextSort, mSettingsGuides[0], mRectSort.bottom - s, mPaintText);
+            canvas.drawText(mTextSortValue[mSortMode], mSettingsGuides[1], mRectSort.bottom - s, mPaintValue);
+
+            canvas.drawText(mTextWidth, mSettingsGuides[2], mRectWidth.bottom - s, mPaintText);
+            canvas.drawText(Integer.toString(mGameWidth), mSettingsGuides[3], mRectWidth.bottom - s, mPaintValue);
+            canvas.drawText(mTextHeight, mSettingsGuides[2], mRectHeight.bottom - s, mPaintText);
+            canvas.drawText(Integer.toString(mGameHeight), mSettingsGuides[3], mRectHeight.bottom - s, mPaintValue);
+
+            mPaintText.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.centerY(), mPaintText);
+
+            if (mTableItems.size() == 0) {
+                canvas.drawText(getResources().getString(R.string.info_no_data), Dimensions.surfaceWidth * .5f, mTableMarginTop, mPaintText);
+                return;
+            }
+
+            float gap = Dimensions.surfaceHeight * 0.05f;
+
+            for (int i = 0; i < mTableItems.size(); i++) {
+                TableItem item = mTableItems.get(i);
+
+                mPaintTable.setColor(Colors.getOverlayTextColor());
+                canvas.drawText(item.id, mTableGuides[0], mTableMarginTop + gap * i, mPaintTable);
+
+                mPaintTable.setColor(Colors.menuTextValue);
+                canvas.drawText(item.moves, mTableGuides[1], mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.time, mTableGuides[2], mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.timestamp, mTableGuides[3], mTableMarginTop + gap * i, mPaintTable);
+            }
+
+        }
+
+        /**
+         * Хранит данные о записи в таблице рекордов
+         */
+        private class TableItem {
+            public String id;
+            public String moves;
+            public String time;
+            public String timestamp;
+        }
+    }
+
     /**
      * Вспомогательный класс для отображения оверлеев
      */
-    public class FieldOverlay {
+    public class FieldOverlay extends BaseScreen {
 
         private Paint mPaintBg;                         // Paint для отрисовки фона
         private Paint mPaintText;                       // Paint для отрисовки текста
@@ -907,7 +1161,6 @@ public class GameView extends SurfaceView {
 
         private String mCaption;                        // отображаемый текст
         private int mAnimFrames = 0;                    // кол-во кадров анимации
-        private boolean mShow = false;                  // видимость
 
         /**
          * @param s текст надписи на оверлее
@@ -929,19 +1182,12 @@ public class GameView extends SurfaceView {
             mPaintText.getTextBounds(mCaption, 0, mCaption.length(), mRectBounds);
         }
 
-        public void show() {
+        @Override
+        public boolean show() {
             if (Settings.animationEnabled) {
                 mAnimFrames = Settings.screenAnimFrames;
             }
-            mShow = true;
-        }
-
-        public void hide() {
-            mShow = false;
-        }
-
-        public boolean isShown() {
-            return mShow;
+            return (mShow = true);
         }
 
         public void draw(Canvas canvas) {

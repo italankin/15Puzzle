@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (mGameView.onBackPressed()) {
+        if (!mGameView.onBackPressed()) {
             super.onBackPressed();
         }
     }

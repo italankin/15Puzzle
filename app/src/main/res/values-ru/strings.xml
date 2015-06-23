@@ -15,10 +15,12 @@
     <string name="pref_mode">Режим игры</string>
     <string name="pref_color_mode">Тема</string>
     <string name="pref_color">Цвета</string>
+    <string name="pref_bf">Hard</string>
+    <string name="pref_sort">Sort</string>
     <string name="back">назад</string>
     <string name="action_about">ПАУЗА</string>
 
-    <string-array name="animations">
+    <string-array name="toggle">
         <item>выкл.</item>
         <item>вкл.</item>
     </string-array>
@@ -30,6 +32,9 @@
         <item>классика</item>
         <item>змейка</item>
     </string-array>
-    <string name="pref_bf">Blindfolded</string>
+    <string-array name="sort_types">
+        <item>fewer moves</item>
+        <item>less time</item>
+    </string-array>
 
 </resources>
