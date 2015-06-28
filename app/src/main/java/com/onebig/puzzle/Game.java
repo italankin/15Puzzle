@@ -38,7 +38,6 @@ public class Game {
      * счетчик времени
      */
     private long time;
-    private boolean stateChanged = false;
     private boolean solved = false;
 
     /**
@@ -260,7 +259,6 @@ public class Game {
 
         // меняются местами пустая и выбранная ячейка
         Collections.swap(instance.grid, pos, instance.zeroPos);
-        instance.stateChanged = true;
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 

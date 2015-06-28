@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "puzzle15";
-    public static final int VERSION = 7;
+    public static final int VERSION = 8;
 
     public static final String KEY_TABLE = "records";
     public static final String KEY_ID = "id";

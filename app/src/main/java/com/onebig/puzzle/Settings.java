@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 
 public class Settings {
 
+    public static final int MIN_GAME_WIDTH = 3;
+    public static final int MIN_GAME_HEIGHT = 3;
     public static final int MAX_GAME_WIDTH = 8;
     public static final int MAX_GAME_HEIGHT = 8;
     public static final int COLOR_MODES = 2;

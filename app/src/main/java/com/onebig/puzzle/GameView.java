@@ -411,8 +411,6 @@ public class GameView extends SurfaceView {
             return mShow;
         }
 
-        public abstract void draw(Canvas canvas);
-
     }
 
     /**
@@ -540,9 +538,7 @@ public class GameView extends SurfaceView {
                 b = mButtons.get(i);
                 if (b.contains(x, y)) {
                     id = b.id;
-                    if (Settings.animationEnabled) {
-                        b.setOverlay();
-                    }
+                    b.setOverlay();
                     break;
                 }
             }
@@ -640,12 +636,14 @@ public class GameView extends SurfaceView {
             }
 
             public void setOverlay() {
-                frame = OVERLAY_FRAMES;
+                if (Settings.animationEnabled) {
+                    frame = OVERLAY_FRAMES;
+                }
             }
 
-        } // Button
+        } // END Button
 
-    } // InterfaceScreen
+    } // END InterfaceScreen
 
     /**
      * Класс объединяет элементы интерфейса настроек и управляет их отрисовкой и поведением
@@ -776,11 +774,11 @@ public class GameView extends SurfaceView {
             // -- ширина поля --
             if (mRectWidth.contains(x, y)) {
                 Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
-                if (Settings.gameWidth < 2) {
+                if (Settings.gameWidth < Settings.MIN_GAME_WIDTH) {
                     Settings.gameWidth = Settings.MAX_GAME_WIDTH;
                 }
                 if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
-                    Settings.gameWidth = 2;
+                    Settings.gameWidth = Settings.MIN_GAME_WIDTH;
                 }
                 Settings.save();
                 createNewGame(true);
@@ -790,11 +788,11 @@ public class GameView extends SurfaceView {
             // -- высота поля --
             if (mRectHeight.contains(x, y)) {
                 Settings.gameHeight += ((dx == 0) ? 1 : Math.signum(dx));
-                if (Settings.gameHeight < 2) {
+                if (Settings.gameHeight < Settings.MIN_GAME_HEIGHT) {
                     Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
                 }
                 if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
-                    Settings.gameHeight = 2;
+                    Settings.gameHeight = Settings.MIN_GAME_HEIGHT;
                 }
                 Settings.save();
                 createNewGame(true);
@@ -1033,11 +1031,11 @@ public class GameView extends SurfaceView {
 
             if (mRectWidth.contains(x, y)) {
                 mGameWidth += ((dx == 0) ? 1 : Math.signum(dx));
-                if (mGameWidth < 2) {
+                if (mGameWidth < Settings.MIN_GAME_WIDTH) {
                     mGameWidth = Settings.MAX_GAME_WIDTH;
                 }
                 if (mGameWidth > Settings.MAX_GAME_WIDTH) {
-                    mGameWidth = 2;
+                    mGameWidth = Settings.MIN_GAME_WIDTH;
                 }
                 updateData();
                 return true;
@@ -1046,11 +1044,11 @@ public class GameView extends SurfaceView {
             // -- высота поля --
             if (mRectHeight.contains(x, y)) {
                 mGameHeight += ((dx == 0) ? 1 : Math.signum(dx));
-                if (mGameHeight < 2) {
+                if (mGameHeight < Settings.MIN_GAME_HEIGHT) {
                     mGameHeight = Settings.MAX_GAME_HEIGHT;
                 }
                 if (mGameHeight > Settings.MAX_GAME_HEIGHT) {
-                    mGameHeight = 2;
+                    mGameHeight = Settings.MIN_GAME_HEIGHT;
                 }
                 updateData();
                 return true;
@@ -1212,7 +1210,7 @@ public class GameView extends SurfaceView {
             mPaintText.setColor(Colors.getOverlayTextColor());
         }
 
-    }
+    } // END FieldOverlay
 
     // TimerTask для таймера
     class GameClock extends TimerTask {
