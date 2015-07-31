@@ -545,9 +545,11 @@ public class GameView extends SurfaceView {
 
                 case BTN_PAUSE:
                     if (!solved) {
-                        paused = true;
+                        paused = !paused;
                     }
-                    if (!mOverlayPause.isShown()) {
+                    if (mOverlayPause.isShown()) {
+                        mOverlayPause.hide();
+                    } else {
                         mOverlayPause.show();
                     }
                     return true;
