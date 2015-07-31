@@ -1,4 +1,4 @@
-package com.onebig.puzzle;
+package com.italankin.fifteen;
 
 import android.app.Activity;
 import android.os.Bundle;

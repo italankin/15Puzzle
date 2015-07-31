@@ -1,4 +1,4 @@
-package com.onebig.puzzle;
+package com.italankin.fifteen;
 
 import android.content.SharedPreferences;
 import android.graphics.Typeface;

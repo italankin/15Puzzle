@@ -1,10 +1,12 @@
-package com.onebig.puzzle;
+package com.italankin.fifteen;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -38,6 +40,16 @@ public class DBHelper extends SQLiteOpenHelper {
         );
     }
 
+    /**
+     * Добавляет данные в БД
+     *
+     * @param mode     режим игры
+     * @param width    ширина поля
+     * @param height   высота поля
+     * @param hardmode сложный режим
+     * @param moves    кол-во ходов
+     * @param time     затраченное время
+     */
     public void insert(int mode, int width, int height, int hardmode, int moves, long time) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -55,6 +67,63 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Метод удаляет лишние записи в таблице
+     *
+     * @param mode     режим игры
+     * @param width    ширина поля
+     * @param height   высота поля
+     * @param hardmode сложный режим
+     */
+    public void delete(int mode, int width, int height, int hardmode) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String selection = KEY_MODE + "=" + mode + " AND " +
+                KEY_WIDTH + "=" + width + " AND " +
+                KEY_HEIGHT + "=" + height + " AND " +
+                KEY_BLINDMODE + "=" + hardmode;
+        String limit = "LIMIT -1 OFFSET 10";
+        String q1 = "SELECT * FROM " + KEY_TABLE + " WHERE " + selection +
+                " ORDER BY " + KEY_TIME + " ASC " + limit;
+        String q2 = "SELECT * FROM " + KEY_TABLE + " WHERE " + selection +
+                " ORDER BY " + KEY_MOVES + " ASC " + limit;
+
+        Cursor c1 = db.rawQuery(q1, null);
+        Cursor c2 = db.rawQuery(q2, null);
+        ArrayList<Integer> a1 = new ArrayList<Integer>(), a2 = new ArrayList<Integer>();
+
+        if (c1.moveToFirst()) {
+            do {
+                a1.add(c1.getInt(c1.getColumnIndex(KEY_ID)));
+            } while (c1.moveToNext());
+            c1.close();
+        }
+
+        if (c2.moveToFirst()) {
+            do {
+                a2.add(c2.getInt(c2.getColumnIndex(KEY_ID)));
+            } while (c2.moveToNext());
+            c2.close();
+        }
+
+        a1.retainAll(a2);
+
+        String ids = a1.toString();
+        ids = ids.substring(1, ids.length() - 1);
+
+        db.delete(KEY_TABLE, "? IN (?)", new String[]{KEY_ID, ids});
+    }
+
+    /**
+     * Запрос результатов
+     *
+     * @param mode     режим игры
+     * @param width    ширина поля
+     * @param height   высота поля
+     * @param hardmode сложный режим
+     * @param sort     сортировка
+     * @return {@link android.database.Cursor}, содержащий результаты запроса
+     */
     public Cursor query(int mode, int width, int height, int hardmode, int sort) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -72,14 +141,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 KEY_HEIGHT + "=" + height + " AND " +
                 KEY_BLINDMODE + "=" + hardmode;
         String limit = "10";
-        String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + " ASC";
+        String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " + ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
+
+        delete(mode, width, height, hardmode);
 
         return db.query(KEY_TABLE, columns, selection, null, null, null, orderBy, limit);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
-            db.execSQL("drop table if exists " + KEY_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + KEY_TABLE);
             onCreate(db);
         }
     }

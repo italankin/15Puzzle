@@ -1,4 +1,4 @@
-package com.onebig.puzzle;
+package com.italankin.fifteen;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -140,11 +140,13 @@ public class GameView extends SurfaceView {
                 mStartX = x;
                 mStartY = y;
 
-                if (solved && mRectField.contains(x, y)) {
-                    solved = false;
-                    createNewGame(true);
-                } else if (!mScreenSettings.isShown() && !mScreenLeaderboard.isShown()) {
-                    mScreenInterface.onClick(x, y);
+                if (!mScreenSettings.isShown() && !mScreenLeaderboard.isShown()) {
+                    if (solved && mRectField.contains(x, y)) {
+                        solved = false;
+                        createNewGame(true);
+                    } else {
+                        mScreenInterface.onClick(x, y);
+                    }
                 }
 
                 break; // ACTION_DOWN
@@ -208,6 +210,7 @@ public class GameView extends SurfaceView {
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
             String string_array = prefs.getString(Settings.KEY_GAME_ARRAY, Game.getGrid().toString());
             ArrayList<Integer> list = Tools.getIntegerArray(Arrays.asList(string_array.split("\\s*,\\s*")));
+
             if (list.size() == Game.getSize()) {
                 Game.load(list, prefs.getInt(Settings.KEY_GAME_MOVES, 0), prefs.getLong(Settings.KEY_GAME_TIME, 0));
             }
@@ -221,6 +224,7 @@ public class GameView extends SurfaceView {
             if (Game.getMoves() > 0) {
                 paused = true;
             }
+
         } else {
             paused = false;
         }
@@ -1002,7 +1006,7 @@ public class GameView extends SurfaceView {
             mRectHeight.inset(0, -lineHeight / 3);
             mRectSort = new Rect(0, marginTop + 2 * mLineGap, (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
             mRectSort.inset(0, -lineHeight / 3);
-            mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 2 * lineHeight, (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
+            mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 3 * lineHeight, (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
         }
 
         public boolean onClick(int x, int y, int dx) {
@@ -1065,21 +1069,22 @@ public class GameView extends SurfaceView {
         public void updateData() {
             mTableItems.clear();
 
-            Cursor query = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
+            Cursor result = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
 
-            if (query.getCount() > 0) {
+            if (result.moveToFirst()) {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                query.moveToFirst();
                 do {
                     TableItem item = new TableItem();
-                    item.id = Integer.toString(query.getPosition() + 1);
-                    item.moves = Integer.toString(query.getInt(query.getColumnIndex(DBHelper.KEY_MOVES)));
-                    item.time = Tools.timeToString(query.getInt(query.getColumnIndex(DBHelper.KEY_TIME)));
-                    Date d = new Date(query.getLong(query.getColumnIndex(DBHelper.KEY_TIMESTAMP)));
+                    item.id = Integer.toString(result.getPosition() + 1);
+                    item.moves = Integer.toString(result.getInt(result.getColumnIndex(DBHelper.KEY_MOVES)));
+                    item.time = Tools.timeToString(result.getInt(result.getColumnIndex(DBHelper.KEY_TIME)));
+                    Date d = new Date(result.getLong(result.getColumnIndex(DBHelper.KEY_TIMESTAMP)));
                     item.timestamp = formatter.format(d);
                     mTableItems.add(item);
-                } while (query.moveToNext());
+                } while (result.moveToNext());
             }
+
+            result.close();
         }
 
         @Override

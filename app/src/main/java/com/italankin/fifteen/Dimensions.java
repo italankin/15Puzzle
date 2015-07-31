@@ -1,4 +1,4 @@
-package com.onebig.puzzle;
+package com.italankin.fifteen;
 
 public class Dimensions {
 
