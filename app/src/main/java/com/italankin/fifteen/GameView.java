@@ -73,17 +73,14 @@ public class GameView extends SurfaceView {
 
                     @Override
                     public void onCreate(int width, int height) {
-
                     }
 
                     @Override
                     public void onLoad() {
-
                     }
 
                     @Override
                     public void onMove() {
-
                     }
 
                     @Override
@@ -94,7 +91,7 @@ public class GameView extends SurfaceView {
                             gameClock = null;
                         }
                         mOverlaySolved.show();
-                        dbHelper.insert(Settings.gameMode, Settings.gameWidth, Settings.gameHeight, Settings.blindfolded ? 1 : 0, Game.getMoves() + 1, Game.getTime());
+                        dbHelper.insert(Settings.gameMode, Settings.gameWidth, Settings.gameHeight, Settings.hardmode ? 1 : 0, Game.getMoves() + 1, Game.getTime());
                     }
 
                 });
@@ -164,7 +161,7 @@ public class GameView extends SurfaceView {
                     return true;
                 }
 
-                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileWidth / 6.0f) && !paused) {
+                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 6.0f) && !paused) {
                     mTiles.move(mStartX, mStartY, Tools.direction(dx, dy));
                 } else if (paused && mRectField.contains(x, y)) {
                     paused = false;
@@ -251,7 +248,7 @@ public class GameView extends SurfaceView {
             int n = Game.getAt(i);
             if (n > 0) {
                 Tile t = new Tile(this, n, i);
-                if (Settings.animationEnabled) {
+                if (Settings.animations) {
                     switch (animationType) {
                         case 1:
                             // по порядку ячеек (сверху вниз)
@@ -480,34 +477,18 @@ public class GameView extends SurfaceView {
             mButtonHeight = Dimensions.surfaceHeight * 0.07f;
             float w = (Dimensions.surfaceWidth / MENU_BUTTON_COUNT);
 
-            mButtons.add(
-                    new TopBarButton(
-                            new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_new),
-                            BTN_NEW
-                    )
-            );
-            mButtons.add(
-                    new TopBarButton(
-                            new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_settings),
-                            BTN_SETTINGS
-                    )
-            );
-            mButtons.add(
-                    new TopBarButton(
-                            new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_lb),
-                            BTN_LB
-                    )
-            );
-            mButtons.add(
-                    new TopBarButton(
-                            new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
-                            getResources().getString(R.string.action_about),
-                            BTN_PAUSE
-                    )
-            );
+            mButtons.add(new TopBarButton(
+                    new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
+                    getResources().getString(R.string.action_new), BTN_NEW));
+            mButtons.add(new TopBarButton(
+                    new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
+                    getResources().getString(R.string.action_settings), BTN_SETTINGS));
+            mButtons.add(new TopBarButton(
+                    new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
+                    getResources().getString(R.string.action_lb), BTN_LB));
+            mButtons.add(new TopBarButton(
+                    new RectF(w * mButtons.size(), 0.0f, w * (mButtons.size() + 1), mButtonHeight),
+                    getResources().getString(R.string.action_about), BTN_PAUSE));
 
             float height = Dimensions.surfaceHeight * 0.13f;
             float center = (Dimensions.fieldMarginTop - Dimensions.spacing - mButtonHeight) / 2.0f + mButtonHeight;
@@ -600,7 +581,8 @@ public class GameView extends SurfaceView {
             }
 
             // режим игры
-            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase() + (Settings.blindfolded ? "*" : ""), Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
+            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
+                    Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
 
             float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
             float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
@@ -612,8 +594,10 @@ public class GameView extends SurfaceView {
             // значения
             mPaintTextCaption.setColor(Colors.getInfoTextColor());
             mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText(Integer.toString(Game.getMoves()), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row1, mPaintTextCaption);
-            canvas.drawText(Tools.timeToString(Game.getTime()), Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
+            canvas.drawText(Integer.toString(Game.getMoves()),
+                    Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row1, mPaintTextCaption);
+            canvas.drawText(Tools.timeToString(Game.getTime()),
+                    Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
         } // END draw
 
         public void update() {
@@ -640,7 +624,7 @@ public class GameView extends SurfaceView {
             }
 
             public void setOverlay() {
-                if (Settings.animationEnabled) {
+                if (Settings.animations) {
                     frame = OVERLAY_FRAMES;
                 }
             }
@@ -663,7 +647,7 @@ public class GameView extends SurfaceView {
         private String mTextWidthValue;
         private String mTextHeight;                     // высота поля
         private String mTextHeightValue;
-        private String mTextBf;                         // blindfolded
+        private String mTextBf;                         // hardmode
         private String mTextBfValue[];
         private String mTextAnimations;                 // анимации
         private String mTextAnimationsValue[];
@@ -716,7 +700,7 @@ public class GameView extends SurfaceView {
             mTextMode = getResources().getString(R.string.pref_mode);
             mTextModeValue = getResources().getStringArray(R.array.game_modes);
             mTextBf = getResources().getString(R.string.pref_bf);
-            mTextBfValue = getResources().getStringArray(R.array.toggle);
+            mTextBfValue = getResources().getStringArray(R.array.difficulty_modes);
             mTextAnimations = getResources().getString(R.string.pref_animation);
             mTextAnimationsValue = getResources().getStringArray(R.array.toggle);
             mTextColorMode = getResources().getString(R.string.pref_color_mode);
@@ -754,11 +738,15 @@ public class GameView extends SurfaceView {
             ch += h;
             mRectColor = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
             mRectColor.inset(0, sp);
-            mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing, mRectColor.top - sp, Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(), mRectColor.bottom + sp);
+            mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing,
+                    mRectColor.top - sp,
+                    Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(),
+                    mRectColor.bottom + sp);
             mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
 
-            mRectBack = new RectF(0, Dimensions.surfaceHeight - h, Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
+            mRectBack = new RectF(0, Dimensions.surfaceHeight - h,
+                    Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
             mRectBack.inset(0, sp);
         }
 
@@ -805,7 +793,7 @@ public class GameView extends SurfaceView {
 
             // -- переключение анимаций --
             if (mRectAnimations.contains(x, y)) {
-                Settings.animationEnabled = !Settings.animationEnabled;
+                Settings.animations = !Settings.animations;
                 Settings.save();
                 return true;
             }
@@ -829,6 +817,7 @@ public class GameView extends SurfaceView {
                 Settings.save();
                 mScreenInterface.update();
                 mScreenSettings.update();
+                mScreenLeaderboard.update();
                 mOverlayPause.update();
                 mOverlaySolved.update();
                 return true;
@@ -844,7 +833,7 @@ public class GameView extends SurfaceView {
 
             // -- режим игры --
             if (mRectBf.contains(x, y)) {
-                Settings.blindfolded = !Settings.blindfolded;
+                Settings.hardmode = !Settings.hardmode;
                 Settings.save();
                 return true;
             }
@@ -880,7 +869,8 @@ public class GameView extends SurfaceView {
 
             // анимации
             canvas.drawText(mTextAnimations, left, mRectAnimations.bottom - s, mPaintText);
-            canvas.drawText(mTextAnimationsValue[Settings.animationEnabled ? 1 : 0], right, mRectAnimations.bottom - s, mPaintValue);
+            canvas.drawText(mTextAnimationsValue[Settings.animations ? 1 : 0],
+                    right, mRectAnimations.bottom - s, mPaintValue);
 
             // цвет
             canvas.drawText(mTextColor, left, mRectColor.bottom - s, mPaintText);
@@ -897,7 +887,7 @@ public class GameView extends SurfaceView {
 
             // bf
             canvas.drawText(mTextBf, left, mRectBf.bottom - s, mPaintText);
-            canvas.drawText(mTextBfValue[Settings.blindfolded ? 1 : 0], right, mRectBf.bottom - s, mPaintValue);
+            canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0], right, mRectBf.bottom - s, mPaintValue);
 
             // кнопка "назад"
             canvas.drawText(mTextBack, Dimensions.surfaceWidth / 2, mRectBack.bottom - s, mPaintControls);
@@ -919,7 +909,7 @@ public class GameView extends SurfaceView {
 
         private String mTextWidth;                      // ширина поля
         private String mTextHeight;                     // высота поля
-        private String mTextBf;                         // blindfolded
+        private String mTextBf;                         // hardmode
         private String mTextBfValue[];
         private String mTextMode;                       // режим игры
         private String mTextModeValue[];
@@ -937,16 +927,16 @@ public class GameView extends SurfaceView {
         private ArrayList<TableItem> mTableItems = new ArrayList<TableItem>();
 
         private float mTableGuides[] = {
-                Dimensions.surfaceWidth * 0.13f,
-                Dimensions.surfaceWidth * 0.28f,
-                Dimensions.surfaceWidth * 0.55f,
+                Dimensions.surfaceWidth * 0.12f,
+                Dimensions.surfaceWidth * 0.26f,
+                Dimensions.surfaceWidth * 0.52f,
                 Dimensions.surfaceWidth * 0.95f
         };
         private int mSettingsGuides[] = {
-                (int) (Dimensions.surfaceWidth * 0.08f),
-                (int) (Dimensions.surfaceWidth * 0.31f),
-                (int) (Dimensions.surfaceWidth * 0.57f),
-                (int) (Dimensions.surfaceWidth * 0.82f)
+                (int) (Dimensions.surfaceWidth * 0.07f),
+                (int) (Dimensions.surfaceWidth * 0.33f),
+                (int) (Dimensions.surfaceWidth * 0.58f),
+                (int) (Dimensions.surfaceWidth * 0.86f)
         };
 
         private float mTableMarginTop;
@@ -955,7 +945,7 @@ public class GameView extends SurfaceView {
         private int mGameWidth = Settings.gameWidth;
         private int mGameHeight = Settings.gameHeight;
         private int mGameMode = Settings.gameMode;
-        private int mHardMode = Settings.blindfolded ? 1 : 0;
+        private int mHardMode = Settings.hardmode ? 1 : 0;
 
         public LeaderboardScreen() {
             mPaintText = new Paint();
@@ -981,7 +971,7 @@ public class GameView extends SurfaceView {
             mTextWidth = getResources().getString(R.string.pref_width);
             mTextHeight = getResources().getString(R.string.pref_height);
             mTextBf = getResources().getString(R.string.pref_bf);
-            mTextBfValue = getResources().getStringArray(R.array.toggle);
+            mTextBfValue = getResources().getStringArray(R.array.difficulty_modes);
             mTextMode = getResources().getString(R.string.pref_mode);
             mTextModeValue = getResources().getStringArray(R.array.game_modes);
             mTextSort = getResources().getString(R.string.pref_sort);
@@ -1006,7 +996,8 @@ public class GameView extends SurfaceView {
             mRectHeight.inset(0, -lineHeight / 3);
             mRectSort = new Rect(0, marginTop + 2 * mLineGap, (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
             mRectSort.inset(0, -lineHeight / 3);
-            mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 3 * lineHeight, (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
+            mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 3 * lineHeight,
+                    (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
         }
 
         public boolean onClick(int x, int y, int dx) {
@@ -1090,7 +1081,7 @@ public class GameView extends SurfaceView {
         @Override
         public boolean show() {
             mGameMode = Settings.gameMode;
-            mHardMode = Settings.blindfolded ? 1 : 0;
+            mHardMode = Settings.hardmode ? 1 : 0;
             mGameWidth = Settings.gameWidth;
             mGameHeight = Settings.gameHeight;
             mSortMode = 0;
@@ -1141,6 +1132,10 @@ public class GameView extends SurfaceView {
 
         }
 
+        public void update() {
+            mPaintText.setColor(Colors.getOverlayTextColor());
+        }
+
         /**
          * Хранит данные о записи в таблице рекордов
          */
@@ -1187,7 +1182,7 @@ public class GameView extends SurfaceView {
 
         @Override
         public boolean show() {
-            if (Settings.animationEnabled) {
+            if (Settings.animations) {
                 mAnimFrames = Settings.screenAnimFrames;
             }
             return (mShow = true);
