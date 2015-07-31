@@ -6,10 +6,9 @@ android {
     compileSdkVersion 19
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId "com.onebig.puzzle"
+        applicationId "com.italankin.fifteen"
         minSdkVersion 8
         targetSdkVersion 15
-        versionName '1.0'
     }
     buildTypes {
         release {
@@ -19,8 +18,6 @@ android {
     }
     productFlavors {
     }
+    sourceSets { main { java.srcDirs = ['src/main/java'] } }
 }
 
-dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
-}
