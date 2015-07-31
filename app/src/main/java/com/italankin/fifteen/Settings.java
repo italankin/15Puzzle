@@ -25,22 +25,63 @@ public class Settings {
     public static final String KEY_GAME_ANTI_ALIAS = "antialias";
     public static final String KEY_GAME_ANIMATION = "animation";
 
-    public static int gameWidth = 4;                    // ширина игры (в ячейках)
-    public static int gameHeight = 4;                   // высота игры
-    public static boolean blindfolded = false;
-    public static boolean saveGame = true;              // сохранение игр между сессиями
-    public static boolean animationEnabled = true;      // анимации (вкл/выкл)
-    public static boolean antiAlias = true;             // сглаживание (вкл/выкл)
-    public static int tileAnimFrames = 13;              // количество кадров для анимирования плиток
-    public static int screenAnimFrames = 10;            // кол-во кадров для анимирования элементов интерфейса
-    public static int tileColor = 0;                    // индекс ячейки в массиве с цветом плиток
-    public static int colorMode = 0;                    // цвет фона
-    public static int gameMode = Game.MODE_CLASSIC;     // режим игры
-    public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD); // шрифт
+    /**
+     * ширина игры
+     */
+    public static int gameWidth = 4;
+    /**
+     * высота игры
+     */
+    public static int gameHeight = 4;
+    /**
+     * сложный режим
+     */
+    public static boolean hardmode = false;
+    /**
+     * сохранение игр между сессиями
+     */
+    public static boolean saveGame = true;
+    /**
+     * анимации
+     */
+    public static boolean animations = true;
+    /**
+     * сглаживание
+     */
+    public static boolean antiAlias = true;
+    /**
+     * количество кадров для анимирования плиток
+     */
+    public static int tileAnimFrames = 13;
+    /**
+     * кол-во кадров для анимирования элементов интерфейса
+     */
+    public static int screenAnimFrames = 10;
+    /**
+     * цвет плиток
+     */
+    public static int tileColor = 0;
+    /**
+     * цветовая тема приложения
+     */
+    public static int colorMode = 0;
+    /**
+     * текущий режим игры
+     */
+    public static int gameMode = Game.MODE_CLASSIC;
+    /**
+     * Typeface текста
+     */
+    public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
 
-    public static SharedPreferences prefs;              // хранилище настроек приложения
+    /**
+     * хранилище настроек приложения
+     */
+    public static SharedPreferences prefs;
 
-    // чтение настроек игры
+    /**
+     * Чтение настроек приложения
+     */
     public static void load() {
         gameWidth = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
         gameHeight = prefs.getInt(KEY_GAME_HEIGHT, gameHeight);
@@ -49,11 +90,13 @@ public class Settings {
         colorMode = prefs.getInt(KEY_GAME_BG_COLOR, colorMode);
         gameMode = prefs.getInt(KEY_GAME_MODE, gameMode);
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
-        animationEnabled = prefs.getBoolean(KEY_GAME_ANIMATION, animationEnabled);
-        blindfolded = prefs.getBoolean(KEY_GAME_BF, blindfolded);
+        animations = prefs.getBoolean(KEY_GAME_ANIMATION, animations);
+        hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
     }
 
-    // запись настроек игры
+    /**
+     * Запись настроек приложения
+     */
     public static void save() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
@@ -73,8 +116,8 @@ public class Settings {
         editor.putInt(KEY_GAME_BG_COLOR, colorMode);
         editor.putInt(KEY_GAME_MODE, gameMode);
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
-        editor.putBoolean(KEY_GAME_ANIMATION, animationEnabled);
-        editor.putBoolean(KEY_GAME_BF, blindfolded);
+        editor.putBoolean(KEY_GAME_ANIMATION, animations);
+        editor.putBoolean(KEY_GAME_BF, hardmode);
         editor.commit();
     }
 
