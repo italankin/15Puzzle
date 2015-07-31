@@ -2,20 +2,62 @@ package com.italankin.fifteen;
 
 public class Dimensions {
 
-    public static float surfaceWidth;                   // ширина области рисования
-    public static float surfaceHeight;                  // высота области рисования
-    public static float tileWidth;                      // ширина ячейки
-    public static float tileHeight;                     // высота ячейки
-    public static float tileCornerRadius;               // радиус закругления углов спрайтов
-    public static float fieldWidth;                     // ширина поля (на области рисования)
-    public static float fieldHeight;                    // высота поля (на области рисования)
-    public static float fieldMarginLeft;                // отступ поля от левого края
-    public static float fieldMarginTop;                 // отступ поля от верхнего края
-    public static float tileFontSize;                   // размер шрифта на спрайтах
-    public static float interfaceFontSize;              // размер шрифта элементов интерфейса
-    public static float menuFontSize;                   // размер шрифта меню
-    public static float spacing;                        // отступ между ячейками на поле
+    /**
+     * ширина области рисования
+     */
+    public static float surfaceWidth;
+    /**
+     * высота области рисования
+     */
+    public static float surfaceHeight;
+    /**
+     * размер стороны плитки
+     */
+    public static float tileSize;
+    /**
+     * радиус закругления углов спрайтов
+     */
+    public static float tileCornerRadius;
+    /**
+     * ширина поля (на области рисования)
+     */
+    public static float fieldWidth;
+    /**
+     * высота поля (на области рисования)
+     */
+    public static float fieldHeight;
+    /**
+     * отступ поля от левого края
+     */
+    public static float fieldMarginLeft;
+    /**
+     * отступ поля от верхнего края
+     */
+    public static float fieldMarginTop;
+    /**
+     * размер шрифта на спрайтах
+     */
+    public static float tileFontSize;
+    /**
+     * размер шрифта элементов интерфейса
+     */
+    public static float interfaceFontSize;
+    /**
+     * размер шрифта меню
+     */
+    public static float menuFontSize;
+    /**
+     * отступ между ячейками на поле
+     */
+    public static float spacing;
 
+    /**
+     * Рассчитывает размеры элементов относительно текущих настроек игры
+     *
+     * @param width  ширина области рисования
+     * @param height высота области рисования
+     * @param scale  коэффициент масштабирования
+     */
     public static void update(int width, int height, float scale) {
         surfaceWidth = width * scale;
         surfaceHeight = height * scale;
@@ -27,11 +69,11 @@ public class Dimensions {
         float spriteSize = Math.min(surfaceWidth, surfaceHeight - fieldMarginTop)
                 - spacing * (sideMax + 1);
 
-        tileHeight = (tileWidth = spriteSize / sideMax);
+        tileSize = spriteSize / sideMax;
 
-        fieldWidth = (tileWidth + spacing) * Settings.gameWidth - spacing;
-        fieldHeight = (tileHeight + spacing) * Settings.gameHeight - spacing;
-        tileFontSize = Math.max(tileHeight / 2.4F, 5.0f);
+        fieldWidth = (tileSize + spacing) * Settings.gameWidth - spacing;
+        fieldHeight = (tileSize + spacing) * Settings.gameHeight - spacing;
+        tileFontSize = Math.max(tileSize / 2.45F, 4.5f);
         interfaceFontSize = Math.max(Math.round(surfaceHeight * 0.029), 11.0f);
         menuFontSize = interfaceFontSize * 1.5f;
         fieldMarginLeft = 0.5f * surfaceWidth - 0.5f * fieldWidth;
