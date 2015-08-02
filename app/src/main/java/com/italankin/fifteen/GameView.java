@@ -310,7 +310,9 @@ public class GameView extends SurfaceView {
     /**
      * Рендер изображения
      */
+    @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         mScreenInterface.draw(canvas);                   // рисование элементов интерфейса
 
         mTiles.draw(canvas);

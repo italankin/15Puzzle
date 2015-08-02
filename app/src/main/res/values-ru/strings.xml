@@ -3,7 +3,7 @@
 
     <string name="app_name">15</string>
     <string name="action_settings">ОПЦИИ</string>
-    <string name="action_new">НОВАЯ ИГРА</string>
+    <string name="action_new">НОВАЯ</string>
     <string name="action_lb">РЕКОРДЫ</string>
     <string name="info_moves">ХОДЫ</string>
     <string name="info_time">ВРЕМЯ</string>
