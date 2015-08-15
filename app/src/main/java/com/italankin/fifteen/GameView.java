@@ -459,7 +459,7 @@ public class GameView extends SurfaceView {
             mPaintTextButton.setTextSize(Dimensions.interfaceFontSize);
 
             mPaintTextValue = new Paint(mPaintTextButton);
-            mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.9f);
+            mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.8f);
             mPaintTextValue.setColor(Colors.getInfoTextColor());
 
             mPaintTextCaption = new Paint(mPaintTextButton);
