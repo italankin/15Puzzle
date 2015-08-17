@@ -343,7 +343,7 @@ public class GameView extends SurfaceView {
          */
         public int at(float x, float y) {
             for (Tile t : this) {
-                if (t.isCollision(x, y)) {
+                if (t.at(x, y)) {
                     return t.getIndex();
                 }
             }
@@ -1061,20 +1061,31 @@ public class GameView extends SurfaceView {
             return false;
         }
 
+        /**
+         * Requery data from db, update {@link #mTableItems}
+         */
         public void updateData() {
             mTableItems.clear();
 
             Cursor result = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
 
             if (result.moveToFirst()) {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                int indexMoves = result.getColumnIndex(DBHelper.KEY_MOVES);
+                int indexTime = result.getColumnIndex(DBHelper.KEY_TIME);
+                int indexTimestamp = result.getColumnIndex(DBHelper.KEY_TIMESTAMP);
+
                 do {
                     TableItem item = new TableItem();
+
                     item.id = Integer.toString(result.getPosition() + 1);
-                    item.moves = Integer.toString(result.getInt(result.getColumnIndex(DBHelper.KEY_MOVES)));
-                    item.time = Tools.timeToString(result.getInt(result.getColumnIndex(DBHelper.KEY_TIME)));
-                    Date d = new Date(result.getLong(result.getColumnIndex(DBHelper.KEY_TIMESTAMP)));
-                    item.timestamp = formatter.format(d);
+                    item.moves = Integer.toString(result.getInt(indexMoves));
+                    item.time = Tools.timeToString(result.getInt(indexTime));
+
+                    Date d = new Date(result.getLong(indexTimestamp));
+                    item.timestamp = format.format(d);
+
                     mTableItems.add(item);
                 } while (result.moveToNext());
             }
@@ -1089,7 +1100,9 @@ public class GameView extends SurfaceView {
             mGameWidth = Settings.gameWidth;
             mGameHeight = Settings.gameHeight;
             mSortMode = 0;
+
             updateData();
+
             return super.show();
         }
 
@@ -1120,6 +1133,7 @@ public class GameView extends SurfaceView {
                 return;
             }
 
+            // отступ новой строки
             float gap = Dimensions.surfaceHeight * 0.05f;
 
             for (int i = 0; i < mTableItems.size(); i++) {
@@ -1134,6 +1148,12 @@ public class GameView extends SurfaceView {
                 canvas.drawText(item.timestamp, mTableGuides[3], mTableMarginTop + gap * i, mPaintTable);
             }
 
+        }
+
+        @Override
+        public boolean hide() {
+            dbHelper.close();
+            return super.hide();
         }
 
         public void update() {
@@ -1214,7 +1234,7 @@ public class GameView extends SurfaceView {
             mPaintText.setColor(Colors.getOverlayTextColor());
         }
 
-    } // END FieldOverlay
+    } // FieldOverlay
 
     // TimerTask для таймера
     class GameClock extends TimerTask {
