@@ -9,22 +9,57 @@ import android.graphics.RectF;
 
 public class Tile {
 
-    private static Paint sPaintText;                    // Paint для рисования текста
-    private static Paint sPaintPath;                    // Paint для рисования фона плитка
-    private static Rect mRectBounds = new Rect();       // определение границ текста
+    /**
+     * Paint для рисования текста
+     */
+    private static Paint sPaintText;
+    /**
+     * Paint для рисования фона плитки
+     */
+    private static Paint sPaintPath;
+    /**
+     * Rect для определения границ текста
+     */
+    private static Rect mRectBounds = new Rect();
 
     private GameView mRootView;
 
-    private Path mShape;                                // путь для рисования фона плитки
-    private RectF mRectShape;                           // определение границ плитки и создания пути
+    /**
+     * Path для рисования фона плитки
+     */
+    private Path mShape;
+    /**
+     * RectF для определения границ плитки и создания пути
+     */
+    private RectF mRectShape;
 
-    private int mData;                                  // отображаемое число на плитке
-    private int mIndex;                                 // индекс плитки в общем массиве
-    private float mCanvasX = 0.0f;                      // позиция плитки
-    private float mCanvasY = 0.0f;                      // на поле (canvas)
+    /**
+     * Отображаемое число на плитке
+     */
+    private int mData;
+    /**
+     * Индекс плитки в общем массиве
+     */
+    private int mIndex;
+    /**
+     * Позиция X плитки на поле
+     */
+    private float mCanvasX = 0.0f;
+    /**
+     * Позиция Y плитки на поле
+     */
+    private float mCanvasY = 0.0f;
 
+    /**
+     * Объект для проведения анимаций
+     */
     private Animation mAnimation = new Animation();
 
+    /**
+     * @param root родительский {@link GameView}
+     * @param d    данные для отображения
+     * @param i    индекс в общем массиве
+     */
     public Tile(GameView root, int d, int i) {
         this.mRootView = root;
         this.mData = d;
@@ -49,17 +84,11 @@ public class Tile {
         mCanvasY = Dimensions.fieldMarginTop + (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
         mShape.addRoundRect(
-                new RectF(
-                        mCanvasX,
-                        mCanvasY,
-                        mCanvasX + Dimensions.tileSize,
-                        mCanvasY + Dimensions.tileSize
-                ),
-                Dimensions.tileCornerRadius,
-                Dimensions.tileCornerRadius,
-                Path.Direction.CW
-        );
-    }
+                new RectF(mCanvasX, mCanvasY,
+                        mCanvasX + Dimensions.tileSize, mCanvasY + Dimensions.tileSize),
+                Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                Path.Direction.CW);
+    } // constructor
 
     public void draw(Canvas canvas) {
 
@@ -99,49 +128,67 @@ public class Tile {
         return mIndex;
     }
 
-    // для отслеживания событий onClick
-    public boolean isCollision(float x2, float y2) {
+    /**
+     * Функция для опредления принадлежности координат спрайту
+     *
+     * @param x2 координата x
+     * @param y2 координата y
+     * @return принадлежат ли координаты {@link #mRectShape}
+     */
+    public boolean at(float x2, float y2) {
         return mRectShape.contains(x2, y2);
     }
 
+    /**
+     * Вызывается при нажатии на спрайт на экране
+     *
+     * @return <b>true</b>, если
+     */
     public boolean onClick() {
+        // при проигрывании анимации взаимодействовать со спрайтом нельзя
         if (mAnimation.isPlaying()) {
             return false;
         }
 
+        // получение текущих координат спрайта на поле
         int x = mIndex % Settings.gameWidth;
         int y = mIndex / Settings.gameWidth;
 
+        // новый индекс спрайта после перемещения
         int newIndex = Game.move(x, y);
 
+        // если текущий индекс не равен новому индексу
+        // (т.е. был сделан ход и ситуация на поле изменилась)
         if (mIndex != newIndex) {
             mIndex = newIndex;
 
             if (Settings.animations) {
+                // получение новых координат
                 x = mIndex % Settings.gameWidth;
                 y = mIndex / Settings.gameWidth;
 
-                mAnimation.dx = Dimensions.fieldMarginLeft + (Dimensions.tileSize + Dimensions.spacing) * x - mCanvasX;
-                mAnimation.dy = Dimensions.fieldMarginTop + (Dimensions.tileSize + Dimensions.spacing) * y - mCanvasY;
+                // расчет величины перемещения по осям
+                mAnimation.dx = Dimensions.fieldMarginLeft +
+                        (Dimensions.tileSize + Dimensions.spacing) * x - mCanvasX;
+                mAnimation.dy = Dimensions.fieldMarginTop +
+                        (Dimensions.tileSize + Dimensions.spacing) * y - mCanvasY;
+
                 mAnimation.type = Animation.TRANSLATE;
                 mAnimation.frames = Settings.tileAnimFrames;
             } else {
-                mCanvasX = Dimensions.fieldMarginLeft + (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
-                mCanvasY = Dimensions.fieldMarginTop + (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
+                mCanvasX = Dimensions.fieldMarginLeft +
+                        (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+                mCanvasY = Dimensions.fieldMarginTop +
+                        (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
                 mShape.reset();
                 mShape.addRoundRect(
-                        new RectF(
-                                mCanvasX,
-                                mCanvasY,
+                        new RectF(mCanvasX, mCanvasY,
                                 mCanvasX + Dimensions.tileSize,
-                                mCanvasY + Dimensions.tileSize
-                        ),
-                        Dimensions.tileCornerRadius,
-                        Dimensions.tileCornerRadius,
-                        Path.Direction.CW
-                );
-            } // if
+                                mCanvasY + Dimensions.tileSize),
+                        Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                        Path.Direction.CW);
+            } // if animations
 
             return true;
 
@@ -165,18 +212,35 @@ public class Tile {
         return this;
     }
 
-    //
+    /**
+     * Внутренний класс для управления анимацией
+     */
     public class Animation {
 
-        public static final int STATIC = 0;             // статическая (без анимации)
-        public static final int SCALE = 1;              // увеличение
-        public static final int TRANSLATE = 2;          // перемещение
+        public static final int STATIC = 0;
+        public static final int SCALE = 1;
+        public static final int TRANSLATE = 2;
 
-        public int type;                                // тип анимации
-        public int frames;                              // отсавшееся кол-во кадров
-        public int delay;                               // задержка анимации (в кадрах)
-        public float dx;                                // перемещение по x
-        public float dy;                                // перемещение по y
+        /**
+         * Тип анимации ({@link #STATIC}, {@link #SCALE}, {@link #TRANSLATE})
+         */
+        public int type;
+        /**
+         * Оставшееся кол-во кадров анимации
+         */
+        public int frames;
+        /**
+         * Задержка анимации (в кадрах)
+         */
+        public int delay;
+        /**
+         * Перемещение по x
+         */
+        public float dx;
+        /**
+         * Перемещение по y
+         */
+        public float dy;
 
         public Animation() {
             this.type = STATIC;
@@ -186,6 +250,8 @@ public class Tile {
 
         /**
          * Производит преобразование фигуры исходя из выбранного типа анимации
+         *
+         * @return трансформированный {@link Path}
          */
         public Path getTransformPath(Path p) {
             float ds, ds2, tx, ty;
@@ -227,8 +293,13 @@ public class Tile {
             }
 
             return p;
-        }
+        } // getTransformPath
 
+        /**
+         * Функция для определения текущего значения масштаба (только для {@link #SCALE})
+         *
+         * @return текущее значение масштаба
+         */
         public float getScale() {
             float ds = 1.0f;
             if (isPlaying() && type == SCALE) {
@@ -237,9 +308,13 @@ public class Tile {
             return ds;
         }
 
+        /**
+         * @return <b>true</b>, если оставшееся кол-во кадров > 0
+         */
         public boolean isPlaying() {
             return frames > 0;
         }
+
     } // Animation
 
 }
