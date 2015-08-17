@@ -26,6 +26,9 @@ import java.util.TimerTask;
 public class GameView extends SurfaceView
         implements Game.GameEventListener, SurfaceHolder.Callback {
 
+    /**
+     * Контекст приложения
+     */
     private Context mContext;
 
     /**

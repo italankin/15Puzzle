@@ -136,12 +136,12 @@ public class Tile {
     /**
      * Функция для опредления принадлежности координат спрайту
      *
-     * @param x2 координата x
-     * @param y2 координата y
+     * @param x координата x
+     * @param y координата y
      * @return принадлежат ли координаты {@link #mRectShape}
      */
-    public boolean at(float x2, float y2) {
-        return mRectShape.contains(x2, y2);
+    public boolean at(float x, float y) {
+        return mRectShape.contains(x, y);
     }
 
     /**
@@ -283,8 +283,7 @@ public class Tile {
                     m = new Matrix();
                     ds = (float) Tools.easeOut(frames, 0, 1.0f, Settings.tileAnimFrames);
                     ds2 = (float) Tools.easeOut(Math.min(frames + 1, Settings.tileAnimFrames),
-                            0.0f, 1.0f,
-                            Settings.tileAnimFrames);
+                            0.0f, 1.0f, Settings.tileAnimFrames);
                     ds = ds - ds2;
                     tx = ds * dx;
                     ty = ds * dy;
@@ -309,11 +308,11 @@ public class Tile {
          * @return текущее значение масштаба
          */
         public float getScale() {
-            float ds = 1.0f;
             if (isPlaying() && type == SCALE) {
-                ds = (float) Tools.easeOut(frames, 0.0f, 1.0f, Settings.tileAnimFrames);
+                return (float) Tools.easeOut(frames, 0.0f, 1.0f, Settings.tileAnimFrames);
+            } else {
+                return 1.0f;
             }
-            return ds;
         }
 
         /**
