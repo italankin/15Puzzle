@@ -43,7 +43,7 @@ public class Game {
     /**
      * обработчик событий
      */
-    private GameEventListener eventListener = null;
+    private GameEventListener mCallbacks = null;
 
     /**
      * Конструктор
@@ -58,8 +58,8 @@ public class Game {
         }
         instance.init(w, h);
 
-        if (instance.eventListener != null) {
-            instance.eventListener.onCreate(w, h);
+        if (instance.mCallbacks != null) {
+            instance.mCallbacks.onGameCreate(w, h);
         }
 
         return instance;
@@ -78,8 +78,8 @@ public class Game {
         instance.time = savedTime;
         instance.zeroPos = savedGrid.indexOf(0);
 
-        if (instance.eventListener != null) {
-            instance.eventListener.onLoad();
+        if (instance.mCallbacks != null) {
+            instance.mCallbacks.onGameLoad();
         }
     }
 
@@ -263,14 +263,14 @@ public class Game {
         instance.zeroPos = pos;
 
         // обработка событий
-        if (instance.eventListener != null) {
+        if (instance.mCallbacks != null) {
             // вызов обработчика событий при перемещении
-            instance.eventListener.onMove();
+            instance.mCallbacks.onGameMove();
 
             // решение головоломки
             if (instance.checkSolution()) {
                 instance.solved = true;
-                instance.eventListener.onSolve();
+                instance.mCallbacks.onGameSolve();
             }
         }
 
@@ -399,8 +399,9 @@ public class Game {
     /**
      * @return массив элементов поля
      */
-    public static ArrayList<Integer> getGrid() {
-        return instance.grid;
+    public static String getGridStr() {
+        String gridAsStr = instance.grid.toString();
+        return gridAsStr.substring(1, gridAsStr.length() - 1);
     }
 
     /**
@@ -420,22 +421,22 @@ public class Game {
          * @param width  ширина поля
          * @param height высота поля
          */
-        void onCreate(int width, int height);
+        void onGameCreate(int width, int height);
 
         /**
          * Вызывается при загрузке игры из памяти
          */
-        void onLoad();
+        void onGameLoad();
 
         /**
          * Вызывается при совершении легального хода
          */
-        void onMove();
+        void onGameMove();
 
         /**
          * Вызывается при решении головоломки
          */
-        void onSolve();
+        void onGameSolve();
 
     }
 
@@ -445,7 +446,7 @@ public class Game {
      * @param listener обработчик событий
      */
     public static void setGameEventListener(GameEventListener listener) {
-        instance.eventListener = listener;
+        instance.mCallbacks = listener;
     }
 
 }

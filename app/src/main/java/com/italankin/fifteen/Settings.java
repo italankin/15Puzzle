@@ -102,8 +102,8 @@ public class Settings {
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);
         if (!Game.isSolved() && saveGame) {
-            String string_array = Game.getGrid().toString();
-            editor.putString(KEY_GAME_ARRAY, string_array.substring(1, string_array.length() - 1));
+            String string_array = Game.getGridStr();
+            editor.putString(KEY_GAME_ARRAY, string_array);
             editor.putInt(KEY_GAME_MOVES, Game.getMoves());
             editor.putLong(KEY_GAME_TIME, Game.getTime());
         } else {

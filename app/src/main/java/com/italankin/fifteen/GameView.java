@@ -23,32 +23,82 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameView extends SurfaceView {
+public class GameView extends SurfaceView
+        implements Game.GameEventListener, SurfaceHolder.Callback {
 
-    private Context mContext;                           // контекст приложения
+    private Context mContext;
 
-    private GameManager mGameLoopThread;                // главный поток
-    private DBHelper dbHelper;                          // БД для сохранения результатов
+    /**
+     * Главный поток для перерисовки изображения
+     */
+    private GameManager mGameLoopThread;
+    /**
+     * Помощник для работы с базой данных
+     */
+    private DBHelper dbHelper;
 
-    private Tiles mTiles = new Tiles();                 // массив спрайтов
+    /**
+     * Массив отображаемых спрайтов
+     */
+    private Tiles mTiles = new Tiles();
 
-    private SettingsScreen mScreenSettings;             // настройки
-    private InterfaceScreen mScreenInterface;           // элементы интерфейса
-    private LeaderboardScreen mScreenLeaderboard;       // рекорды
-    private FieldOverlay mOverlaySolved;                // экран конца игры
-    private FieldOverlay mOverlayPause;                 // экран паузы
-    private RectF mRectField;                           // область игрового поля
+    /**
+     * Экран настроек
+     */
+    private SettingsScreen mScreenSettings;
+    /**
+     * Элементы интерфейса
+     */
+    private InterfaceScreen mScreenInterface;
+    /**
+     * Экран рекордов
+     */
+    private LeaderboardScreen mScreenLeaderboard;
+    /**
+     * Оверлей конца игры
+     */
+    private FieldOverlay mOverlaySolved;
+    /**
+     * Оверлей паузы
+     */
+    private FieldOverlay mOverlayPause;
+    /**
+     * Область игрового поля
+     */
+    private RectF mRectField;
 
-    public boolean solved = false;                      // состояние головоломки (решено/не решено)
-    public boolean paused = false;                      // состояние паузы
+    /**
+     * Состояние решения головоломки
+     */
+    public boolean solved = false;
+    /**
+     * Состояние паузы
+     */
+    public boolean paused = false;
 
-    private int mStartX;                                // координата x и y начальной точки
-    private int mStartY;                                // вектора перемещения
+    /**
+     * Координата x начальной точки жеста
+     */
+    private int mStartX;
+    /**
+     * Координата y начальной точки жеста
+     */
+    private int mStartY;
 
-    public Timer gameClock;                             // таймер для отслеживания затраченного времени
+    /**
+     * Таймер для отслеживания затраченного времени
+     */
+    public Timer gameClock;
+    /**
+     * Интервал срабатывания таймера (мс)
+     */
     public static final int TIME_CLOCK = 20;
 
-    // конструктор
+    /**
+     * Конструктор по умолчанию
+     *
+     * @param context контекст приложения
+     */
     public GameView(Context context) {
         super(context);
         mContext = context;
@@ -58,70 +108,70 @@ public class GameView extends SurfaceView {
 
         SurfaceHolder holder = getHolder();
 
-        holder.addCallback(new SurfaceHolder.Callback() {
+        holder.addCallback(this);
 
-            public void surfaceCreated(SurfaceHolder holder) {
-                createNewGame(false);
+    }
 
-                mScreenSettings = new SettingsScreen();
-                mScreenInterface = new InterfaceScreen();
-                mScreenLeaderboard = new LeaderboardScreen();
-                mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
-                mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
+    public void surfaceCreated(SurfaceHolder holder) {
+        createNewGame(false);
 
-                Game.setGameEventListener(new Game.GameEventListener() {
+        mScreenSettings = new SettingsScreen();
+        mScreenInterface = new InterfaceScreen();
+        mScreenLeaderboard = new LeaderboardScreen();
+        mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
+        mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
 
-                    @Override
-                    public void onCreate(int width, int height) {
-                    }
+        Game.setGameEventListener(this);
 
-                    @Override
-                    public void onLoad() {
-                    }
+        mGameLoopThread.setRunning(true);
+        try {
+            mGameLoopThread.start();
+        } catch (IllegalThreadStateException e) {
+            Log.e("surfaceCreated", e.toString());
+        }
+    }
 
-                    @Override
-                    public void onMove() {
-                    }
-
-                    @Override
-                    public void onSolve() {
-                        solved = true;
-                        if (gameClock != null) {
-                            gameClock.cancel();
-                            gameClock = null;
-                        }
-                        mOverlaySolved.show();
-                        dbHelper.insert(Settings.gameMode, Settings.gameWidth, Settings.gameHeight, Settings.hardmode ? 1 : 0, Game.getMoves() + 1, Game.getTime());
-                    }
-
-                });
-
-                mGameLoopThread.setRunning(true);
-                try {
-                    mGameLoopThread.start();
-                } catch (IllegalThreadStateException e) {
-                    Log.e("surfaceCreated", e.toString());
-                }
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        boolean retry = true;
+        mGameLoopThread.setRunning(false);
+        while (retry) {
+            try {
+                mGameLoopThread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+                Log.e("surfaceDestroyed", e.toString());
             }
+        }
+    }
 
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                boolean retry = true;
-                mGameLoopThread.setRunning(false);
-                while (retry) {
-                    try {
-                        mGameLoopThread.join();
-                        retry = false;
-                    } catch (InterruptedException e) {
-                        Log.e("surfaceDestroyed", e.toString());
-                    }
-                }
-            }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
 
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            }
+    @Override
+    public void onGameCreate(int width, int height) {
+    }
 
-        });
+    @Override
+    public void onGameLoad() {
+    }
 
+    @Override
+    public void onGameMove() {
+    }
+
+    @Override
+    public void onGameSolve() {
+        solved = true;
+        if (gameClock != null) {
+            gameClock.cancel();
+            gameClock = null;
+        }
+        mOverlaySolved.show();
+        dbHelper.insert(Settings.gameMode,
+                Settings.gameWidth,
+                Settings.gameHeight, Settings.hardmode ? 1 : 0,
+                Game.getMoves() + 1,
+                Game.getTime());
     }
 
     /**
@@ -205,11 +255,14 @@ public class GameView extends SurfaceView {
         // если создание новой игры не было инициировано пользователем,
         // загружаем сохрененную игру (если имеется)
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
-            String string_array = prefs.getString(Settings.KEY_GAME_ARRAY, Game.getGrid().toString());
-            ArrayList<Integer> list = Tools.getIntegerArray(Arrays.asList(string_array.split("\\s*,\\s*")));
+            String string_array = prefs.getString(Settings.KEY_GAME_ARRAY, Game.getGridStr());
+            ArrayList<Integer> list = Tools.getIntegerArray(
+                    Arrays.asList(string_array.split("\\s*,\\s*")));
 
             if (list.size() == Game.getSize()) {
-                Game.load(list, prefs.getInt(Settings.KEY_GAME_MOVES, 0), prefs.getLong(Settings.KEY_GAME_TIME, 0));
+                Game.load(list,
+                        prefs.getInt(Settings.KEY_GAME_MOVES, 0),
+                        prefs.getLong(Settings.KEY_GAME_TIME, 0));
             }
 
             SharedPreferences.Editor editor = prefs.edit();
@@ -493,9 +546,12 @@ public class GameView extends SurfaceView {
                     getResources().getString(R.string.action_about), BTN_PAUSE));
 
             float height = Dimensions.surfaceHeight * 0.13f;
-            float center = (Dimensions.fieldMarginTop - Dimensions.spacing - mButtonHeight) / 2.0f + mButtonHeight;
-            mRectInfo = new RectF(0.0f, center - height / 2.0f, Dimensions.surfaceWidth, center + height / 2.0f);
-            mRectMode = new RectF(0.0f, center - height / 4.0f, Dimensions.surfaceWidth * 0.5f, center + height / 4.0f);
+            float center = (Dimensions.fieldMarginTop - Dimensions.spacing - mButtonHeight)
+                    / 2.0f + mButtonHeight;
+            mRectInfo = new RectF(0.0f, center - height / 2.0f,
+                    Dimensions.surfaceWidth, center + height / 2.0f);
+            mRectMode = new RectF(0.0f, center - height / 4.0f,
+                    Dimensions.surfaceWidth * 0.5f, center + height / 4.0f);
 
             Rect r = new Rect();
             mPaintTextButton.getTextBounds("A", 0, 1, r);
@@ -581,12 +637,15 @@ public class GameView extends SurfaceView {
                     mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
                     canvas.drawRect(b.rect, mPaintOverlay);
                 }
-                canvas.drawText(b.caption, b.rect.centerX(), b.rect.centerY() - mButtonTextOffset, mPaintTextButton);
+                canvas.drawText(b.caption, b.rect.centerX(),
+                        b.rect.centerY() - mButtonTextOffset, mPaintTextButton);
             }
 
             // режим игры
-            canvas.drawText(mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
-                    Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset, mPaintTextValue);
+            canvas.drawText(
+                    mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
+                    Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,
+                    mPaintTextValue);
 
             float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
             float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
@@ -852,9 +911,12 @@ public class GameView extends SurfaceView {
         }
 
         public void draw(Canvas canvas) {
-            float right = Dimensions.surfaceWidth / 2 + Dimensions.spacing; // отступ от центра
-            float left = Dimensions.surfaceWidth / 2 - Dimensions.spacing;  // для выравнивания элементов
-            float s = (int) (Dimensions.surfaceHeight * 0.02f);       // смещение по вертикали
+            // отступ от центра
+            float right = Dimensions.surfaceWidth / 2 + Dimensions.spacing;
+            // для выравнивания элементов
+            float left = Dimensions.surfaceWidth / 2 - Dimensions.spacing;
+            // смещение по вертикали
+            float s = (int) (Dimensions.surfaceHeight * 0.02f);
 
             // фон
             canvas.drawColor(Colors.getOverlayColor());
@@ -883,18 +945,22 @@ public class GameView extends SurfaceView {
 
             // цвет фона
             canvas.drawText(mTextColorMode, left, mRectColorMode.bottom - s, mPaintText);
-            canvas.drawText(mTextColorModeValue[Settings.colorMode], right, mRectColorMode.bottom - s, mPaintValue);
+            canvas.drawText(mTextColorModeValue[Settings.colorMode],
+                    right, mRectColorMode.bottom - s, mPaintValue);
 
             // режим
             canvas.drawText(mTextMode, left, mRectMode.bottom - s, mPaintText);
-            canvas.drawText(mTextModeValue[Settings.gameMode], right, mRectMode.bottom - s, mPaintValue);
+            canvas.drawText(mTextModeValue[Settings.gameMode],
+                    right, mRectMode.bottom - s, mPaintValue);
 
             // bf
             canvas.drawText(mTextBf, left, mRectBf.bottom - s, mPaintText);
-            canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0], right, mRectBf.bottom - s, mPaintValue);
+            canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
+                    right, mRectBf.bottom - s, mPaintValue);
 
             // кнопка "назад"
-            canvas.drawText(mTextBack, Dimensions.surfaceWidth / 2, mRectBack.bottom - s, mPaintControls);
+            canvas.drawText(mTextBack, Dimensions.surfaceWidth / 2,
+                    mRectBack.bottom - s, mPaintControls);
         }
 
         public void update() {
@@ -992,13 +1058,17 @@ public class GameView extends SurfaceView {
 
             mRectMode = new Rect(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
             mRectMode.inset(0, -lineHeight / 3);
-            mRectWidth = new Rect(mSettingsGuides[2], marginTop, (int) Dimensions.surfaceWidth, marginTop + lineHeight);
+            mRectWidth = new Rect(mSettingsGuides[2], marginTop,
+                    (int) Dimensions.surfaceWidth, marginTop + lineHeight);
             mRectWidth.inset(0, -lineHeight / 3);
-            mRectBf = new Rect(0, marginTop + mLineGap, mSettingsGuides[2], marginTop + mLineGap + lineHeight);
+            mRectBf = new Rect(0, marginTop + mLineGap,
+                    mSettingsGuides[2], marginTop + mLineGap + lineHeight);
             mRectBf.inset(0, -lineHeight / 3);
-            mRectHeight = new Rect(mSettingsGuides[2], marginTop + mLineGap, (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
+            mRectHeight = new Rect(mSettingsGuides[2], marginTop + mLineGap,
+                    (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
             mRectHeight.inset(0, -lineHeight / 3);
-            mRectSort = new Rect(0, marginTop + 2 * mLineGap, (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
+            mRectSort = new Rect(0, marginTop + 2 * mLineGap,
+                    (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
             mRectSort.inset(0, -lineHeight / 3);
             mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 3 * lineHeight,
                     (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
@@ -1067,30 +1137,30 @@ public class GameView extends SurfaceView {
         public void updateData() {
             mTableItems.clear();
 
-            Cursor result = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
+            Cursor q = dbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
 
-            if (result.moveToFirst()) {
+            if (q.moveToFirst()) {
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-                int indexMoves = result.getColumnIndex(DBHelper.KEY_MOVES);
-                int indexTime = result.getColumnIndex(DBHelper.KEY_TIME);
-                int indexTimestamp = result.getColumnIndex(DBHelper.KEY_TIMESTAMP);
+                int indexMoves = q.getColumnIndex(DBHelper.KEY_MOVES);
+                int indexTime = q.getColumnIndex(DBHelper.KEY_TIME);
+                int indexTimestamp = q.getColumnIndex(DBHelper.KEY_TIMESTAMP);
 
                 do {
                     TableItem item = new TableItem();
 
-                    item.id = Integer.toString(result.getPosition() + 1);
-                    item.moves = Integer.toString(result.getInt(indexMoves));
-                    item.time = Tools.timeToString(result.getInt(indexTime));
+                    item.id = Integer.toString(q.getPosition() + 1);
+                    item.moves = Integer.toString(q.getInt(indexMoves));
+                    item.time = Tools.timeToString(q.getInt(indexTime));
 
-                    Date d = new Date(result.getLong(indexTimestamp));
+                    Date d = new Date(q.getLong(indexTimestamp));
                     item.timestamp = format.format(d);
 
                     mTableItems.add(item);
-                } while (result.moveToNext());
+                } while (q.moveToNext());
             }
 
-            result.close();
+            q.close();
         }
 
         @Override
@@ -1114,22 +1184,28 @@ public class GameView extends SurfaceView {
             float s = Dimensions.menuFontSize * 0.29f;
 
             canvas.drawText(mTextMode, mSettingsGuides[0], mRectMode.bottom - s, mPaintText);
-            canvas.drawText(mTextModeValue[mGameMode], mSettingsGuides[1], mRectMode.bottom - s, mPaintValue);
+            canvas.drawText(mTextModeValue[mGameMode], mSettingsGuides[1],
+                    mRectMode.bottom - s, mPaintValue);
             canvas.drawText(mTextBf, mSettingsGuides[0], mRectBf.bottom - s, mPaintText);
-            canvas.drawText(mTextBfValue[mHardMode], mSettingsGuides[1], mRectBf.bottom - s, mPaintValue);
+            canvas.drawText(mTextBfValue[mHardMode], mSettingsGuides[1],
+                    mRectBf.bottom - s, mPaintValue);
             canvas.drawText(mTextSort, mSettingsGuides[0], mRectSort.bottom - s, mPaintText);
-            canvas.drawText(mTextSortValue[mSortMode], mSettingsGuides[1], mRectSort.bottom - s, mPaintValue);
+            canvas.drawText(mTextSortValue[mSortMode], mSettingsGuides[1],
+                    mRectSort.bottom - s, mPaintValue);
 
             canvas.drawText(mTextWidth, mSettingsGuides[2], mRectWidth.bottom - s, mPaintText);
-            canvas.drawText(Integer.toString(mGameWidth), mSettingsGuides[3], mRectWidth.bottom - s, mPaintValue);
+            canvas.drawText("" + mGameWidth, mSettingsGuides[3],
+                    mRectWidth.bottom - s, mPaintValue);
             canvas.drawText(mTextHeight, mSettingsGuides[2], mRectHeight.bottom - s, mPaintText);
-            canvas.drawText(Integer.toString(mGameHeight), mSettingsGuides[3], mRectHeight.bottom - s, mPaintValue);
+            canvas.drawText("" + mGameHeight, mSettingsGuides[3],
+                    mRectHeight.bottom - s, mPaintValue);
 
             mPaintText.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.centerY(), mPaintText);
 
             if (mTableItems.size() == 0) {
-                canvas.drawText(getResources().getString(R.string.info_no_data), Dimensions.surfaceWidth * .5f, mTableMarginTop, mPaintText);
+                canvas.drawText(getResources().getString(R.string.info_no_data),
+                        Dimensions.surfaceWidth * .5f, mTableMarginTop, mPaintText);
                 return;
             }
 
@@ -1140,12 +1216,16 @@ public class GameView extends SurfaceView {
                 TableItem item = mTableItems.get(i);
 
                 mPaintTable.setColor(Colors.getOverlayTextColor());
-                canvas.drawText(item.id, mTableGuides[0], mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.id, mTableGuides[0],
+                        mTableMarginTop + gap * i, mPaintTable);
 
                 mPaintTable.setColor(Colors.menuTextValue);
-                canvas.drawText(item.moves, mTableGuides[1], mTableMarginTop + gap * i, mPaintTable);
-                canvas.drawText(item.time, mTableGuides[2], mTableMarginTop + gap * i, mPaintTable);
-                canvas.drawText(item.timestamp, mTableGuides[3], mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.moves, mTableGuides[1],
+                        mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.time, mTableGuides[2],
+                        mTableMarginTop + gap * i, mPaintTable);
+                canvas.drawText(item.timestamp, mTableGuides[3],
+                        mTableMarginTop + gap * i, mPaintTable);
             }
 
         }
@@ -1216,17 +1296,16 @@ public class GameView extends SurfaceView {
             if (mAnimFrames > 0) {
                 mAnimFrames--;
             }
-            float alpha = (float) Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
+            double alpha = Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
             mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
             mPaintText.setAlpha((int) (255 * alpha));
 
             canvas.drawRect(mRectField, mPaintBg);
-            canvas.drawText(
-                    mCaption,
+            canvas.drawText(mCaption,
                     Dimensions.fieldMarginLeft + Dimensions.fieldWidth / 2.0f,
-                    Dimensions.fieldMarginTop + Dimensions.fieldHeight / 2.0f - mRectBounds.centerY(),
-                    mPaintText
-            );
+                    Dimensions.fieldMarginTop + Dimensions.fieldHeight / 2.0f -
+                            mRectBounds.centerY(),
+                    mPaintText);
         }
 
         public void update() {
@@ -1235,6 +1314,7 @@ public class GameView extends SurfaceView {
         }
 
     } // FieldOverlay
+
 
     // TimerTask для таймера
     class GameClock extends TimerTask {

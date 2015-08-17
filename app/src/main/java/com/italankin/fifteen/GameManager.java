@@ -5,11 +5,20 @@ import android.util.Log;
 
 public class GameManager extends Thread {
 
-    public static final long FPS = 30;                  // кадры в секунду
+    /**
+     * Кадры в секунду
+     */
+    public static final long FPS = 30;
 
-    private GameView mView;                             // главная область приложения
+    /**
+     * Главная область приложения
+     */
+    private GameView mView;
 
-    private boolean mRunning = false;                   // флаг работы потока
+    /**
+     * Флаг работы потока
+     */
+    private boolean mRunning = false;
 
     public GameManager(GameView view) {
         this.mView = view;

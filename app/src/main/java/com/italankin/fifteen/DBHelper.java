@@ -141,7 +141,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 KEY_HEIGHT + "=" + height + " AND " +
                 KEY_BLINDMODE + "=" + hardmode;
         String limit = "10";
-        String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " + ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
+        String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " +
+                ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
 
         delete(mode, width, height, hardmode);
 

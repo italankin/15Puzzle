@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Tools {
 
-    // направления движения (жесты)
     public static final int DIRECTION_DEFAULT = -1;
     public static final int DIRECTION_UP = 0;
     public static final int DIRECTION_RIGHT = 1;
@@ -64,7 +63,8 @@ public class Tools {
      * @return константу направления
      */
     public static int direction(float dx, float dy) {
-        return (Math.abs(dx) > Math.abs(dy)) ? ((dx > 0) ? DIRECTION_RIGHT : DIRECTION_LEFT) : ((dy > 0) ? DIRECTION_DOWN : DIRECTION_UP);
+        return (Math.abs(dx) > Math.abs(dy)) ? ((dx > 0) ?
+                DIRECTION_RIGHT : DIRECTION_LEFT) : ((dy > 0) ? DIRECTION_DOWN : DIRECTION_UP);
     }
 
 
