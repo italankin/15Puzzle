@@ -22,6 +22,9 @@ public class Tile {
      */
     private static Rect mRectBounds = new Rect();
 
+    /**
+     * Главная область приложения
+     */
     private GameView mRootView;
 
     /**

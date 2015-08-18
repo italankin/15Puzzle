@@ -14,36 +14,36 @@ public class Game {
      */
     private static Game instance;
     /**
-     * ширина головоломки в ячейках
+     * Ширина головоломки в ячейках
      */
     private int width;
     /**
-     * высота головоломки в ячейках
+     * Высота головоломки в ячейках
      */
     private int height;
     /**
-     * массив игрового поля
+     * Массив игрового поля
      */
     private ArrayList<Integer> grid = new ArrayList<Integer>();
 
     /**
-     * позиция нулевой (пустой) ячейки на поле
+     * Позиция нулевой (пустой) ячейки на поле
      */
     private int zeroPos;
     /**
-     * счетчик ходов
+     * Счетчик ходов
      */
     private int moves;
     /**
-     * счетчик времени
+     * Счетчик времени
      */
     private long time;
     private boolean solved = false;
 
     /**
-     * обработчик событий
+     * Обработчик событий
      */
-    private GameEventListener mCallbacks = null;
+    private Callback mCallbacks = null;
 
     /**
      * Конструктор
@@ -92,7 +92,7 @@ public class Game {
     public void init(int w, int h) {
         height = h;
         width = w;
-        int size = height * width;                      // рассчет размера поля
+        int size = height * width;
 
         grid.clear();
 
@@ -101,9 +101,11 @@ public class Game {
             grid.add(i);
         }
 
-        Collections.shuffle(grid, new Random());        // перемешивание
+        // перемешивание массива
+        Collections.shuffle(grid, new Random());
 
-        zeroPos = grid.indexOf(0);                      // позиция нулевой ячейки
+        // позиция нулевой ячейки
+        zeroPos = grid.indexOf(0);
 
         moves = 0;
         time = 0;
@@ -164,7 +166,8 @@ public class Game {
                 // для "змейки" нужно проверить,
                 // является ли номер текущей строки четным
                 for (int i = 0; i < size; i++) {
-                    // если строка имеет четный номер, элементы массива нужно перебирать в обратном порядке
+                    // если строка имеет четный номер,
+                    // элементы массива нужно перебирать в обратном порядке
                     if ((i / width) % 2 == 0) {
                         n = grid.get(i);
                     } else {
@@ -193,7 +196,7 @@ public class Game {
         } // switch
 
         return false;
-    } // END isSolvable
+    } // isSolvable
 
     /**
      * Проверка решения
@@ -215,12 +218,15 @@ public class Game {
 
             case MODE_SNAKE:
                 for (i = 0; i < size - 1; i++) {
+                    // если номер текущей строки четный
                     if ((i / width) % 2 == 0) {
+                        // порядок чисел соответствует обычному порядку
                         v = i + 1;
                         if (grid.get(i) != v) {
                             return false;
                         }
                     } else {
+                        // иначе получаем числа в обратном порядке
                         v = (width * (1 + i / width) - i % width);
                         if (v == size) {
                             v = 0;
@@ -234,8 +240,9 @@ public class Game {
 
         } // switch
 
+        // головоломка решена
         return true;
-    } // END checkSolution
+    } // checkSolution
 
     /**
      * Перемещение ячейки (базовый ход)
@@ -245,15 +252,18 @@ public class Game {
      * @return конечная позиция ячейки
      */
     public static int move(int x, int y) {
-        int pos = y * instance.width + x;               // вычисление позиции ячейки в массиве
+        // вычисление позиции ячейки в массиве
+        int pos = y * instance.width + x;
 
         if (instance.grid.get(pos) == 0) {
             return pos;
         }
-        int x0 = instance.zeroPos % instance.width;     // вычисление координат
-        int y0 = instance.zeroPos / instance.width;     // пустой ячейки
+        // вычисление координат пустой ячейки
+        int x0 = instance.zeroPos % instance.width;
+        int y0 = instance.zeroPos / instance.width;
 
-        if (Tools.manhattan(x0, y0, x, y) > 1) {              // проверка дистанции
+        // проверка дистанции
+        if (Tools.manhattan(x0, y0, x, y) > 1) {
             return pos;
         }
 
@@ -275,7 +285,7 @@ public class Game {
         }
 
         return newPos;
-    } // END move
+    } // move
 
     /**
      * Определяет элементы, которые необходимо переместить в выбранном жестом направлении
@@ -293,13 +303,15 @@ public class Game {
             return result;
         }
 
-        int x, y;                                       // переменные для расчетов
+        int x, y;
 
-        int x1 = index % instance.width;                // вычисление координат начальной
-        int y1 = index / instance.width;                // ячейки (начальная точка "жеста")
+        // вычисление координат ячейки начальной точки жеста
+        int x1 = index % instance.width;
+        int y1 = index / instance.width;
 
-        int x0 = instance.zeroPos % instance.width;     // вычисление позиции
-        int y0 = instance.zeroPos / instance.width;     // пустой ячейки
+        // вычисление позиции пустой ячейки
+        int x0 = instance.zeroPos % instance.width;
+        int y0 = instance.zeroPos / instance.width;
 
         switch (direction) {
             case Tools.DIRECTION_UP:
@@ -349,7 +361,7 @@ public class Game {
         }
 
         return result;
-    } // END getSlidingElements
+    } // getSlidingElements
 
     /**
      * Возвращает число в ячейке по его индексу в массиве
@@ -395,7 +407,6 @@ public class Game {
         return instance.solved;
     }
 
-
     /**
      * @return массив элементов поля
      */
@@ -411,9 +422,10 @@ public class Game {
         return instance.grid.size();
     }
 
-    /* Other */
-
-    public interface GameEventListener {
+    /**
+     * Интерфейс для отслеживания событий в игре
+     */
+    public interface Callback {
 
         /**
          * Вызывается при создании новой игры
@@ -443,10 +455,10 @@ public class Game {
     /**
      * Привязывает обработчик событий к игре
      *
-     * @param listener обработчик событий
+     * @param callback обработчик событий
      */
-    public static void setGameEventListener(GameEventListener listener) {
-        instance.mCallbacks = listener;
+    public static void addCallback(Callback callback) {
+        instance.mCallbacks = callback;
     }
 
 }

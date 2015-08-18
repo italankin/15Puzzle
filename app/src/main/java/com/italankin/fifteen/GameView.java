@@ -24,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameView extends SurfaceView
-        implements Game.GameEventListener, SurfaceHolder.Callback {
+        implements Game.Callback, SurfaceHolder.Callback {
 
     /**
      * Контекст приложения
@@ -124,7 +124,7 @@ public class GameView extends SurfaceView
         mOverlaySolved = new FieldOverlay(getResources().getString(R.string.info_win));
         mOverlayPause = new FieldOverlay(getResources().getString(R.string.info_pause));
 
-        Game.setGameEventListener(this);
+        Game.addCallback(this);
 
         mGameLoopThread.setRunning(true);
         try {
@@ -150,19 +150,15 @@ public class GameView extends SurfaceView
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
 
-    @Override
     public void onGameCreate(int width, int height) {
     }
 
-    @Override
     public void onGameLoad() {
     }
 
-    @Override
     public void onGameMove() {
     }
 
-    @Override
     public void onGameSolve() {
         solved = true;
         if (gameClock != null) {
@@ -880,12 +876,12 @@ public class GameView extends SurfaceView
             // -- цвет фона --
             if (mRectColorMode.contains(x, y)) {
                 Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
-                Settings.save();
                 mScreenInterface.update();
                 mScreenSettings.update();
                 mScreenLeaderboard.update();
                 mOverlayPause.update();
                 mOverlaySolved.update();
+                Settings.save();
                 return true;
             }
 
@@ -901,6 +897,7 @@ public class GameView extends SurfaceView
             if (mRectBf.contains(x, y)) {
                 Settings.hardmode = !Settings.hardmode;
                 Settings.save();
+                createNewGame(true);
                 return true;
             }
 
@@ -1001,13 +998,13 @@ public class GameView extends SurfaceView
 
         private float mTableGuides[] = {
                 Dimensions.surfaceWidth * 0.12f,
-                Dimensions.surfaceWidth * 0.26f,
-                Dimensions.surfaceWidth * 0.52f,
+                Dimensions.surfaceWidth * 0.27f,
+                Dimensions.surfaceWidth * 0.53f,
                 Dimensions.surfaceWidth * 0.95f
         };
         private int mSettingsGuides[] = {
                 (int) (Dimensions.surfaceWidth * 0.07f),
-                (int) (Dimensions.surfaceWidth * 0.33f),
+                (int) (Dimensions.surfaceWidth * 0.31f),
                 (int) (Dimensions.surfaceWidth * 0.58f),
                 (int) (Dimensions.surfaceWidth * 0.86f)
         };
@@ -1024,14 +1021,14 @@ public class GameView extends SurfaceView
             mPaintText = new Paint();
             mPaintText.setAntiAlias(Settings.antiAlias);
             mPaintText.setColor(Colors.getOverlayTextColor());
-            mPaintText.setTextSize(Dimensions.menuFontSize);
+            mPaintText.setTextSize(Dimensions.menuFontSize * 0.9f);
             mPaintText.setTypeface(Settings.typeface);
             mPaintText.setTextAlign(Paint.Align.LEFT);
 
             mPaintValue = new Paint();
             mPaintValue.setAntiAlias(Settings.antiAlias);
             mPaintValue.setColor(Colors.menuTextValue);
-            mPaintValue.setTextSize(Dimensions.menuFontSize);
+            mPaintValue.setTextSize(Dimensions.menuFontSize * 0.9f);
             mPaintValue.setTypeface(Settings.typeface);
             mPaintValue.setTextAlign(Paint.Align.LEFT);
 
@@ -1135,7 +1132,7 @@ public class GameView extends SurfaceView
         }
 
         /**
-         * Requery data from db, update {@link #mTableItems}
+         * Запрос данных из бд, обновление {@link #mTableItems}
          */
         public void updateData() {
             mTableItems.clear();
