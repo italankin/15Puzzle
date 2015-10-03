@@ -6,21 +6,16 @@ import android.util.Log;
 public class GameManager extends Thread {
 
     /**
-     * Кадры в секунду
-     */
-    public static final long FPS = 30;
-
-    /**
      * Главная область приложения
      */
-    private GameView mView;
+    private GameSurface mView;
 
     /**
      * Флаг работы потока
      */
     private boolean mRunning = false;
 
-    public GameManager(GameView view) {
+    public GameManager(GameSurface view) {
         this.mView = view;
     }
 
@@ -30,7 +25,7 @@ public class GameManager extends Thread {
 
     @Override
     public void run() {
-        long ticksPS = 1000 / FPS;
+        long ticksPS = 1000 / BuildConfig.FPS;
         long startTime;
         long sleepTime;
         while (mRunning) {

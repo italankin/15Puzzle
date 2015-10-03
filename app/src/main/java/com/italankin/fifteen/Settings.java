@@ -52,11 +52,11 @@ public class Settings {
     /**
      * количество кадров для анимирования плиток
      */
-    public static int tileAnimFrames = 13;
+    public static long tileAnimFrames = BuildConfig.FPS / 2;
     /**
      * кол-во кадров для анимирования элементов интерфейса
      */
-    public static int screenAnimFrames = 10;
+    public static long screenAnimFrames = BuildConfig.FPS / 3;
     /**
      * цвет плиток
      */

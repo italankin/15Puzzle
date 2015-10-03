@@ -12,7 +12,7 @@ public class Game {
     /**
      * Singleton
      */
-    private static Game instance;
+    private static Game instance = new Game();
     /**
      * Ширина головоломки в ячейках
      */
@@ -24,7 +24,7 @@ public class Game {
     /**
      * Массив игрового поля
      */
-    private ArrayList<Integer> grid = new ArrayList<Integer>();
+    private ArrayList<Integer> grid = new ArrayList<>();
 
     /**
      * Позиция нулевой (пустой) ячейки на поле
@@ -39,6 +39,7 @@ public class Game {
      */
     private long time;
     private boolean solved = false;
+    private boolean paused = false;
 
     /**
      * Обработчик событий
@@ -50,19 +51,9 @@ public class Game {
      *
      * @param w ширина головоломки
      * @param h высота головоломки
-     * @return объект класса Game
      */
-    public static Game create(int w, int h) {
-        if (instance == null) {
-            instance = new Game();
-        }
+    public static void create(int w, int h) {
         instance.init(w, h);
-
-        if (instance.mCallbacks != null) {
-            instance.mCallbacks.onGameCreate(w, h);
-        }
-
-        return instance;
     }
 
     /**
@@ -77,10 +68,6 @@ public class Game {
         instance.moves = savedMoves;
         instance.time = savedTime;
         instance.zeroPos = savedGrid.indexOf(0);
-
-        if (instance.mCallbacks != null) {
-            instance.mCallbacks.onGameLoad();
-        }
     }
 
     /**
@@ -110,6 +97,7 @@ public class Game {
         moves = 0;
         time = 0;
         solved = false;
+        paused = false;
 
         // проверка на возможность решения данной раскладки
         if (!isSolvable()) {
@@ -274,9 +262,6 @@ public class Game {
 
         // обработка событий
         if (instance.mCallbacks != null) {
-            // вызов обработчика событий при перемещении
-            instance.mCallbacks.onGameMove();
-
             // решение головоломки
             if (instance.checkSolution()) {
                 instance.solved = true;
@@ -296,7 +281,7 @@ public class Game {
      */
     public static ArrayList<Integer> getSlidingElements(int direction, int index) {
         // массив индексов ячеек, которые будут перемещены
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        ArrayList<Integer> result = new ArrayList<>();
 
         // проверка принадлежности начальной точки перемещения игровому полю
         if (index < 0) {
@@ -407,6 +392,18 @@ public class Game {
         return instance.solved;
     }
 
+    public static void setPaused(boolean paused) {
+        instance.paused = paused;
+    }
+
+    public static void invertPaused() {
+        instance.paused = !instance.paused;
+    }
+
+    public static boolean isPaused() {
+        return instance.paused;
+    }
+
     /**
      * @return массив элементов поля
      */
@@ -426,24 +423,6 @@ public class Game {
      * Интерфейс для отслеживания событий в игре
      */
     public interface Callback {
-
-        /**
-         * Вызывается при создании новой игры
-         *
-         * @param width  ширина поля
-         * @param height высота поля
-         */
-        void onGameCreate(int width, int height);
-
-        /**
-         * Вызывается при загрузке игры из памяти
-         */
-        void onGameLoad();
-
-        /**
-         * Вызывается при совершении легального хода
-         */
-        void onGameMove();
 
         /**
          * Вызывается при решении головоломки

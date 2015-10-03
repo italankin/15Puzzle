@@ -5,7 +5,7 @@
     <string name="action_settings">SETTINGS</string>
     <string name="action_new">NEW</string>
     <string name="action_about">PAUSE</string>
-    <string name="action_lb">RECORDS</string>
+    <string name="action_leaderboard">RECORDS</string>
     <string name="info_moves">MOVES</string>
     <string name="info_time">TIME</string>
     <string name="info_win">SOLVED!</string>

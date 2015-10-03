@@ -7,7 +7,7 @@ import android.view.Window;
 
 public class MainActivity extends Activity {
 
-    private GameView mGameView;
+    private GameSurface mGameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         Settings.load();
-        mGameView = new GameView(this);
+        mGameView = new GameSurface(this);
         setContentView(mGameView);
     }
 

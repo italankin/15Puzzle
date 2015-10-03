@@ -23,11 +23,6 @@ public class Tile {
     private static Rect mRectBounds = new Rect();
 
     /**
-     * Главная область приложения
-     */
-    private GameView mRootView;
-
-    /**
      * Path для рисования фона плитки
      */
     private Path mShape;
@@ -58,27 +53,34 @@ public class Tile {
      */
     private Animation mAnimation = new Animation();
 
-    /**
-     * @param root родительский {@link GameView}
-     * @param d    данные для отображения
-     * @param i    индекс в общем массиве
-     */
-    public Tile(GameView root, int d, int i) {
-        this.mRootView = root;
-        this.mData = d;
-        this.mIndex = i;
-
+    public static void updatePaint() {
         if (sPaintText == null) {
             sPaintText = new Paint();
             sPaintText.setTypeface(Settings.typeface);
             sPaintText.setTextAlign(Paint.Align.CENTER);
-            sPaintText.setAntiAlias(Settings.antiAlias);
+            sPaintText.setTextSize(Dimensions.tileFontSize);
         }
 
         if (sPaintPath == null) {
             sPaintPath = new Paint();
-            sPaintPath.setAntiAlias(Settings.antiAlias);
         }
+
+        sPaintPath.setColor(Colors.getTileColor());
+        sPaintPath.setAntiAlias(Settings.antiAlias);
+
+        sPaintText.setColor(Colors.getTileTextColor());
+        sPaintText.setAntiAlias(Settings.antiAlias);
+    }
+
+    /**
+     * @param number данные для отображения
+     * @param index  индекс в общем массиве
+     */
+    public Tile(int number, int index) {
+        this.mData = number;
+        this.mIndex = index;
+
+        updatePaint();
 
         mRectShape = new RectF();
         mShape = new Path();
@@ -112,17 +114,15 @@ public class Tile {
             mShape = mAnimation.getTransformPath(mShape);
         }
 
-        sPaintPath.setColor(Colors.getTileColor());
         canvas.drawPath(mShape, sPaintPath);
 
-        if (!mRootView.paused) {
+        if (!Game.isPaused()) {
             mRectShape.inset(-Dimensions.spacing / 2.0f, -Dimensions.spacing / 2.0f);
             String text = Integer.toString(mData);
             mShape.computeBounds(mRectShape, true);
             sPaintText.setTextSize(mAnimation.getScale() * Dimensions.tileFontSize);
             sPaintText.getTextBounds(text, 0, text.length(), mRectBounds);
-            sPaintText.setColor(Colors.getTileTextColor());
-            if (!Settings.hardmode || Game.getMoves() == 0 || mRootView.solved) {
+            if (!Settings.hardmode || Game.getMoves() == 0 || Game.isSolved()) {
                 canvas.drawText(text, mRectShape.centerX(),
                         mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
@@ -211,13 +211,12 @@ public class Tile {
      * @param type  тип анимации
      * @param delay задержка отображения анимации
      */
-    public Tile setAnimation(int type, int delay) {
+    public void setAnimation(int type, int delay) {
         if (Settings.animations) {
             mAnimation.delay = delay;
             mAnimation.type = type;
             mAnimation.frames = Settings.tileAnimFrames;
         }
-        return this;
     }
 
     /**
@@ -236,7 +235,7 @@ public class Tile {
         /**
          * Оставшееся кол-во кадров анимации
          */
-        public int frames;
+        public long frames;
         /**
          * Задержка анимации (в кадрах)
          */

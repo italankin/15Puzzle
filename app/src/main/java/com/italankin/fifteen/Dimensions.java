@@ -50,6 +50,14 @@ public class Dimensions {
      * отступ между ячейками на поле
      */
     public static float spacing;
+    /**
+     * высота верхней панели с кнопками
+     */
+    public static float topBarHeight;
+    /**
+     * высота панели инфо
+     */
+    public static float infoBarHeight;
 
     /**
      * Рассчитывает размеры элементов относительно текущих настроек игры
@@ -78,6 +86,8 @@ public class Dimensions {
         menuFontSize = interfaceFontSize * 1.5f;
         fieldMarginLeft = 0.5f * surfaceWidth - 0.5f * fieldWidth;
         tileCornerRadius = 0.0f;
+        topBarHeight = Dimensions.surfaceHeight * 0.07f;
+        infoBarHeight = Dimensions.surfaceHeight * 0.13f;
     }
 
 }

@@ -29,15 +29,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + KEY_TABLE + " (" +
-                        KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        KEY_MODE + " INTEGER," +
-                        KEY_WIDTH + " INTEGER," +
-                        KEY_HEIGHT + " INTEGER," +
-                        KEY_MOVES + " INTEGER," +
-                        KEY_TIME + " INTEGER," +
-                        KEY_BLINDMODE + " INTEGER," +
-                        KEY_TIMESTAMP + " INTEGER );"
-        );
+                KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                KEY_MODE + " INTEGER," +
+                KEY_WIDTH + " INTEGER," +
+                KEY_HEIGHT + " INTEGER," +
+                KEY_MOVES + " INTEGER," +
+                KEY_TIME + " INTEGER," +
+                KEY_BLINDMODE + " INTEGER," +
+                KEY_TIMESTAMP + " INTEGER" +
+                ");");
     }
 
     /**
@@ -90,7 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor c1 = db.rawQuery(q1, null);
         Cursor c2 = db.rawQuery(q2, null);
-        ArrayList<Integer> a1 = new ArrayList<Integer>(), a2 = new ArrayList<Integer>();
+        ArrayList<Integer> a1 = new ArrayList<>(), a2 = new ArrayList<>();
 
         if (c1.moveToFirst()) {
             do {
