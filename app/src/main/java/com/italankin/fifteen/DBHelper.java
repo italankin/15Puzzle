@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "puzzle15";
@@ -62,7 +60,9 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(KEY_BLINDMODE, hardmode);
         cv.put(KEY_TIMESTAMP, System.currentTimeMillis());
 
-        db.insert(KEY_TABLE, null, cv);
+        long rowid = db.insert(KEY_TABLE, null, cv);
+
+        Tools.log("Inserted values: rowid=" + rowid + " " + cv.toString());
 
         db.close();
     }
@@ -70,48 +70,30 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Метод удаляет лишние записи в таблице
      *
+     * @param db       база данных
      * @param mode     режим игры
      * @param width    ширина поля
      * @param height   высота поля
      * @param hardmode сложный режим
      */
-    public void delete(int mode, int width, int height, int hardmode) {
-        SQLiteDatabase db = getWritableDatabase();
-
+    public void delete(SQLiteDatabase db, int mode, int width, int height, int hardmode) {
         String selection = KEY_MODE + "=" + mode + " AND " +
                 KEY_WIDTH + "=" + width + " AND " +
                 KEY_HEIGHT + "=" + height + " AND " +
                 KEY_BLINDMODE + "=" + hardmode;
         String limit = "LIMIT -1 OFFSET 10";
-        String q1 = "SELECT * FROM " + KEY_TABLE + " WHERE " + selection +
-                " ORDER BY " + KEY_TIME + " ASC " + limit;
-        String q2 = "SELECT * FROM " + KEY_TABLE + " WHERE " + selection +
-                " ORDER BY " + KEY_MOVES + " ASC " + limit;
 
-        Cursor c1 = db.rawQuery(q1, null);
-        Cursor c2 = db.rawQuery(q2, null);
-        ArrayList<Integer> a1 = new ArrayList<>(), a2 = new ArrayList<>();
+        String lastByTime = "SELECT id FROM (SELECT id FROM " + KEY_TABLE + " WHERE " + selection +
+                " ORDER BY " + KEY_TIME + " ASC " + limit + ")";
+        String lastByMoves = "SELECT id FROM (SELECT id FROM " + KEY_TABLE + " WHERE " + selection +
+                " ORDER BY " + KEY_MOVES + " ASC " + limit + ")";
 
-        if (c1.moveToFirst()) {
-            do {
-                a1.add(c1.getInt(c1.getColumnIndex(KEY_ID)));
-            } while (c1.moveToNext());
-            c1.close();
-        }
+        String sql = "DELETE FROM " + KEY_TABLE + " WHERE " +
+                KEY_ID + " IN (" + lastByTime + " INTERSECT " + lastByMoves + ")";
 
-        if (c2.moveToFirst()) {
-            do {
-                a2.add(c2.getInt(c2.getColumnIndex(KEY_ID)));
-            } while (c2.moveToNext());
-            c2.close();
-        }
+        Tools.log("Executed query: " + sql);
 
-        a1.retainAll(a2);
-
-        String ids = a1.toString();
-        ids = ids.substring(1, ids.length() - 1);
-
-        db.delete(KEY_TABLE, "? IN (?)", new String[]{KEY_ID, ids});
+        db.execSQL(sql);
     }
 
     /**
@@ -144,7 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " +
                 ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
 
-        delete(mode, width, height, hardmode);
+        delete(db, mode, width, height, hardmode);
 
         return db.query(KEY_TABLE, columns, selection, null, null, null, orderBy, limit);
     }
@@ -153,6 +135,8 @@ public class DBHelper extends SQLiteOpenHelper {
         if (oldVersion < newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + KEY_TABLE);
             onCreate(db);
+
+            Tools.log("Upgraded from " + oldVersion + " to " + newVersion);
         }
     }
 
