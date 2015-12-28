@@ -157,7 +157,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             mGameLoopThread.start();
             mGameLoopThread.setRunning(true);
         } catch (Exception e) {
-            Tools.log("surfaceCreated" + e.toString());
+            Tools.log("surfaceCreated: " + e.toString());
         }
 
         updateViews();
@@ -178,7 +178,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 mGameLoopThread.join();
                 retry = false;
             } catch (InterruptedException e) {
-                Log.e("surfaceDestroyed", e.toString());
+                Tools.log("surfaceDestroyed: " + e.toString());
             }
         }
     }
@@ -400,19 +400,19 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                             break;
                         case 6:
                             // по строкам
-                            delay = index / Settings.gameWidth * 3; // 3 - задержка в кадрах между группами
+                            delay = index / Settings.gameWidth * 5; // 5 - задержка в кадрах между группами
                             break;
                         case 7:
                             // по столбцам
-                            delay = index % Settings.gameWidth * 3;
+                            delay = index % Settings.gameWidth * 5;
                             break;
                         case 8:
                             // по строкам в обратном порядке
-                            delay = (Settings.gameHeight - index / Settings.gameWidth) * 3;
+                            delay = (Settings.gameHeight - index / Settings.gameWidth) * 5;
                             break;
                         case 9:
                             // по столбцам в обратном порядке
-                            delay = (Settings.gameWidth - index % Settings.gameWidth) * 3;
+                            delay = (Settings.gameWidth - index % Settings.gameWidth) * 5;
                             break;
                         default:
                             // все вместе

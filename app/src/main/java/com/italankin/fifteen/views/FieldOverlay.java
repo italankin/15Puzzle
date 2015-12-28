@@ -66,7 +66,8 @@ public class FieldOverlay extends BaseView {
         mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
         mPaintText.setAlpha((int) (255 * alpha));
 
-        canvas.drawRect(mRectField, mPaintBg);
+        canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                mPaintBg);
         canvas.drawText(mCaption,
                 Dimensions.fieldMarginLeft + Dimensions.fieldWidth / 2.0f,
                 Dimensions.fieldMarginTop + Dimensions.fieldHeight / 2.0f - mRectBounds.centerY(),

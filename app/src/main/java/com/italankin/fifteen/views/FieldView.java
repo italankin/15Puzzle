@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Game;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
@@ -94,7 +95,8 @@ public class FieldView extends BaseView {
      */
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawRect(mRectField, mPaintField);
+        canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                mPaintField);
         for (int i = 0; i < mData.size(); i++) {
             mData.get(i).draw(canvas);
         }

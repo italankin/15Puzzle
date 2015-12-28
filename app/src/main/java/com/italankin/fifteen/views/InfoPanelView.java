@@ -72,7 +72,8 @@ public class InfoPanelView extends BaseView {
             return;
         }
 
-        canvas.drawRect(mRectInfo, mPaintBg);
+        canvas.drawRoundRect(mRectInfo, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                mPaintBg);
 
         // режим игры
         canvas.drawText(

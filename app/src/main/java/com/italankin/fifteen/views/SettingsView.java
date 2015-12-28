@@ -35,6 +35,7 @@ public class SettingsView extends BaseView {
     private String mTextMode;                       // режим игры
     private String mTextModeValue[];
     private String mTextBack;                       // кнопка "назад"
+    private String mTextAbout;                      // кнопка "назад"
 
     private RectF mRectWidth;                       // граница элемента настройки ширины
     private RectF mRectHeight;                      // ... высоты
@@ -45,6 +46,7 @@ public class SettingsView extends BaseView {
     private RectF mRectAnimations;                  // ... анимации
     private RectF mRectMode;                        // ... режим игры
     private RectF mRectBack;                        // ... "назад"
+    private RectF mRectAbout;                       // ... "about"
 
     private Callbacks mCallbacks;
 
@@ -87,6 +89,7 @@ public class SettingsView extends BaseView {
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
         mTextBack = res.getString(R.string.back);
+        mTextAbout = res.getString(R.string.about);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -125,7 +128,11 @@ public class SettingsView extends BaseView {
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
 
-        mRectBack = new RectF(0, Dimensions.surfaceHeight - h,
+        mRectAbout = new RectF(0.0f, Dimensions.surfaceHeight - h,
+                Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h + r.height());
+        mRectAbout.inset(0, sp);
+
+        mRectBack = new RectF(Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
         mRectBack.inset(0, sp);
     }
@@ -228,7 +235,7 @@ public class SettingsView extends BaseView {
     }
 
     public void draw(Canvas canvas) {
-        if(!mShow) {
+        if (!mShow) {
             return;
         }
 
@@ -280,8 +287,12 @@ public class SettingsView extends BaseView {
                 right, mRectBf.bottom - s, mPaintValue);
 
         // кнопка "назад"
-        canvas.drawText(mTextBack, Dimensions.surfaceWidth / 2,
+        canvas.drawText(mTextBack, mRectBack.centerX(),
                 mRectBack.bottom - s, mPaintControls);
+
+        // кнопка "о программе"
+        canvas.drawText(mTextAbout, mRectAbout.centerX(),
+                mRectAbout.bottom - s, mPaintControls);
     }
 
     public void update() {
