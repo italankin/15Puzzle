@@ -1,7 +1,9 @@
+/app/keystore-release
 .gradle
 local.properties
 .idea/
 .DS_Store
-/build
 /captures
 *.iml
+build/
+app/build
