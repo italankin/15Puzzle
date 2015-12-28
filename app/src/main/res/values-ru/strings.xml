@@ -41,5 +41,6 @@
         <item>меньше ходов</item>
         <item>лучшее время</item>
     </string-array>
+    <string name="about">инфо</string>
 
 </resources>

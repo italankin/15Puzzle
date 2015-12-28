@@ -20,6 +20,7 @@
     <string name="pref_sort">Sort</string>
     <string name="back">back</string>
     <string name="info_no_data">no data</string>
+    <string name="about">about</string>
 
     <string-array name="toggle">
         <item>off</item>
