@@ -3,7 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '23.0.2'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -20,10 +20,22 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('keystore/debug.keystore')
+            storeFile file('keystore-debug/debug.keystore')
             storePassword 'android'
             keyAlias 'debug'
             keyPassword 'android'
+        }
+        release {
+            Properties propsRelease = new Properties()
+            File propsFileRelease = new File('./app/keystore-release/release.properties');
+            if (propsFileRelease.exists()) {
+                propsRelease.load(new FileInputStream(propsFileRelease))
+
+                storeFile file(propsRelease['keystore'])
+                storePassword propsRelease['keystore_password']
+                keyAlias propsRelease['alias']
+                keyPassword propsRelease['alias_password']
+            }
         }
     }
 
