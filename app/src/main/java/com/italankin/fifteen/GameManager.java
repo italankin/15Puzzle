@@ -1,14 +1,13 @@
 package com.italankin.fifteen;
 
 import android.graphics.Canvas;
-import android.util.Log;
 
 public class GameManager extends Thread {
 
     /**
      * Главная область приложения
      */
-    private GameSurface mView;
+    private final GameSurface mView;
 
     /**
      * Флаг работы потока
@@ -19,15 +18,18 @@ public class GameManager extends Thread {
         this.mView = view;
     }
 
-    public void setRunning(boolean run) {
-        mRunning = run;
+    public void setRunning(boolean running) {
+        mRunning = running;
     }
 
     @Override
     public void run() {
-        long ticksPS = 1000 / BuildConfig.FPS;
         long startTime;
-        long sleepTime;
+        long elapsed = 0;
+        float min = 999;
+        float frameBuffer = 0, timeBuffer = 0;
+        float allFrames = 0, allTime = 0;
+        String info = "fps / min / avg";
         while (mRunning) {
             Canvas c = null;
             startTime = System.currentTimeMillis();
@@ -35,7 +37,7 @@ public class GameManager extends Thread {
                 c = mView.getHolder().lockCanvas();
                 synchronized (mView.getHolder()) {
                     if (c != null) {
-                        mView.draw(c);
+                        mView.draw(c, elapsed, info);
                     }
                 }
             } finally {
@@ -43,14 +45,19 @@ public class GameManager extends Thread {
                     mView.getHolder().unlockCanvasAndPost(c);
                 }
             }
-            sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
-            try {
-                if (sleepTime < 1) {
-                    sleepTime = 10;
+            elapsed = System.currentTimeMillis() - startTime;
+            timeBuffer += elapsed;
+            frameBuffer += 1.0f;
+            if (timeBuffer > 1000) {
+                float fps = frameBuffer / (timeBuffer / 1000);
+                if (fps < min) {
+                    min = fps;
                 }
-                sleep(sleepTime);
-            } catch (Exception e) {
-                Log.e("GameManager", e.toString());
+                allTime += timeBuffer;
+                allFrames += frameBuffer;
+                info = String.format("%.1f / %.1f / %.1f", fps, min, allFrames / (allTime / 1000));
+                frameBuffer = 0;
+                timeBuffer = 0;
             }
         }
     }

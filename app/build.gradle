@@ -41,11 +41,9 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "long", "FPS", "50"
             signingConfig signingConfigs.debug
         }
         release {
-            buildConfigField "long", "FPS", "50"
             debuggable false
             minifyEnabled true
         }

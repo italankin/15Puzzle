@@ -97,11 +97,11 @@ public class Tile {
                 Path.Direction.CW);
     } // constructor
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsedTime) {
 
-        // задержка анимации (в кадрах)
+        // задержка анимации
         if (mAnimation.delay > 0) {
-            mAnimation.delay--;
+            mAnimation.delay -= elapsedTime;
             return;
         }
 
@@ -111,7 +111,7 @@ public class Tile {
                 (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
         if (mAnimation.isPlaying()) {
-            mShape = mAnimation.getTransformPath(mShape);
+            mShape = mAnimation.getTransformPath(mShape, elapsedTime);
         }
 
         canvas.drawPath(mShape, sPaintPath);
@@ -249,6 +249,9 @@ public class Tile {
          */
         public float dy;
 
+        private float lastTx = 0;
+        private float lastTy = 0;
+
         public Animation() {
             this.type = STATIC;
             this.frames = 0;
@@ -260,7 +263,7 @@ public class Tile {
          *
          * @return трансформированный {@link Path}
          */
-        public Path getTransformPath(Path p) {
+        public Path getTransformPath(Path p, long time) {
             float ds, ds2, tx, ty;
             Matrix m;
 
@@ -283,12 +286,14 @@ public class Tile {
 
                 case TRANSLATE:
                     m = new Matrix();
+                    if (frames < time) {
+                        frames = 0;
+                    }
                     ds = (float) Tools.easeOut(frames, 0, 1.0f, Settings.tileAnimFrames);
-                    ds2 = (float) Tools.easeOut(Math.min(frames + 1, Settings.tileAnimFrames),
-                            0.0f, 1.0f, Settings.tileAnimFrames);
-                    ds = ds - ds2;
-                    tx = ds * dx;
-                    ty = ds * dy;
+                    tx = ds * dx - lastTx;
+                    ty = ds * dy - lastTy;
+                    lastTx = ds * dx;
+                    lastTy = ds * dy;
                     m.postTranslate(tx, ty);
                     p.transform(m);
                     break; // TRANSLATE
@@ -296,9 +301,17 @@ public class Tile {
             } // switch
 
             if (frames > 0) {
-                frames--;
+                frames -= time;
             } else {
                 type = STATIC;
+                lastTx = 0;
+                lastTy = 0;
+                p.reset();
+                p.addRoundRect(
+                        new RectF(mCanvasX, mCanvasY,
+                                mCanvasX + Dimensions.tileSize, mCanvasY + Dimensions.tileSize),
+                        Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
+                        Path.Direction.CW);
             }
 
             return p;

@@ -21,7 +21,7 @@ public abstract class BaseView {
         return mShow;
     }
 
-    public abstract void draw(Canvas canvas);
+    public abstract void draw(Canvas canvas, long elapsedTime);
 
     public abstract void update();
 

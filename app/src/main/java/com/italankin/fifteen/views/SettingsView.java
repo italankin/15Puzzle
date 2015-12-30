@@ -234,7 +234,8 @@ public class SettingsView extends BaseView {
         }
     }
 
-    public void draw(Canvas canvas) {
+    @Override
+    public void draw(Canvas canvas, long elapsedTime) {
         if (!mShow) {
             return;
         }

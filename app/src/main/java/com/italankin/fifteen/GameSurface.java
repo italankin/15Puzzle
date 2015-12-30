@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -76,6 +78,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Область игрового поля
      */
     private RectF mRectField = new RectF();
+
+    private Paint mFpsPaint;
 
     /**
      * Координата x начальной точки жеста
@@ -160,6 +164,12 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             Tools.log("surfaceCreated: " + e.toString());
         }
 
+        mFpsPaint = new Paint();
+        mFpsPaint.setTypeface(Settings.typeface);
+        mFpsPaint.setTextSize(Dimensions.interfaceFontSize * .75f);
+        mFpsPaint.setTextAlign(Paint.Align.LEFT);
+        mFpsPaint.setColor(Settings.tileColor);
+
         updateViews();
 
         createNewGame(false);
@@ -242,6 +252,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
             case BTN_SETTINGS:
                 Game.setPaused(Game.getMoves() > 0);
+                if (Game.isPaused()) {
+                    mPauseOverlay.setVisible(true);
+                }
                 mSettings.show();
                 break;
 
@@ -281,6 +294,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Приостановка {@link android.app.Activity}
      */
     public void onPause() {
+        mGameLoopThread.setRunning(false);
         if (gameClock != null) {
             gameClock.cancel();
             gameClock = null;
@@ -290,27 +304,29 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     /**
      * Рендер изображения
      */
-    @Override
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsed, String fps) {
         super.draw(canvas);
 
         canvas.drawColor(Colors.getBackgroundColor());
 
-        mTopPanel.draw(canvas);
-        mInfoPanel.draw(canvas);
-        mField.draw(canvas);
+        mTopPanel.draw(canvas, elapsed);
+        mInfoPanel.draw(canvas, elapsed);
+        mField.draw(canvas, elapsed);
 
-        if (Game.isSolved() && mSolvedOverlay.isShown()) {
-            mSolvedOverlay.draw(canvas);                 // оверлей "solved"
+        if (Game.isSolved() && mSolvedOverlay.isShown() && !mSettings.isShown()) {
+            mSolvedOverlay.draw(canvas, elapsed);                 // оверлей "solved"
         }
 
         if (mLeaderboard.isShown()) {
-            mLeaderboard.draw(canvas);
+            mLeaderboard.draw(canvas, elapsed);
         } else if (mSettings.isShown()) {
-            mSettings.draw(canvas);                // экран настроек
+            mSettings.draw(canvas, elapsed);                      // экран настроек
         } else if (Game.isPaused() && !Game.isSolved() && mPauseOverlay.isShown()) {
-            mPauseOverlay.draw(canvas);                  // оверлей "paused"
+            mPauseOverlay.draw(canvas, elapsed);                  // оверлей "paused"
         }
+
+        mFpsPaint.setColor(Color.RED);
+        canvas.drawText(fps, 0, Dimensions.surfaceHeight, mFpsPaint);
     }
 
     public void updateViews() {
@@ -321,6 +337,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mSettings.update();
         mPauseOverlay.update();
         mSolvedOverlay.update();
+        mFpsPaint.setColor(Settings.tileColor);
     }
 
     /**

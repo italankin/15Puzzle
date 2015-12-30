@@ -79,7 +79,7 @@ public class TopPanelView extends BaseView {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsedTime) {
         if(!mShow) {
             return;
         }
@@ -88,7 +88,8 @@ public class TopPanelView extends BaseView {
 
         for (Button button : mButtons) {
             if (button.frame > 0) {
-                float a = (float) Tools.easeOut(button.frame--, 0.0f, 1.0f, Settings.screenAnimFrames);
+                button.frame -= elapsedTime;
+                float a = (float) Tools.easeOut(button.frame, 0.0f, 1.0f, Settings.screenAnimFrames);
                 mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
                 canvas.drawRect(button.rect, mPaintOverlay);
             }

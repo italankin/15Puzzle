@@ -67,7 +67,7 @@ public class InfoPanelView extends BaseView {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsedTime) {
         if (!mShow) {
             return;
         }

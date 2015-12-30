@@ -54,15 +54,25 @@ public class FieldOverlay extends BaseView {
         return (mShow = true);
     }
 
-    public void draw(Canvas canvas) {
+    public void setVisible(boolean visible) {
+        mShow = visible;
+    }
+
+    @Override
+    public void draw(Canvas canvas, long elapsedTime) {
         if (!mShow) {
             return;
         }
 
+        double alpha = 1;
         if (mAnimFrames > 0) {
-            mAnimFrames--;
+            mAnimFrames -= elapsedTime;
+            if (mAnimFrames < 0) {
+                mAnimFrames = 0;
+            } else {
+                alpha = Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
+            }
         }
-        double alpha = Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
         mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
         mPaintText.setAlpha((int) (255 * alpha));
 

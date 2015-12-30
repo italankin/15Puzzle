@@ -94,11 +94,11 @@ public class FieldView extends BaseView {
      * Отрисовка спрайтов
      */
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsedTime) {
         canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                 mPaintField);
         for (int i = 0; i < mData.size(); i++) {
-            mData.get(i).draw(canvas);
+            mData.get(i).draw(canvas, elapsedTime);
         }
     }
 
