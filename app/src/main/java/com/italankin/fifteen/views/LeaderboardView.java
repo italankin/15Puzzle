@@ -25,15 +25,33 @@ public class LeaderboardView extends BaseView {
     private Paint mPaintValue;
     private Paint mPaintTable;
 
-    private String mTextWidth;                      // ширина поля
-    private String mTextHeight;                     // высота поля
-    private String mTextBf;                         // hardmode
+    /**
+     * Ширина поля
+     */
+    private String mTextWidth;
+    /**
+     * Высота поля
+     */
+    private String mTextHeight;
+    /**
+     * Hard Mode
+     */
+    private String mTextBf;
     private String mTextBfValue[];
-    private String mTextMode;                       // режим игры
+    /**
+     * Режим игры
+     */
+    private String mTextMode;
     private String mTextModeValue[];
-    private String mTextSort;                       // сортировка
+    /**
+     * Сортировка
+     */
+    private String mTextSort;
     private String mTextSortValue[];
-    private String mTextBack;                       // кнопка "назад"
+    /**
+     * Кнопка "Назад"
+     */
+    private String mTextBack;
     private String mTextNoData;
 
     private Rect mRectWidth;
@@ -267,10 +285,12 @@ public class LeaderboardView extends BaseView {
         // отступ новой строки
         float gap = Dimensions.surfaceHeight * 0.05f;
 
+        // отрисовка таблицы
+        int overlayTextColor = Colors.getOverlayTextColor();
         for (int i = 0; i < mTableItems.size(); i++) {
             TableItem item = mTableItems.get(i);
 
-            mPaintTable.setColor(Colors.getOverlayTextColor());
+            mPaintTable.setColor(overlayTextColor);
             canvas.drawText(item.id, mTableGuides[0],
                     mTableMarginTop + gap * i, mPaintTable);
 

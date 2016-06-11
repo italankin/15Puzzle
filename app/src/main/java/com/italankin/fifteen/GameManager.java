@@ -2,6 +2,8 @@ package com.italankin.fifteen;
 
 import android.graphics.Canvas;
 
+import java.util.Locale;
+
 public class GameManager extends Thread {
 
     /**
@@ -55,7 +57,8 @@ public class GameManager extends Thread {
                 }
                 allTime += timeBuffer;
                 allFrames += frameBuffer;
-                info = String.format("%.1f / %.1f / %.1f", fps, min, allFrames / (allTime / 1000));
+                info = String.format(Locale.ROOT, "%.1f / %.1f / %.1f", fps, min,
+                        allFrames / (allTime / 1000));
                 frameBuffer = 0;
                 timeBuffer = 0;
             }

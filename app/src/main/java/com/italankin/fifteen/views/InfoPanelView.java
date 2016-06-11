@@ -15,16 +15,41 @@ import com.italankin.fifteen.Tools;
 
 public class InfoPanelView extends BaseView {
 
-    private Paint mPaintBg;                      // ... фон игрового поля
-    private Paint mPaintTextValue;                  // ... отображение текстов инфо
-    private Paint mPaintTextCaption;                // ... отображение заголовков инфо
+    /**
+     * фон игрового поля
+     */
+    private Paint mPaintBg;
+    /**
+     * отображение текстов инфо
+     */
+    private Paint mPaintTextValue;
+    /**
+     * отображение заголовков инфо
+     */
+    private Paint mPaintTextCaption;
 
-    private String mTextMode[];                     // режим игры
-    private String mTextMoves;                      // ходы
-    private String mTextTime;                       // время
+    /**
+     * режим игры
+     */
+    private String mTextMode[];
 
-    private RectF mRectInfo;                        // ... инфо
-    private RectF mRectMode;                        // режим игры
+    /**
+     * текущее количество ходов
+     */
+    private String mTextMoves;
+    /**
+     * текущее время
+     */
+    private String mTextTime;
+
+    /**
+     * панель инфо
+     */
+    private RectF mRectInfo;
+    /**
+     * область отображения режима игры
+     */
+    private RectF mRectMode;
 
     private int mValueTextOffset;
     private int mCaptionTextOffset;
@@ -47,7 +72,6 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.setTextSize(Dimensions.interfaceFontSize * 1.4f);
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
 
-        float height = (Dimensions.fieldMarginTop - Dimensions.topBarHeight) * 0.75f;
         mRectInfo = new RectF(0.0f, Dimensions.topBarHeight + Dimensions.infoBarHeight / 2,
                 Dimensions.surfaceWidth, Dimensions.fieldMarginTop - Dimensions.infoBarHeight / 2);
         mRectMode = new RectF(mRectInfo);

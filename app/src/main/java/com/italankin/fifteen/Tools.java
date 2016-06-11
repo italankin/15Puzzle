@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Tools {
 
@@ -38,7 +39,7 @@ public class Tools {
         long sec = (duration /= 1000) % 60;
         long min = (duration % 3600) / 60;
 
-        return String.format("%d:%02d.%d", min, sec, ms);
+        return String.format(Locale.US, "%d:%02d.%d", min, sec, ms);
     }
 
     /**
@@ -64,6 +65,9 @@ public class Tools {
      * @return константу направления
      */
     public static int direction(float dx, float dy) {
+        if (dx == 0 && dy == 0) {
+            return DIRECTION_DEFAULT;
+        }
         return (Math.abs(dx) > Math.abs(dy)) ? ((dx > 0) ?
                 DIRECTION_RIGHT : DIRECTION_LEFT) : ((dy > 0) ? DIRECTION_DOWN : DIRECTION_UP);
     }
@@ -84,7 +88,9 @@ public class Tools {
     }
 
     public static void log(String message) {
-        log(message, false);
+        if (BuildConfig.DEBUG) {
+            log(message, false);
+        }
     }
 
     public static void log(String message, boolean error) {

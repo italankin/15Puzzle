@@ -16,37 +16,109 @@ import com.italankin.fifteen.Settings;
  */
 public class SettingsView extends BaseView {
 
-    private Paint mPaintText;                       // заголовок элемента настроек
-    private Paint mPaintValue;                      // значение элемента настроек
-    private Paint mPaintControls;                   // кнопки управления (назад)
-    private Paint mPaintIcon;                       // для графического представления (например, цвет плиток)
+    /**
+     * заголовок элемента настроек
+     */
+    private Paint mPaintText;
+    /**
+     * значение элемента настроек
+     */
+    private Paint mPaintValue;
+    /**
+     * кнопки управления (назад)
+     */
+    private Paint mPaintControls;
+    /**
+     * для графического представления (например, цвет плиток)
+     */
+    private Paint mPaintIcon;
 
-    private String mTextWidth;                      // ширина поля
+    /**
+     * ширина поля
+     */
+    private String mTextWidth;
     private String mTextWidthValue;
-    private String mTextHeight;                     // высота поля
+    /**
+     * высота поля
+     */
+    private String mTextHeight;
     private String mTextHeightValue;
-    private String mTextBf;                         // hardmode
+    /**
+     * hardmode
+     */
+    private String mTextBf;
     private String mTextBfValue[];
-    private String mTextAnimations;                 // анимации
+    /**
+     * анимации
+     */
+    private String mTextAnimations;
     private String mTextAnimationsValue[];
-    private String mTextColor;                      // цвет плиток
-    private String mTextColorMode;                  // цвет фона
-    private String mTextColorModeValue[];           // цветовая тема
-    private String mTextMode;                       // режим игры
+    /**
+     * цвет плиток
+     */
+    private String mTextColor;
+    /**
+     * цвет фона
+     */
+    private String mTextColorMode;
+    /**
+     * цветовая тема
+     */
+    private String mTextColorModeValue[];
+    /**
+     * режим игры
+     */
+    private String mTextMode;
     private String mTextModeValue[];
-    private String mTextBack;                       // кнопка "назад"
-    private String mTextAbout;                      // кнопка "назад"
+    /**
+     * кнопка "назад"
+     */
+    private String mTextBack;
+    /**
+     * кнопка "назад"
+     */
+//    private String mTextAbout;
 
-    private RectF mRectWidth;                       // граница элемента настройки ширины
-    private RectF mRectHeight;                      // ... высоты
-    private RectF mRectBf;                          // ... "слепого" режима
-    private RectF mRectColor;                       // ... цвета
-    private RectF mRectColorMode;                   // ... цвета фона
-    private RectF mRectColorIcon;                   // ... визуальное представление цвета
-    private RectF mRectAnimations;                  // ... анимации
-    private RectF mRectMode;                        // ... режим игры
-    private RectF mRectBack;                        // ... "назад"
-    private RectF mRectAbout;                       // ... "about"
+    /**
+     * граница элемента настройки ширины
+     */
+    private RectF mRectWidth;
+    /**
+     * граница элемента высоты
+     */
+    private RectF mRectHeight;
+    /**
+     * граница элемента "слепого" режима
+     */
+    private RectF mRectBf;
+    /**
+     * граница элемента цвета
+     */
+    private RectF mRectColor;
+    /**
+     * граница элемента цвета фона
+     */
+    private RectF mRectColorMode;
+    /**
+     * граница элемента визуальное представление цвета
+     */
+    private RectF mRectColorIcon;
+    /**
+     * граница элемента анимации
+     */
+    private RectF mRectAnimations;
+    /**
+     * граница элемента режим игры
+     */
+    private RectF mRectMode;
+    /**
+     * граница элемента "назад"
+     */
+    private RectF mRectBack;
+    /**
+     * граница элемента "about"
+     */
+//    private RectF mRectAbout;
 
     private Callbacks mCallbacks;
 
@@ -89,7 +161,7 @@ public class SettingsView extends BaseView {
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
         mTextBack = res.getString(R.string.back);
-        mTextAbout = res.getString(R.string.about);
+//        mTextAbout = res.getString(R.string.about);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -127,12 +199,11 @@ public class SettingsView extends BaseView {
                 mRectColor.bottom + sp);
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
+//        mRectAbout = new RectF(0.0f, Dimensions.surfaceHeight - h,
+//                Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h + r.height());
+//        mRectAbout.inset(0, sp);
 
-        mRectAbout = new RectF(0.0f, Dimensions.surfaceHeight - h,
-                Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h + r.height());
-        mRectAbout.inset(0, sp);
-
-        mRectBack = new RectF(Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h,
+        mRectBack = new RectF(0, Dimensions.surfaceHeight - h,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
         mRectBack.inset(0, sp);
     }
@@ -292,8 +363,8 @@ public class SettingsView extends BaseView {
                 mRectBack.bottom - s, mPaintControls);
 
         // кнопка "о программе"
-        canvas.drawText(mTextAbout, mRectAbout.centerX(),
-                mRectAbout.bottom - s, mPaintControls);
+//        canvas.drawText(mTextAbout, mRectAbout.centerX(),
+//                mRectAbout.bottom - s, mPaintControls);
     }
 
     public void update() {

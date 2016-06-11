@@ -70,7 +70,7 @@ public class TopPanelView extends BaseView {
     public void onClick(float x, float y) {
         for (Button b : mButtons) {
             if (b.contains(x, y)) {
-                b.setOverlay(Settings.screenAnimFrames);
+                b.setOverlay(Settings.screenAnimDuration);
                 if (mCallbacks != null) {
                     mCallbacks.onTopPanelButtonClick(b.id);
                 }
@@ -80,7 +80,7 @@ public class TopPanelView extends BaseView {
 
     @Override
     public void draw(Canvas canvas, long elapsedTime) {
-        if(!mShow) {
+        if (!mShow) {
             return;
         }
 
@@ -89,7 +89,7 @@ public class TopPanelView extends BaseView {
         for (Button button : mButtons) {
             if (button.frame > 0) {
                 button.frame -= elapsedTime;
-                float a = (float) Tools.easeOut(button.frame, 0.0f, 1.0f, Settings.screenAnimFrames);
+                float a = (float) Tools.easeOut(button.frame, 0.0f, 1.0f, Settings.screenAnimDuration);
                 mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
                 canvas.drawRect(button.rect, mPaintOverlay);
             }

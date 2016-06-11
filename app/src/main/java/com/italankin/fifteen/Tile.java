@@ -1,11 +1,15 @@
 package com.italankin.fifteen;
 
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.animation.DecelerateInterpolator;
 
 public class Tile {
 
@@ -32,10 +36,6 @@ public class Tile {
     private RectF mRectShape;
 
     /**
-     * Отображаемое число на плитке
-     */
-    private int mData;
-    /**
      * Индекс плитки в общем массиве
      */
     private int mIndex;
@@ -48,10 +48,14 @@ public class Tile {
      */
     private float mCanvasY = 0.0f;
 
-    /**
-     * Объект для проведения анимаций
-     */
-    private Animation mAnimation = new Animation();
+    private ObjectAnimator mTranslateXAnimator;
+    private ObjectAnimator mTranslateYAnimator;
+    private ValueAnimator mScaleAnimator;
+    private float mTextScale = 1.0f;
+    private Path mDrawPath = new Path();
+
+    private Matrix mMatrix = new Matrix();
+    private String mDataText;
 
     public static void updatePaint() {
         if (sPaintText == null) {
@@ -77,8 +81,8 @@ public class Tile {
      * @param index  индекс в общем массиве
      */
     public Tile(int number, int index) {
-        this.mData = number;
-        this.mIndex = index;
+        mIndex = index;
+        mDataText = Integer.toString(number);
 
         updatePaint();
 
@@ -95,35 +99,28 @@ public class Tile {
                         mCanvasX + Dimensions.tileSize, mCanvasY + Dimensions.tileSize),
                 Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                 Path.Direction.CW);
+
+        mShape.computeBounds(mRectShape, false);
+        mDrawPath.set(mShape);
+
+        TimeInterpolator interpolator = new DecelerateInterpolator(1.5f);
+        mTranslateXAnimator = ObjectAnimator.ofFloat(this, "canvasX", 0, 0);
+        mTranslateXAnimator.setInterpolator(interpolator);
+        mTranslateYAnimator = ObjectAnimator.ofFloat(this, "canvasY", 0, 0);
+        mTranslateYAnimator.setInterpolator(interpolator);
+
+        mScaleAnimator = ObjectAnimator.ofFloat(this, "scale", 1, 1);
+        mScaleAnimator.setInterpolator(interpolator);
     } // constructor
 
-    public void draw(Canvas canvas, long elapsedTime) {
-
-        // задержка анимации
-        if (mAnimation.delay > 0) {
-            mAnimation.delay -= elapsedTime;
-            return;
-        }
-
-        mCanvasX = Dimensions.fieldMarginLeft +
-                (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
-        mCanvasY = Dimensions.fieldMarginTop +
-                (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
-
-        if (mAnimation.isPlaying()) {
-            mShape = mAnimation.getTransformPath(mShape, elapsedTime);
-        }
-
-        canvas.drawPath(mShape, sPaintPath);
+    public void draw(Canvas canvas) {
+        canvas.drawPath(mDrawPath, sPaintPath);
 
         if (!Game.isPaused()) {
-            mRectShape.inset(-Dimensions.spacing / 2.0f, -Dimensions.spacing / 2.0f);
-            String text = Integer.toString(mData);
-            mShape.computeBounds(mRectShape, true);
-            sPaintText.setTextSize(mAnimation.getScale() * Dimensions.tileFontSize);
-            sPaintText.getTextBounds(text, 0, text.length(), mRectBounds);
+            sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
+            sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
             if (!Settings.hardmode || Game.getMoves() == 0 || Game.isSolved()) {
-                canvas.drawText(text, mRectShape.centerX(),
+                canvas.drawText(mDataText, mRectShape.centerX(),
                         mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
         }
@@ -147,17 +144,39 @@ public class Tile {
         return mRectShape.contains(x, y);
     }
 
+    public void setCanvasX(float newX) {
+        float dx = newX - mCanvasX;
+        mShape.offset(dx, 0);
+        mCanvasX = newX;
+        updatePath();
+    }
+
+    public void setCanvasY(float newY) {
+        float dy = newY - mCanvasY;
+        mShape.offset(0, dy);
+        mCanvasY = newY;
+        updatePath();
+    }
+
+    public void setScale(float scale) {
+        mTextScale = scale;
+        updatePath();
+        mMatrix.reset();
+        mMatrix.setScale(scale, scale, mRectShape.centerX(), mRectShape.centerY());
+        mDrawPath.transform(mMatrix);
+    }
+
+    private void updatePath() {
+        mShape.computeBounds(mRectShape, false);
+        mDrawPath.set(mShape);
+    }
+
     /**
      * Вызывается при нажатии на спрайт на экране
      *
      * @return <b>true</b>, если
      */
     public boolean onClick() {
-        // при проигрывании анимации взаимодействовать со спрайтом нельзя
-        if (mAnimation.isPlaying()) {
-            return false;
-        }
-
         // получение текущих координат спрайта на поле
         int x = mIndex % Settings.gameWidth;
         int y = mIndex / Settings.gameWidth;
@@ -170,32 +189,27 @@ public class Tile {
         if (mIndex != newIndex) {
             mIndex = newIndex;
 
+            float newX = Dimensions.fieldMarginLeft +
+                    (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+            float newY = Dimensions.fieldMarginTop +
+                    (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
+
             if (Settings.animations) {
-                // получение новых координат
-                x = mIndex % Settings.gameWidth;
-                y = mIndex / Settings.gameWidth;
+                // задание значений анимации
+                mTranslateXAnimator.setFloatValues(mCanvasX, newX);
+                mTranslateYAnimator.setFloatValues(mCanvasY, newY);
 
-                // расчет величины перемещения по осям
-                mAnimation.dx = Dimensions.fieldMarginLeft +
-                        (Dimensions.tileSize + Dimensions.spacing) * x - mCanvasX;
-                mAnimation.dy = Dimensions.fieldMarginTop +
-                        (Dimensions.tileSize + Dimensions.spacing) * y - mCanvasY;
+                // задание длительности
+                mTranslateXAnimator.setDuration(Settings.tileAnimDuration);
+                mTranslateYAnimator.setDuration(Settings.tileAnimDuration);
 
-                mAnimation.type = Animation.TRANSLATE;
-                mAnimation.frames = Settings.tileAnimFrames;
+                // старт анимации
+                mTranslateXAnimator.start();
+                mTranslateYAnimator.start();
             } else {
-                mCanvasX = Dimensions.fieldMarginLeft +
-                        (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
-                mCanvasY = Dimensions.fieldMarginTop +
-                        (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
-
-                mShape.reset();
-                mShape.addRoundRect(
-                        new RectF(mCanvasX, mCanvasY,
-                                mCanvasX + Dimensions.tileSize,
-                                mCanvasY + Dimensions.tileSize),
-                        Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
-                        Path.Direction.CW);
+                // обновление позиции плитки
+                setCanvasX(newX);
+                setCanvasY(newY);
             } // if animations
 
             return true;
@@ -205,138 +219,65 @@ public class Tile {
         return false;
     }
 
-    /**
-     * Устанавливает анимацию для спрайта
-     *
-     * @param type  тип анимации
-     * @param delay задержка отображения анимации
-     */
-    public void setAnimation(int type, int delay) {
-        if (Settings.animations) {
-            mAnimation.delay = delay;
-            mAnimation.type = type;
-            mAnimation.frames = Settings.tileAnimFrames;
-        }
+    public void animateAppearance(int delay) {
+        setScale(0);
+        mScaleAnimator.setDuration(Settings.tileAnimDuration);
+        mScaleAnimator.setFloatValues(0, 1);
+        mScaleAnimator.setStartDelay(delay);
+        mScaleAnimator.start();
     }
 
-    /**
-     * Внутренний класс для управления анимацией
-     */
-    public class Animation {
+    ///////////////////////////////////////////////////////////////////////////
+    // Workaround бага в 6м Андроиде
+    // Аниматоры пытаются сослаться/обновить состояние для мертвого объекта
+    ///////////////////////////////////////////////////////////////////////////
 
-        public static final int STATIC = 0;
-        public static final int SCALE = 1;
-        public static final int TRANSLATE = 2;
-
-        /**
-         * Тип анимации ({@link #STATIC}, {@link #SCALE}, {@link #TRANSLATE})
-         */
-        public int type;
-        /**
-         * Оставшееся кол-во кадров анимации
-         */
-        public long frames;
-        /**
-         * Задержка анимации (в кадрах)
-         */
-        public int delay;
-        /**
-         * Перемещение по x
-         */
-        public float dx;
-        /**
-         * Перемещение по y
-         */
-        public float dy;
-
-        private float lastTx = 0;
-        private float lastTy = 0;
-
-        public Animation() {
-            this.type = STATIC;
-            this.frames = 0;
-            this.delay = 0;
+    private final static Tile NO_OP_TILE = new Tile(0, 0) {
+        @Override
+        public void setCanvasX(float newX) {
         }
 
-        /**
-         * Производит преобразование фигуры исходя из выбранного типа анимации
-         *
-         * @return трансформированный {@link Path}
-         */
-        public Path getTransformPath(Path p, long time) {
-            float ds, ds2, tx, ty;
-            Matrix m;
-
-            switch (type) {
-                case SCALE:
-                    m = new Matrix();
-                    ds = (float) Tools.easeOut(frames, 0.0f, 1.0f, Settings.tileAnimFrames);
-                    tx = (1 - ds) * (mCanvasX + Dimensions.tileSize / 2.0f);
-                    ty = (1 - ds) * (mCanvasY + Dimensions.tileSize / 2.0f);
-                    m.postScale(ds, ds);
-                    m.postTranslate(tx, ty);
-                    p.reset();
-                    p.addRoundRect(
-                            new RectF(mCanvasX, mCanvasY,
-                                    mCanvasX + Dimensions.tileSize, mCanvasY + Dimensions.tileSize),
-                            Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
-                            Path.Direction.CW);
-                    p.transform(m);
-                    break; // SCALE
-
-                case TRANSLATE:
-                    m = new Matrix();
-                    if (frames < time) {
-                        frames = 0;
-                    }
-                    ds = (float) Tools.easeOut(frames, 0, 1.0f, Settings.tileAnimFrames);
-                    tx = ds * dx - lastTx;
-                    ty = ds * dy - lastTy;
-                    lastTx = ds * dx;
-                    lastTy = ds * dy;
-                    m.postTranslate(tx, ty);
-                    p.transform(m);
-                    break; // TRANSLATE
-
-            } // switch
-
-            if (frames > 0) {
-                frames -= time;
-            } else {
-                type = STATIC;
-                lastTx = 0;
-                lastTy = 0;
-                p.reset();
-                p.addRoundRect(
-                        new RectF(mCanvasX, mCanvasY,
-                                mCanvasX + Dimensions.tileSize, mCanvasY + Dimensions.tileSize),
-                        Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
-                        Path.Direction.CW);
-            }
-
-            return p;
-        } // getTransformPath
-
-        /**
-         * Функция для определения текущего значения масштаба (только для {@link #SCALE})
-         *
-         * @return текущее значение масштаба
-         */
-        public float getScale() {
-            if (isPlaying() && type == SCALE) {
-                return (float) Tools.easeOut(frames, 0.0f, 1.0f, Settings.tileAnimFrames);
-            } else {
-                return 1.0f;
-            }
+        @Override
+        public void draw(Canvas canvas) {
         }
 
-        /**
-         * @return <b>true</b>, если оставшееся кол-во кадров > 0
-         */
-        public boolean isPlaying() {
-            return frames > 0;
+        @Override
+        public int getIndex() {
+            return -1;
         }
 
-    } // Animation
+        @Override
+        public boolean at(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public void setCanvasY(float newY) {
+        }
+
+        @Override
+        public void setScale(float scale) {
+        }
+
+        @Override
+        public boolean onClick() {
+            return false;
+        }
+
+        @Override
+        public void animateAppearance(int delay) {
+        }
+    };
+
+    public void recycle() {
+        mTranslateXAnimator.setTarget(NO_OP_TILE);
+        mTranslateXAnimator.cancel();
+
+        mTranslateYAnimator.setTarget(NO_OP_TILE);
+        mTranslateYAnimator.cancel();
+
+        mScaleAnimator.setTarget(NO_OP_TILE);
+        mScaleAnimator.cancel();
+    }
 
 }

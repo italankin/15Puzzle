@@ -1,15 +1,16 @@
 package com.italankin.fifteen.views;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.animation.DecelerateInterpolator;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Settings;
-import com.italankin.fifteen.Tools;
 
 /**
  * Вспомогательный класс для отображения оверлеев
@@ -22,8 +23,10 @@ public class FieldOverlay extends BaseView {
     private Rect mRectBounds;                       // рассчет границ текста
 
     private String mCaption;                        // отображаемый текст
-    private long mAnimFrames = 0;                    // кол-во кадров анимации
     private RectF mRectField;                        // границы игрового поля
+
+    private ObjectAnimator mAlphaAnimator;
+    private float mAlpha = 1;
 
     /**
      * @param s текст надписи на оверлее
@@ -44,18 +47,42 @@ public class FieldOverlay extends BaseView {
 
         mRectBounds = new Rect();
         mPaintText.getTextBounds(mCaption, 0, mCaption.length(), mRectBounds);
+
+        mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
+        mAlphaAnimator.setInterpolator(new DecelerateInterpolator(2));
     }
 
     @Override
     public boolean show() {
         if (Settings.animations) {
-            mAnimFrames = Settings.screenAnimFrames;
+            mAlphaAnimator.setDuration(Settings.screenAnimDuration);
+            mAlphaAnimator.start();
         }
         return (mShow = true);
     }
 
+    /**
+     * Устанавливает видимость элемента.
+     *
+     * @param visible видимость элемента
+     */
     public void setVisible(boolean visible) {
         mShow = visible;
+    }
+
+    /**
+     * Устанавливает прозрачность элемента. Используется для анимации.
+     *
+     * @param alpha значение прозрачности в интервале [0, 1]
+     */
+    public void setAlpha(float alpha) {
+        mAlpha = alpha;
+    }
+
+    @Override
+    public boolean hide() {
+        mAlphaAnimator.cancel();
+        return super.hide();
     }
 
     @Override
@@ -63,18 +90,8 @@ public class FieldOverlay extends BaseView {
         if (!mShow) {
             return;
         }
-
-        double alpha = 1;
-        if (mAnimFrames > 0) {
-            mAnimFrames -= elapsedTime;
-            if (mAnimFrames < 0) {
-                mAnimFrames = 0;
-            } else {
-                alpha = Tools.easeOut(mAnimFrames, 0.0f, 1.0f, Settings.screenAnimFrames);
-            }
-        }
-        mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * alpha));
-        mPaintText.setAlpha((int) (255 * alpha));
+        mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * mAlpha));
+        mPaintText.setAlpha((int) (255 * mAlpha));
 
         canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                 mPaintBg);

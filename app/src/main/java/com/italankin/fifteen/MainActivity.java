@@ -26,9 +26,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onPause() {
+        super.onPause();
         Settings.save();
         mGameView.onPause();
-        super.onPause();
     }
 
     @Override

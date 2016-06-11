@@ -60,10 +60,11 @@ public class FieldView extends BaseView {
             // вычисляем индексы ячеек, которые нам нужно переместить
             ArrayList<Integer> numbersToMove = Game.getSlidingElements(direction, startIndex);
             // перемещаем выбранные ячейки, если таковые есть
-            for (int i : numbersToMove) {
-                for (Tile s : mData) {
-                    if (s.getIndex() == i) {
-                        s.onClick();
+            for (int i = 0, s = numbersToMove.size(); i < s; i++) {
+                int num = numbersToMove.get(i);
+                for (Tile t : mData) {
+                    if (t.getIndex() == num) {
+                        t.onClick();
                     }
                 }
             }
@@ -95,14 +96,17 @@ public class FieldView extends BaseView {
      */
     @Override
     public void draw(Canvas canvas, long elapsedTime) {
-        canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
-                mPaintField);
+        canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius,
+                Dimensions.tileCornerRadius, mPaintField);
         for (int i = 0; i < mData.size(); i++) {
-            mData.get(i).draw(canvas, elapsedTime);
+            mData.get(i).draw(canvas);
         }
     }
 
     public void clear() {
+        for (Tile tile : mData) {
+            tile.recycle();
+        }
         mData.clear();
     }
 

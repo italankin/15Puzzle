@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
@@ -23,8 +22,6 @@ import com.italankin.fifteen.views.TopPanelView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, SurfaceHolder.Callback,
         InfoPanelView.Callbacks {
@@ -89,15 +86,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Координата y начальной точки жеста
      */
     private int mStartY;
-
-    /**
-     * Таймер для отслеживания затраченного времени
-     */
-    public Timer gameClock;
-    /**
-     * Интервал срабатывания таймера (мс)
-     */
-    public static final int TIME_CLOCK = 100;
+    private int sAnim = 0;
 
     /**
      * Конструктор по умолчанию
@@ -139,15 +128,13 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             updateViews();
         });
         mLeaderboard = new LeaderboardView(dbHelper, getResources());
-        mLeaderboard.addCallback(this::updateViews);
+        mLeaderboard.addCallback(() -> {
+            updateViews();
+        });
         mSolvedOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_win));
         mPauseOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_pause));
 
         Game.addCallback(() -> {
-            if (gameClock != null) {
-                gameClock.cancel();
-                gameClock = null;
-            }
             mSolvedOverlay.show();
             dbHelper.insert(
                     Settings.gameMode,
@@ -295,10 +282,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      */
     public void onPause() {
         mGameLoopThread.setRunning(false);
-        if (gameClock != null) {
-            gameClock.cancel();
-            gameClock = null;
-        }
     }
 
     /**
@@ -307,22 +290,29 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     public void draw(Canvas canvas, long elapsed, String fps) {
         super.draw(canvas);
 
+        boolean paused = Game.isPaused();
+        boolean solved = Game.isSolved();
+
+        if (!paused && !solved) {
+            Game.incTime(elapsed);
+        }
+
         canvas.drawColor(Colors.getBackgroundColor());
 
         mTopPanel.draw(canvas, elapsed);
         mInfoPanel.draw(canvas, elapsed);
         mField.draw(canvas, elapsed);
 
-        if (Game.isSolved() && mSolvedOverlay.isShown() && !mSettings.isShown()) {
-            mSolvedOverlay.draw(canvas, elapsed);                 // оверлей "solved"
+        if (solved && mSolvedOverlay.isShown() && !mSettings.isShown()) {
+            mSolvedOverlay.draw(canvas, elapsed);
         }
 
         if (mLeaderboard.isShown()) {
             mLeaderboard.draw(canvas, elapsed);
         } else if (mSettings.isShown()) {
-            mSettings.draw(canvas, elapsed);                      // экран настроек
-        } else if (Game.isPaused() && !Game.isSolved() && mPauseOverlay.isShown()) {
-            mPauseOverlay.draw(canvas, elapsed);                  // оверлей "paused"
+            mSettings.draw(canvas, elapsed);
+        } else if (paused && !solved && mPauseOverlay.isShown()) {
+            mPauseOverlay.draw(canvas, elapsed);
         }
 
         mFpsPaint.setColor(Color.RED);
@@ -337,7 +327,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mSettings.update();
         mPauseOverlay.update();
         mSolvedOverlay.update();
-        mFpsPaint.setColor(Settings.tileColor);
     }
 
     /**
@@ -366,10 +355,11 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             editor.remove(Settings.KEY_GAME_ARRAY);
             editor.remove(Settings.KEY_GAME_MOVES);
             editor.remove(Settings.KEY_GAME_TIME);
-            editor.commit();
+            editor.apply();
 
             if (Game.getMoves() > 0) {
                 Game.setPaused(true);
+                mPauseOverlay.show();
             }
 
         }
@@ -386,9 +376,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
         Random rnd = new Random();
         int size = Game.getSize();                      // размер
-        int animationType = rnd.nextInt(10);            // тип анимации
+        int animationType = ++sAnim % 10;            // тип анимации
         int shift = size / 26 + 1;                      // коэффициент смещения анимации (группировка)
-        int delay;                                  // задержка появляения
+        int delay;                                      // задержка появляения
         for (int index = 0; index < size; index++) {
             int number = Game.getAt(index);
             if (number > 0) {
@@ -417,51 +407,34 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                             break;
                         case 6:
                             // по строкам
-                            delay = index / Settings.gameWidth * 5; // 5 - задержка в кадрах между группами
+                            // 5 - задержка в кадрах между группами
+                            delay = index / Settings.gameWidth * 5;
                             break;
                         case 7:
                             // по столбцам
+                            // 5 - задержка в кадрах между группами
                             delay = index % Settings.gameWidth * 5;
                             break;
                         case 8:
                             // по строкам в обратном порядке
+                            // 5 - задержка в кадрах между группами
                             delay = (Settings.gameHeight - index / Settings.gameWidth) * 5;
                             break;
                         case 9:
                             // по столбцам в обратном порядке
+                            // 5 - задержка в кадрах между группами
                             delay = (Settings.gameWidth - index % Settings.gameWidth) * 5;
                             break;
                         default:
                             // все вместе
                             delay = 0;
                     }
-                    t.setAnimation(Tile.Animation.SCALE, delay);
+                    t.animateAppearance(delay * Settings.TILE_ANIM_FRAME_MULTIPLIER);
+                    //t.setAnimation(Tile.Animation.SCALE, delay);
                 }
                 mField.addTile(t);
             }
         }
-
-        if (gameClock != null) {
-            gameClock.cancel();
-            gameClock = null;
-        }
-
-        gameClock = new Timer();
-        GameClock gameClockTask = new GameClock();
-
-        gameClock.schedule(gameClockTask, TIME_CLOCK, TIME_CLOCK);
-
     } // END createNewGame
-
-    // TimerTask для таймера
-    class GameClock extends TimerTask {
-
-        @Override
-        public void run() {
-            if (!Game.isPaused() && !Game.isSolved()) {
-                Game.incTime(TIME_CLOCK);
-            }
-        }
-    }
 
 }

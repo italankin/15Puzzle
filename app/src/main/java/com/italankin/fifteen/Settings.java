@@ -11,6 +11,7 @@ public class Settings {
     public static final int MAX_GAME_HEIGHT = 8;
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
+    public static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
 
     public static final String KEY_GAME_WIDTH = "puzzle_width";
     public static final String KEY_GAME_HEIGHT = "puzzle_height";
@@ -50,13 +51,13 @@ public class Settings {
      */
     public static boolean antiAlias = true;
     /**
-     * количество кадров для анимирования плиток
+     * длительность анимации плиток
      */
-    public static long tileAnimFrames = 500;
+    public static long tileAnimDuration = 300;
     /**
      * кол-во кадров для анимирования элементов интерфейса
      */
-    public static long screenAnimFrames = 300;
+    public static long screenAnimDuration = 300;
     /**
      * цвет плиток
      */
@@ -118,7 +119,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
-        editor.commit();
+        editor.apply();
     }
 
 }
