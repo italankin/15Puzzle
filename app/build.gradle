@@ -27,7 +27,7 @@ android {
         }
         release {
             Properties propsRelease = new Properties()
-            File propsFileRelease = new File('./app/keystore-release/release.properties');
+            File propsFileRelease = new File('app/keystore-release/release.properties');
             if (propsFileRelease.exists()) {
                 propsRelease.load(new FileInputStream(propsFileRelease))
 
@@ -39,13 +39,17 @@ android {
         }
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
             debuggable false
-            minifyEnabled true
+            signingConfig signingConfigs.release
         }
     }
 
