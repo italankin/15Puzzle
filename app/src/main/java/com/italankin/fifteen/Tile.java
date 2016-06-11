@@ -196,6 +196,13 @@ public class Tile {
 
             if (Settings.animations) {
                 // задание значений анимации
+                if (mTranslateXAnimator.isRunning()) {
+                    mTranslateXAnimator.cancel();
+                }
+                if (mTranslateYAnimator.isRunning()) {
+                    mTranslateYAnimator.cancel();
+                }
+
                 mTranslateXAnimator.setFloatValues(mCanvasX, newX);
                 mTranslateYAnimator.setFloatValues(mCanvasY, newY);
 
@@ -221,6 +228,9 @@ public class Tile {
 
     public void animateAppearance(int delay) {
         setScale(0);
+        if (mScaleAnimator.isRunning()) {
+            mScaleAnimator.cancel();
+        }
         mScaleAnimator.setDuration(Settings.tileAnimDuration);
         mScaleAnimator.setFloatValues(0, 1);
         mScaleAnimator.setStartDelay(delay);
