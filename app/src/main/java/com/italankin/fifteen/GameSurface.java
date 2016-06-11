@@ -76,7 +76,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      */
     private RectF mRectField = new RectF();
 
-    private Paint mFpsPaint;
+    private Paint mDebugPaint;
 
     /**
      * Координата x начальной точки жеста
@@ -151,11 +151,11 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             Tools.log("surfaceCreated: " + e.toString());
         }
 
-        mFpsPaint = new Paint();
-        mFpsPaint.setTypeface(Settings.typeface);
-        mFpsPaint.setTextSize(Dimensions.interfaceFontSize * .75f);
-        mFpsPaint.setTextAlign(Paint.Align.LEFT);
-        mFpsPaint.setColor(Settings.tileColor);
+        mDebugPaint = new Paint();
+        mDebugPaint.setTypeface(Settings.typeface);
+        mDebugPaint.setTextSize(Dimensions.interfaceFontSize * .75f);
+        mDebugPaint.setTextAlign(Paint.Align.LEFT);
+        mDebugPaint.setColor(Color.RED);
 
         updateViews();
 
@@ -287,7 +287,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     /**
      * Рендер изображения
      */
-    public void draw(Canvas canvas, long elapsed, String fps) {
+    public void draw(Canvas canvas, long elapsed, String info) {
         super.draw(canvas);
 
         boolean paused = Game.isPaused();
@@ -315,8 +315,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             mPauseOverlay.draw(canvas, elapsed);
         }
 
-        mFpsPaint.setColor(Color.RED);
-        canvas.drawText(fps, 0, Dimensions.surfaceHeight, mFpsPaint);
+        if (info != null) {
+            canvas.drawText(info, 0, Dimensions.surfaceHeight, mDebugPaint);
+        }
     }
 
     public void updateViews() {
