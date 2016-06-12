@@ -6,3 +6,7 @@ Simple Android sliding puzzle game. Supports 2 game modes and custom puzzle size
 ![Screen 3](/art/3.jpg)
 ![Screen 4](/art/4.jpg)
 ![Screen 5](/art/5.jpg)
+
+# Download
+
+[Google Play](https://play.google.com/store/apps/details?id=com.italankin.fifteen)
