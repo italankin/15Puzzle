@@ -192,14 +192,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             case MotionEvent.ACTION_DOWN:
                 mStartX = x;
                 mStartY = y;
-                if (!mSettings.isShown() && !mLeaderboard.isShown()) {
-                    if (Game.isSolved() && mRectField.contains(x, y)) {
-                        createNewGame(true);
-                    } else {
-                        mTopPanel.onClick(x, y);
-                        mInfoPanel.onClick(x, y);
-                    }
-                }
                 break; // ACTION_DOWN
 
             case MotionEvent.ACTION_UP:
@@ -209,9 +201,13 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 if (mLeaderboard.isShown()) {
                     mLeaderboard.onClick(mStartX, mStartY, dx);
                     return true;
-                }
-                if (mSettings.isShown()) {
+                } else if (mSettings.isShown()) {
                     mSettings.onClick(mStartX, mStartY, dx);
+                    return true;
+                } else if (Game.isSolved() && mRectField.contains(x, y)) {
+                    createNewGame(true);
+                    return true;
+                } else if (mTopPanel.onClick(x, y) || mInfoPanel.onClick(x, y)) {
                     return true;
                 }
 

@@ -121,12 +121,14 @@ public class InfoPanelView extends BaseView {
                 Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
     }
 
-    public void onClick(float x, float y) {
+    public boolean onClick(float x, float y) {
         if (mRectMode.contains(x, y)) {
             if (mCallbacks != null) {
                 mCallbacks.onModeClick();
             }
+            return true;
         }
+        return false;
     }
 
     @Override

@@ -67,15 +67,17 @@ public class TopPanelView extends BaseView {
      * @param x координата x нажатия
      * @param y координата y нажатия
      */
-    public void onClick(float x, float y) {
+    public boolean onClick(float x, float y) {
         for (Button b : mButtons) {
             if (b.contains(x, y)) {
                 b.setOverlay(Settings.screenAnimDuration);
                 if (mCallbacks != null) {
                     mCallbacks.onTopPanelButtonClick(b.id);
                 }
+                return true;
             }
         }
+        return false;
     }
 
     @Override
