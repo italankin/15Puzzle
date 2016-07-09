@@ -116,7 +116,7 @@ public class Tile {
     public void draw(Canvas canvas) {
         canvas.drawPath(mDrawPath, sPaintPath);
 
-        if (!Game.isPaused()) {
+        if (!Game.isPaused() && mTextScale > 0) {
             sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
             sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
             if (!Settings.hardmode || Game.getMoves() == 0 || Game.isSolved()) {
