@@ -98,16 +98,24 @@ public class FieldView extends BaseView {
     public void draw(Canvas canvas, long elapsedTime) {
         canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius,
                 Dimensions.tileCornerRadius, mPaintField);
-        for (int i = 0; i < mData.size(); i++) {
-            mData.get(i).draw(canvas);
+        ArrayList<Tile> tiles;
+        synchronized (this) {
+            tiles = new ArrayList<>(mData);
+        }
+        for (Tile tile : tiles) {
+            tile.draw(canvas, elapsedTime);
         }
     }
 
     public void clear() {
-        for (Tile tile : mData) {
+        ArrayList<Tile> list;
+        synchronized (this) {
+            list = new ArrayList<>(mData);
+            mData.clear();
+        }
+        for (Tile tile : list) {
             tile.recycle();
         }
-        mData.clear();
     }
 
     @Override

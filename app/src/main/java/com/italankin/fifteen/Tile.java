@@ -1,8 +1,6 @@
 package com.italankin.fifteen;
 
-import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -10,6 +8,10 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.animation.DecelerateInterpolator;
+
+import com.italankin.fifteen.anim.TileScaleAnimator;
+import com.italankin.fifteen.anim.TileXAnimator;
+import com.italankin.fifteen.anim.TileYAnimator;
 
 public class Tile {
 
@@ -48,14 +50,16 @@ public class Tile {
      */
     private float mCanvasY = 0.0f;
 
-    private ObjectAnimator mTranslateXAnimator;
-    private ObjectAnimator mTranslateYAnimator;
-    private ValueAnimator mScaleAnimator;
+    private TileXAnimator mTileXAnimator;
+    private TileYAnimator mTileYAnimator;
+    private TileScaleAnimator mTileScaleAnimator;
     private float mTextScale = 1.0f;
     private Path mDrawPath = new Path();
 
     private Matrix mMatrix = new Matrix();
     private String mDataText;
+
+    private boolean recycled = false;
 
     public static void updatePaint() {
         if (sPaintText == null) {
@@ -104,16 +108,34 @@ public class Tile {
         mDrawPath.set(mShape);
 
         TimeInterpolator interpolator = new DecelerateInterpolator(1.5f);
-        mTranslateXAnimator = ObjectAnimator.ofFloat(this, "canvasX", 0, 0);
-        mTranslateXAnimator.setInterpolator(interpolator);
-        mTranslateYAnimator = ObjectAnimator.ofFloat(this, "canvasY", 0, 0);
-        mTranslateYAnimator.setInterpolator(interpolator);
+        mTileXAnimator = new TileXAnimator(this);
+        mTileXAnimator.setInterpolator(interpolator);
+        mTileYAnimator = new TileYAnimator(this);
+        mTileYAnimator.setInterpolator(interpolator);
 
-        mScaleAnimator = ObjectAnimator.ofFloat(this, "scale", 1, 1);
-        mScaleAnimator.setInterpolator(interpolator);
+        mTileScaleAnimator = new TileScaleAnimator(this);
+        mTileScaleAnimator.setInterpolator(interpolator);
     } // constructor
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, long elapsedTime) {
+        if (recycled) {
+            return;
+        }
+
+        if (mTileXAnimator.isRunning()) {
+            mTileXAnimator.nextFrame(elapsedTime);
+        }
+        if (mTileYAnimator.isRunning()) {
+            mTileYAnimator.nextFrame(elapsedTime);
+        }
+        if (mTileScaleAnimator.isRunning()) {
+            mTileScaleAnimator.nextFrame(elapsedTime);
+        }
+
+        if (mDrawPath == null) {
+            return;
+        }
+
         canvas.drawPath(mDrawPath, sPaintPath);
 
         if (!Game.isPaused() && mTextScale > 0) {
@@ -145,6 +167,10 @@ public class Tile {
     }
 
     public void setCanvasX(float newX) {
+        if (recycled) {
+            return;
+        }
+
         float dx = newX - mCanvasX;
         mShape.offset(dx, 0);
         mCanvasX = newX;
@@ -152,6 +178,10 @@ public class Tile {
     }
 
     public void setCanvasY(float newY) {
+        if (recycled) {
+            return;
+        }
+
         float dy = newY - mCanvasY;
         mShape.offset(0, dy);
         mCanvasY = newY;
@@ -159,6 +189,10 @@ public class Tile {
     }
 
     public void setScale(float scale) {
+        if (recycled) {
+            return;
+        }
+
         mTextScale = scale;
         updatePath();
         mMatrix.reset();
@@ -177,6 +211,10 @@ public class Tile {
      * @return <b>true</b>, если
      */
     public boolean onClick() {
+        if (recycled) {
+            return false;
+        }
+
         // получение текущих координат спрайта на поле
         int x = mIndex % Settings.gameWidth;
         int y = mIndex / Settings.gameWidth;
@@ -196,23 +234,23 @@ public class Tile {
 
             if (Settings.animations) {
                 // задание значений анимации
-                if (mTranslateXAnimator.isRunning()) {
-                    mTranslateXAnimator.cancel();
+                if (mTileXAnimator.isRunning()) {
+                    mTileXAnimator.cancel();
                 }
-                if (mTranslateYAnimator.isRunning()) {
-                    mTranslateYAnimator.cancel();
+                if (mTileYAnimator.isRunning()) {
+                    mTileYAnimator.cancel();
                 }
 
-                mTranslateXAnimator.setFloatValues(mCanvasX, newX);
-                mTranslateYAnimator.setFloatValues(mCanvasY, newY);
+                mTileXAnimator.setValues(mCanvasX, newX);
+                mTileYAnimator.setValues(mCanvasY, newY);
 
                 // задание длительности
-                mTranslateXAnimator.setDuration(Settings.tileAnimDuration);
-                mTranslateYAnimator.setDuration(Settings.tileAnimDuration);
+                mTileXAnimator.setDuration(Settings.tileAnimDuration);
+                mTileYAnimator.setDuration(Settings.tileAnimDuration);
 
                 // старт анимации
-                mTranslateXAnimator.start();
-                mTranslateYAnimator.start();
+                mTileXAnimator.start();
+                mTileYAnimator.start();
             } else {
                 // обновление позиции плитки
                 setCanvasX(newX);
@@ -227,67 +265,25 @@ public class Tile {
     }
 
     public void animateAppearance(int delay) {
-        setScale(0);
-        if (mScaleAnimator.isRunning()) {
-            mScaleAnimator.cancel();
+        if (recycled) {
+            return;
         }
-        mScaleAnimator.setDuration(Settings.tileAnimDuration);
-        mScaleAnimator.setFloatValues(0, 1);
-        mScaleAnimator.setStartDelay(delay);
-        mScaleAnimator.start();
+
+        setScale(0);
+        if (mTileScaleAnimator.isRunning()) {
+            mTileScaleAnimator.cancel();
+        }
+        mTileScaleAnimator.setDuration(Settings.tileAnimDuration);
+        mTileScaleAnimator.setValues(0, 1);
+        mTileScaleAnimator.setStartDelay(delay);
+        mTileScaleAnimator.start();
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Workaround бага в 6м Андроиде
-    // Аниматоры пытаются сослаться/обновить состояние для мертвого объекта
-    ///////////////////////////////////////////////////////////////////////////
-
-    private final static Tile NO_OP_TILE = new Tile(0, 0) {
-        @Override
-        public void setCanvasX(float newX) {
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-        }
-
-        @Override
-        public int getIndex() {
-            return -1;
-        }
-
-        @Override
-        public boolean at(float x, float y) {
-            return false;
-        }
-
-        @Override
-        public void setCanvasY(float newY) {
-        }
-
-        @Override
-        public void setScale(float scale) {
-        }
-
-        @Override
-        public boolean onClick() {
-            return false;
-        }
-
-        @Override
-        public void animateAppearance(int delay) {
-        }
-    };
-
     public void recycle() {
-        mTranslateXAnimator.setTarget(NO_OP_TILE);
-        mTranslateXAnimator.cancel();
-
-        mTranslateYAnimator.setTarget(NO_OP_TILE);
-        mTranslateYAnimator.cancel();
-
-        mScaleAnimator.setTarget(NO_OP_TILE);
-        mScaleAnimator.cancel();
+        recycled = true;
+        mTileXAnimator.cancel();
+        mTileYAnimator.cancel();
+        mTileScaleAnimator.cancel();
     }
 
 }
