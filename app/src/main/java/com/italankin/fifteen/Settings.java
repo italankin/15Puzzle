@@ -84,8 +84,14 @@ public class Settings {
      * Чтение настроек приложения
      */
     public static void load() {
-        gameWidth = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
-        gameHeight = prefs.getInt(KEY_GAME_HEIGHT, gameHeight);
+        int w = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
+        if (w >= Settings.MIN_GAME_WIDTH && w < Settings.MAX_GAME_WIDTH) {
+            gameWidth = w;
+        }
+        int h = prefs.getInt(KEY_GAME_WIDTH, gameHeight);
+        if (w >= Settings.MIN_GAME_HEIGHT && w < Settings.MAX_GAME_HEIGHT) {
+            gameHeight = h;
+        }
         saveGame = prefs.getBoolean(KEY_GAME_SAVE, saveGame);
         tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, tileColor);
         colorMode = prefs.getInt(KEY_GAME_BG_COLOR, colorMode);
