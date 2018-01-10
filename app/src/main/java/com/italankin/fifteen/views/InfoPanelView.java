@@ -46,15 +46,9 @@ public class InfoPanelView extends BaseView {
      * панель инфо
      */
     private RectF mRectInfo;
-    /**
-     * область отображения режима игры
-     */
-    private RectF mRectMode;
 
     private int mValueTextOffset;
     private int mCaptionTextOffset;
-
-    private Callbacks mCallbacks;
 
     public InfoPanelView(Resources res) {
         mPaintBg = new Paint();
@@ -74,8 +68,6 @@ public class InfoPanelView extends BaseView {
 
         mRectInfo = new RectF(0.0f, Dimensions.topBarHeight + Dimensions.infoBarHeight / 2,
                 Dimensions.surfaceWidth, Dimensions.fieldMarginTop - Dimensions.infoBarHeight / 2);
-        mRectMode = new RectF(mRectInfo);
-        mRectMode.right = Dimensions.surfaceWidth * 0.5f;
 
         Rect r = new Rect();
         mPaintTextValue.getTextBounds("A", 0, 1, r);
@@ -122,12 +114,6 @@ public class InfoPanelView extends BaseView {
     }
 
     public boolean onClick(float x, float y) {
-        if (mRectMode.contains(x, y)) {
-            if (mCallbacks != null) {
-                mCallbacks.onModeClick();
-            }
-            return true;
-        }
         return false;
     }
 
@@ -135,13 +121,5 @@ public class InfoPanelView extends BaseView {
     public void update() {
         mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintBg.setColor(Colors.backgroundField);
-    }
-
-    public void addCallback(Callbacks callbacks) {
-        mCallbacks = callbacks;
-    }
-
-    public interface Callbacks {
-        void onModeClick();
     }
 }

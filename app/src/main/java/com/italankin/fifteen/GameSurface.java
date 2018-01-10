@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, SurfaceHolder.Callback,
-        InfoPanelView.Callbacks {
+public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, SurfaceHolder.Callback {
 
     private static final int BTN_NEW = 0;
     private static final int BTN_SETTINGS = 1;
@@ -116,7 +115,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mTopPanel.addCallback(this);
 
         mInfoPanel = new InfoPanelView(mResources);
-        mInfoPanel.addCallback(this);
 
         mField = new FieldView(mRectField);
 
@@ -257,13 +255,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onModeClick() {
-        Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
-        Settings.save();
-        createNewGame(true);
     }
 
     /**
