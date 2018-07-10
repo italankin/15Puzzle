@@ -1,44 +1,31 @@
 package com.italankin.fifteen;
 
 import android.graphics.Canvas;
+import android.view.SurfaceHolder;
 
-public class GameManager extends Thread {
+public class GameManager extends AbstractGameManager {
 
-    /**
-     * Главная область приложения
-     */
-    private final GameSurface mView;
-
-    /**
-     * Флаг работы потока
-     */
-    private boolean mRunning = false;
-
-    public GameManager(GameSurface view) {
-        this.mView = view;
-    }
-
-    public void setRunning(boolean running) {
-        mRunning = running;
+    public GameManager(GameSurface gameSurface, SurfaceHolder surfaceHolder) {
+        super(gameSurface, surfaceHolder);
     }
 
     @Override
     public void run() {
+        Canvas canvas = null;
         long startTime;
         long elapsed = 0;
         while (mRunning) {
-            Canvas c = null;
             startTime = System.currentTimeMillis();
             try {
-                c = mView.getHolder().lockCanvas();
-                synchronized (mView.getHolder()) {
-                    if (c != null) {
-                        mView.draw(c, elapsed, null);
+                canvas = mSurfaceHolder.lockCanvas();
+                synchronized (mSurfaceHolder) {
+                    if (canvas != null) {
+                        mGameSurface.draw(canvas, elapsed, null);
                     }
                 }
             } finally {
-                if (c != null) {
-                    mView.getHolder().unlockCanvasAndPost(c);
+                if (canvas != null) {
+                    mSurfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
             elapsed = System.currentTimeMillis() - startTime;

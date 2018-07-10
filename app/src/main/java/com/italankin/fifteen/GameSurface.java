@@ -95,8 +95,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     public GameSurface(Context context) {
         super(context);
 
-        mGameLoopThread = new GameManager(this);
-
         dbHelper = new DBHelper(context);
         mResources = getResources();
 
@@ -105,6 +103,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        mGameLoopThread = new GameManager(this, holder);
+
         Dimensions.update(this.getWidth(), this.getHeight(), 1.0f);
 
         mTopPanel = new TopPanelView();
@@ -166,16 +166,16 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        boolean retry = true;
         mGameLoopThread.setRunning(false);
-        while (retry) {
+        while (true) {
             try {
                 mGameLoopThread.join();
-                retry = false;
+                break;
             } catch (InterruptedException e) {
                 Tools.log("surfaceDestroyed: " + e.toString());
             }
         }
+        mGameLoopThread = null;
     }
 
     /**
