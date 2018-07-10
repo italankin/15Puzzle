@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -15,7 +14,7 @@ android {
         versionCode 7
         versionName "1.3.1"
         minSdkVersion 11
-        targetSdkVersion 23
+        targetSdkVersion 27
     }
 
     signingConfigs {
@@ -27,7 +26,7 @@ android {
         }
         release {
             Properties propsRelease = new Properties()
-            File propsFileRelease = new File('app/keystore-release/release.properties');
+            File propsFileRelease = new File('app/keystore-release/release.properties')
             if (propsFileRelease.exists()) {
                 propsRelease.load(new FileInputStream(propsFileRelease))
 
@@ -37,10 +36,6 @@ android {
                 keyPassword propsRelease['alias_password']
             }
         }
-    }
-
-    lintOptions {
-        checkReleaseBuilds false
     }
 
     buildTypes {
