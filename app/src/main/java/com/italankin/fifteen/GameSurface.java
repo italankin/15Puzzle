@@ -19,8 +19,7 @@ import com.italankin.fifteen.views.LeaderboardView;
 import com.italankin.fifteen.views.SettingsView;
 import com.italankin.fifteen.views.TopPanelView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, SurfaceHolder.Callback {
@@ -329,14 +328,14 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         // если создание новой игры не было инициировано пользователем,
         // загружаем сохрененную игру (если имеется)
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
-            String string_array = prefs.getString(Settings.KEY_GAME_ARRAY, Game.getGridStr());
-            ArrayList<Integer> list = Tools.getIntegerArray(
-                    Arrays.asList(string_array.split("\\s*,\\s*")));
-
-            if (list.size() == Game.getSize()) {
-                Game.load(list,
-                        prefs.getInt(Settings.KEY_GAME_MOVES, 0),
-                        prefs.getLong(Settings.KEY_GAME_TIME, 0));
+            String strings = prefs.getString(Settings.KEY_GAME_ARRAY, null);
+            if (strings != null) {
+                List<Integer> list = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
+                if (list.size() == Game.getSize()) {
+                    Game.load(list,
+                            prefs.getInt(Settings.KEY_GAME_MOVES, 0),
+                            prefs.getLong(Settings.KEY_GAME_TIME, 0));
+                }
             }
 
             SharedPreferences.Editor editor = prefs.edit();

@@ -3,6 +3,7 @@ package com.italankin.fifteen;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,13 +46,14 @@ public class Tools {
     /**
      * Преобразование массива строк в массив чисел
      */
-    public static ArrayList<Integer> getIntegerArray(List<String> list) {
+    public static List<Integer> getIntegerArray(String... strings) {
         ArrayList<Integer> result = new ArrayList<>();
-        for (String s : list) {
+        for (String s : strings) {
             try {
                 result.add(Integer.parseInt(s));
             } catch (NumberFormatException e) {
                 Log.e("getIntegerArray", "Error: " + s + " - invalid number");
+                return Collections.emptyList();
             }
         }
         return result;

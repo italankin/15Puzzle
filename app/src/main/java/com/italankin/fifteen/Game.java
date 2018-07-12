@@ -2,6 +2,7 @@ package com.italankin.fifteen;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class Game {
@@ -24,7 +25,7 @@ public class Game {
     /**
      * Массив игрового поля
      */
-    private ArrayList<Integer> grid = new ArrayList<>();
+    private List<Integer> grid = new ArrayList<>();
 
     /**
      * Позиция нулевой (пустой) ячейки на поле
@@ -63,7 +64,7 @@ public class Game {
      * @param savedMoves количество сделанных ходов
      * @param savedTime  прошедшее время
      */
-    public static void load(ArrayList<Integer> savedGrid, int savedMoves, long savedTime) {
+    public static void load(List<Integer> savedGrid, int savedMoves, long savedTime) {
         instance.grid = savedGrid;
         instance.moves = savedMoves;
         instance.time = savedTime;
