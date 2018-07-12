@@ -88,8 +88,8 @@ public class Settings {
         if (w >= Settings.MIN_GAME_WIDTH && w < Settings.MAX_GAME_WIDTH) {
             gameWidth = w;
         }
-        int h = prefs.getInt(KEY_GAME_WIDTH, gameHeight);
-        if (w >= Settings.MIN_GAME_HEIGHT && w < Settings.MAX_GAME_HEIGHT) {
+        int h = prefs.getInt(KEY_GAME_HEIGHT, gameHeight);
+        if (h >= Settings.MIN_GAME_HEIGHT && h < Settings.MAX_GAME_HEIGHT) {
             gameHeight = h;
         }
         saveGame = prefs.getBoolean(KEY_GAME_SAVE, saveGame);
