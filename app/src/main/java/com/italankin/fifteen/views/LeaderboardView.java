@@ -277,8 +277,10 @@ public class LeaderboardView extends BaseView {
         canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.centerY(), mPaintText);
 
         if (mTableItems.size() == 0) {
+            mPaintText.setAlpha(128);
             canvas.drawText(mTextNoData,
                     Dimensions.surfaceWidth * .5f, mTableMarginTop, mPaintText);
+            mPaintText.setAlpha(255);
             return;
         }
 
