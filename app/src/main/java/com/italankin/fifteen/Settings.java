@@ -1,5 +1,6 @@
 package com.italankin.fifteen;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 
@@ -101,10 +102,15 @@ public class Settings {
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
     }
 
+    public static void save() {
+        save(false);
+    }
+
     /**
      * Запись настроек приложения
      */
-    public static void save() {
+    @SuppressLint("ApplySharedPref")
+    public static void save(boolean sync) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);
@@ -125,7 +131,11 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
-        editor.apply();
+        if (sync) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
     }
 
 }
