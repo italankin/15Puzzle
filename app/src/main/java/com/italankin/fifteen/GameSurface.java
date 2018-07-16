@@ -267,7 +267,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Приостановка {@link android.app.Activity}
      */
     public void onPause() {
-        mGameLoopThread.setRunning(false);
+        if (mGameLoopThread != null) {
+            mGameLoopThread.setRunning(false);
+        }
     }
 
     /**
