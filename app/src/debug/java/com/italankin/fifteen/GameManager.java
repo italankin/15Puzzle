@@ -35,6 +35,7 @@ public class GameManager extends AbstractGameManager {
                 }
             }
             elapsed = System.currentTimeMillis() - startTime;
+            delay();
             timeBuffer += elapsed;
             frameBuffer += 1.0f;
             if (timeBuffer > 1000) {

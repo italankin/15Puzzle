@@ -29,6 +29,7 @@ public class GameManager extends AbstractGameManager {
                 }
             }
             elapsed = System.currentTimeMillis() - startTime;
+            delay();
         }
     }
 

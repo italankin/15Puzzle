@@ -2,6 +2,8 @@ package com.italankin.fifteen;
 
 import android.view.SurfaceHolder;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class AbstractGameManager extends Thread {
 
     protected final GameSurface mGameSurface;
@@ -19,4 +21,12 @@ public abstract class AbstractGameManager extends Thread {
 
     @Override
     public abstract void run();
+
+    void delay() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
