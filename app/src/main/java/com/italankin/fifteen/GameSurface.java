@@ -186,12 +186,27 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         int y = (int) event.getY();
 
         switch (action) {
-            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN: {
                 mStartX = x;
                 mStartY = y;
-                break; // ACTION_DOWN
+                return true;
+            }
 
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE: {
+                if (Game.isPaused() || Game.isSolved()) {
+                    return true;
+                }
+                int dx = x - mStartX;
+                int dy = y - mStartY;
+                float minSwipeDistance = Dimensions.tileSize / 6.0f;
+                if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
+                    mField.moveTiles(mStartX, mStartY, Tools.direction(dx, dy));
+                    event.setAction(MotionEvent.ACTION_CANCEL);
+                }
+                return true;
+            }
+
+            case MotionEvent.ACTION_UP: {
                 int dx = x - mStartX;
                 int dy = y - mStartY;
 
@@ -208,7 +223,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                     return true;
                 }
 
-                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 6.0f) && !Game.isPaused()) {
+                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !Game.isPaused()) {
                     mField.moveTiles(mStartX, mStartY, Tools.direction(dx, dy));
                 } else if (Game.isPaused() && mRectField.contains(x, y)) {
                     Game.setPaused(false);
@@ -216,11 +231,12 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 } else if (!Game.isSolved()) {
                     mField.moveTiles(mStartX, mStartY, Tools.DIRECTION_DEFAULT);
                 }
-                break; // ACTION_UP
+                return true;
+            }
 
+            default:
+                return true;
         }
-
-        return true;
     }
 
     @Override
@@ -350,7 +366,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 Game.setPaused(true);
                 mPauseOverlay.show();
             }
-
         }
 
         // вычисление размеров
@@ -425,5 +440,4 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             }
         }
     } // END createNewGame
-
 }
