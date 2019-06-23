@@ -30,6 +30,29 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     private static final int BTN_PAUSE = 3;
 
     /**
+     * Задержка анимации между тайлами в кадрах
+     */
+    private static final int ANIM_WINDOW_FRAMES = 5;
+    private static final int ANIM_TYPE_COUNT = 16;
+
+    private static final int ANIM_TYPE_ALL = 0;
+    private static final int ANIM_TYPE_INDEX_ASC = 1;
+    private static final int ANIM_TYPE_INDEX_DESC = 2;
+    private static final int ANIM_TYPE_RANDOM = 3;
+    private static final int ANIM_TYPE_NUMBER_ASC = 4;
+    private static final int ANIM_TYPE_NUMBER_DESC = 5;
+    private static final int ANIM_TYPE_ROW = 6;
+    private static final int ANIM_TYPE_COLUMN = 7;
+    private static final int ANIM_TYPE_ROW_REVERSE = 8;
+    private static final int ANIM_TYPE_COLUMN_REVERSE = 9;
+    private static final int ANIM_TYPE_TOP_LEFT_CORNER = 10;
+    private static final int ANIM_TYPE_TOP_RIGHT_CORNER = 11;
+    private static final int ANIM_TYPE_BOTTOM_LEFT_CORNER = 12;
+    private static final int ANIM_TYPE_BOTTOM_RIGHT_CORNER = 13;
+    private static final int ANIM_TYPE_FROM_CENTER = 14;
+    private static final int ANIM_TYPE_TO_CENTER = 15;
+
+    /**
      * Главный поток для перерисовки изображения
      */
     private GameManager mGameLoopThread;
@@ -84,7 +107,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Координата y начальной точки жеста
      */
     private int mStartY;
-    private int sAnim = 0;
+    private int animCurrentIndex = ANIM_TYPE_ALL;
 
     /**
      * Конструктор по умолчанию
@@ -379,65 +402,90 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mField.clear();
 
         Random rnd = new Random();
-        int size = Game.getSize();                      // размер
-        int animationType = ++sAnim % 10;            // тип анимации
-        int shift = size / 26 + 1;                      // коэффициент смещения анимации (группировка)
-        int delay;                                      // задержка появляения
+        int size = Game.getSize();
+        int animationType = animCurrentIndex++ % ANIM_TYPE_COUNT;
+        int shift = size / 26 + 1; // коэффициент смещения анимации (группировка тайлов по shift штук)
+        int delay; // задержка появляения
         for (int index = 0; index < size; index++) {
             int number = Game.getAt(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
                 if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown()) {
                     switch (animationType) {
-                        case 1:
-                            // по порядку ячеек (сверху вниз)
+                        case ANIM_TYPE_INDEX_ASC:
                             delay = index / shift;
                             break;
-                        case 2:
-                            // в обратном порядке ячеек (снизу вверх)
+                        case ANIM_TYPE_INDEX_DESC:
                             delay = (size - index) / shift;
                             break;
-                        case 3:
-                            // случайный порядок
+                        case ANIM_TYPE_RANDOM:
                             delay = rnd.nextInt(10 + 10 * (shift - 1));
                             break;
-                        case 4:
-                            // по порядку (1, 2, 3, ..., n-1, n)
+                        case ANIM_TYPE_NUMBER_ASC:
                             delay = number / shift;
                             break;
-                        case 5:
-                            // в обратном порядке (n, n-1, n-2, ..., 2, 1)
+                        case ANIM_TYPE_NUMBER_DESC:
                             delay = (size - number) / shift;
                             break;
-                        case 6:
-                            // по строкам
-                            // 5 - задержка в кадрах между группами
-                            delay = index / Settings.gameWidth * 5;
+                        case ANIM_TYPE_ROW:
+                            delay = index / Settings.gameWidth * ANIM_WINDOW_FRAMES;
                             break;
-                        case 7:
-                            // по столбцам
-                            // 5 - задержка в кадрах между группами
-                            delay = index % Settings.gameWidth * 5;
+                        case ANIM_TYPE_COLUMN:
+                            delay = index % Settings.gameWidth * ANIM_WINDOW_FRAMES;
                             break;
-                        case 8:
-                            // по строкам в обратном порядке
-                            // 5 - задержка в кадрах между группами
-                            delay = (Settings.gameHeight - index / Settings.gameWidth) * 5;
+                        case ANIM_TYPE_ROW_REVERSE:
+                            delay = (Settings.gameHeight - index / Settings.gameWidth) * ANIM_WINDOW_FRAMES;
                             break;
-                        case 9:
-                            // по столбцам в обратном порядке
-                            // 5 - задержка в кадрах между группами
-                            delay = (Settings.gameWidth - index % Settings.gameWidth) * 5;
+                        case ANIM_TYPE_COLUMN_REVERSE:
+                            delay = (Settings.gameWidth - index % Settings.gameWidth) * ANIM_WINDOW_FRAMES;
                             break;
+                        case ANIM_TYPE_TOP_LEFT_CORNER:
+                            delay = fromPoint(0, 0, index);
+                            break;
+                        case ANIM_TYPE_TOP_RIGHT_CORNER:
+                            delay = fromPoint(Settings.gameWidth - 1, 0, index);
+                            break;
+                        case ANIM_TYPE_BOTTOM_LEFT_CORNER:
+                            delay = fromPoint(0, Settings.gameHeight - 1, index);
+                            break;
+                        case ANIM_TYPE_BOTTOM_RIGHT_CORNER:
+                            delay = fromPoint(Settings.gameWidth - 1, Settings.gameHeight - 1, index);
+                            break;
+                        case ANIM_TYPE_FROM_CENTER: {
+                            float x0 = Settings.gameWidth / 2f - .5f;
+                            float y0 = Settings.gameHeight / 2f - .5f;
+                            delay = fromPointF(x0, y0, index);
+                            break;
+                        }
+                        case ANIM_TYPE_TO_CENTER: {
+                            float x0 = Settings.gameWidth / 2f - .5f;
+                            float y0 = Settings.gameHeight / 2f - .5f;
+                            delay = (size - fromPointF(x0, y0, index)) / 2;
+                            break;
+                        }
+                        case ANIM_TYPE_ALL:
                         default:
                             // все вместе
                             delay = 0;
                     }
                     t.animateAppearance(delay * Settings.TILE_ANIM_FRAME_MULTIPLIER);
-                    //t.setAnimation(Tile.Animation.SCALE, delay);
                 }
                 mField.addTile(t);
             }
         }
     } // END createNewGame
+
+    private static int fromPoint(int x0, int y0, int index) {
+        int x1 = index % Settings.gameWidth;
+        int y1 = index / Settings.gameWidth;
+        int distance = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+        return (distance + 1) * ANIM_WINDOW_FRAMES;
+    }
+
+    private static int fromPointF(float x0, float y0, int index) {
+        int x1 = index % Settings.gameWidth;
+        int y1 = index / Settings.gameWidth;
+        int distance = (int) Math.floor(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)));
+        return (distance + 1) * ANIM_WINDOW_FRAMES;
+    }
 }
