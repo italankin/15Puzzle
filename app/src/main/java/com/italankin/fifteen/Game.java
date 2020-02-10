@@ -393,6 +393,10 @@ public class Game {
         return instance.solved;
     }
 
+    public static boolean isNotStarted() {
+        return instance.moves == 0;
+    }
+
     public static void setPaused(boolean paused) {
         instance.paused = paused;
     }

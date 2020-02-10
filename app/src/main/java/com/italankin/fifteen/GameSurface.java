@@ -216,7 +216,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (Game.isPaused() || Game.isSolved()) {
+                if (Game.isPaused() || Game.isSolved() || Game.isNotStarted()) {
                     return true;
                 }
                 int dx = x - mStartX;

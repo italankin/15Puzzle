@@ -141,7 +141,7 @@ public class Tile {
         if (!Game.isPaused() && mTextScale > 0) {
             sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
             sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
-            if (!Settings.hardmode || Game.getMoves() == 0 || Game.isSolved()) {
+            if (!Settings.hardmode || Game.isNotStarted() || Game.isSolved()) {
                 canvas.drawText(mDataText, mRectShape.centerX(),
                         mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
