@@ -82,7 +82,7 @@ public class Dimensions {
         fieldWidth = (tileSize + spacing) * Settings.gameWidth - spacing;
         fieldHeight = (tileSize + spacing) * Settings.gameHeight - spacing;
         tileFontSize = Math.max(tileSize / 2.4F, 4.25f);
-        interfaceFontSize = Math.max(Math.round(surfaceHeight * 0.027), 10.0f);
+        interfaceFontSize = Math.max(Math.round(surfaceWidth * 0.045), 10.0f);
         menuFontSize = interfaceFontSize * 1.5f;
         fieldMarginLeft = 0.5f * surfaceWidth - 0.5f * fieldWidth;
         tileCornerRadius = 0.0f;
