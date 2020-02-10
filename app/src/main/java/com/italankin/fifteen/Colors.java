@@ -5,7 +5,7 @@ public class Colors {
     /**
      * задний фон главного экрана
      */
-    public static int background[] = {0xffcacaca, 0xff181818};
+    public static int[] background = {0xffcacaca, 0xff181818};
     /**
      * цвет фона поля
      */
@@ -13,19 +13,19 @@ public class Colors {
     /**
      * цвет фона оверлеев
      */
-    public static int overlay[] = {0xdaa0a0a0, 0xda373737};
+    public static int[] overlay = {0xdaa0a0a0, 0xda373737};
     /**
      * цвет текста оверлея
      */
-    public static int overlayText[] = {0xff373737, 0xff787878};
+    public static int[] overlayText = {0xff373737, 0xff787878};
     /**
      * цвет текста спрайтов
      */
-    public static int spriteText[] = {0xfff8f8f8, 0xff181818};
+    public static int[] spriteText = {0xfff8f8f8, 0xff181818};
     /**
      * цвет текста инфо
      */
-    public static int textInfo[] = {0xffcacaca, 0xff787878};
+    public static int[] textInfo = {0xffcacaca, 0xff787878};
     /**
      * цвет текста значений в меню настроек
      */
@@ -33,7 +33,7 @@ public class Colors {
     /**
      * цвета спрайтов
      */
-    public static int tiles[] = {
+    public static int[] tiles = {
             0xff5e707e, // синий+серый
             0xff983030, // красный
             0xffd2974c, // оранжевый

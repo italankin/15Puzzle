@@ -364,7 +364,7 @@ public class Game {
      *
      * @param index начальный индекс
      * @return идентификатор направления
-     * @see {@link Tools}
+     * @see Tools
      */
     public static int getDirection(int index) {
         return Tools.direction(instance.zeroPos % instance.width - index % instance.width,

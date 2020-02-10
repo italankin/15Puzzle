@@ -27,7 +27,7 @@ public class Tile {
     /**
      * Rect для определения границ текста
      */
-    private static Rect mRectBounds = new Rect();
+    private static final Rect mRectBounds = new Rect();
 
     /**
      * Path для рисования фона плитки

@@ -159,7 +159,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             dbHelper.insert(
                     Settings.gameMode,
                     Settings.gameWidth,
-                    Settings.gameHeight, Settings.hardmode ? 1 : 0,
+                    Settings.gameHeight,
+                    Settings.hardmode ? 1 : 0,
                     Game.getMoves() + 1,
                     Game.getTime());
         });
