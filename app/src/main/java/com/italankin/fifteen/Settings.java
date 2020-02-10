@@ -1,8 +1,11 @@
 package com.italankin.fifteen;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+
+import java.text.DateFormat;
 
 public class Settings {
 
@@ -81,11 +84,12 @@ public class Settings {
      * хранилище настроек приложения
      */
     public static SharedPreferences prefs;
+    public static DateFormat dateFormat;
 
     /**
      * Чтение настроек приложения
      */
-    public static void load() {
+    public static void load(Context context) {
         int w = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
         if (w >= Settings.MIN_GAME_WIDTH && w < Settings.MAX_GAME_WIDTH) {
             gameWidth = w;
@@ -101,6 +105,7 @@ public class Settings {
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         animations = prefs.getBoolean(KEY_GAME_ANIMATION, animations);
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
+        dateFormat = android.text.format.DateFormat.getDateFormat(context);
     }
 
     public static void save() {

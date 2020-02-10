@@ -14,10 +14,8 @@ import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tools;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class LeaderboardView extends BaseView {
 
@@ -205,8 +203,6 @@ public class LeaderboardView extends BaseView {
 
         Cursor cursor = mDbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
         if (cursor.moveToFirst()) {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
             int indexMoves = cursor.getColumnIndex(DBHelper.KEY_MOVES);
             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME);
             int indexTimestamp = cursor.getColumnIndex(DBHelper.KEY_TIMESTAMP);
@@ -219,7 +215,7 @@ public class LeaderboardView extends BaseView {
                 item.time = Tools.timeToString(cursor.getInt(indexTime));
 
                 Date d = new Date(cursor.getLong(indexTimestamp));
-                item.timestamp = format.format(d);
+                item.timestamp = Settings.dateFormat.format(d);
 
                 mTableItems.add(item);
             } while (cursor.moveToNext());

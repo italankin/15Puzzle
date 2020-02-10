@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        Settings.load();
+        Settings.load(this);
         mGameView = new GameSurface(this);
         setContentView(mGameView);
     }
