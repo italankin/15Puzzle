@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.italankin.fifteen.anim.TileScaleAnimator;
 import com.italankin.fifteen.anim.TileXAnimator;
@@ -107,14 +108,15 @@ public class Tile {
         mShape.computeBounds(mRectShape, false);
         mDrawPath.set(mShape);
 
-        TimeInterpolator interpolator = new DecelerateInterpolator(1.5f);
+        TimeInterpolator interpolator = new OvershootInterpolator(.8f);
         mTileXAnimator = new TileXAnimator(this);
         mTileXAnimator.setInterpolator(interpolator);
         mTileYAnimator = new TileYAnimator(this);
         mTileYAnimator.setInterpolator(interpolator);
 
+        TimeInterpolator scaleInterpolator = new DecelerateInterpolator(1.5f);
         mTileScaleAnimator = new TileScaleAnimator(this);
-        mTileScaleAnimator.setInterpolator(interpolator);
+        mTileScaleAnimator.setInterpolator(scaleInterpolator);
     } // constructor
 
     public void draw(Canvas canvas, long elapsedTime) {
