@@ -12,6 +12,7 @@ import com.italankin.fifteen.Tile;
 import com.italankin.fifteen.Tools;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FieldView extends BaseView {
 
@@ -20,12 +21,12 @@ public class FieldView extends BaseView {
     /**
      * Массив элементов {@link Tile}
      */
-    private ArrayList<Tile> mData;
+    private CopyOnWriteArrayList<Tile> mData;
 
     private RectF mRectField;
 
     public FieldView(RectF rect) {
-        mData = new ArrayList<>();
+        mData = new CopyOnWriteArrayList<>();
         mRectField = rect;
         mPaintField = new Paint();
 
@@ -98,24 +99,16 @@ public class FieldView extends BaseView {
     public void draw(Canvas canvas, long elapsedTime) {
         canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius,
                 Dimensions.tileCornerRadius, mPaintField);
-        ArrayList<Tile> tiles;
-        synchronized (this) {
-            tiles = new ArrayList<>(mData);
-        }
-        for (Tile tile : tiles) {
+        for (Tile tile : mData) {
             tile.draw(canvas, elapsedTime);
         }
     }
 
     public void clear() {
-        ArrayList<Tile> list;
-        synchronized (this) {
-            list = new ArrayList<>(mData);
-            mData.clear();
-        }
-        for (Tile tile : list) {
+        for (Tile tile : mData) {
             tile.recycle();
         }
+        mData.clear();
     }
 
     @Override
