@@ -13,6 +13,7 @@ public class Settings {
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
     public static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
+    public static final long NEW_GAME_DEBOUNCE = 500;
 
     public static final String KEY_GAME_WIDTH = "puzzle_width";
     public static final String KEY_GAME_HEIGHT = "puzzle_height";

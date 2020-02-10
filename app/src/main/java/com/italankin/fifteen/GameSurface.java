@@ -108,6 +108,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      */
     private int mStartY;
     private int animCurrentIndex = ANIM_TYPE_ALL;
+    private long lastSolvedTimestamp = 0;
 
     /**
      * Конструктор по умолчанию
@@ -163,6 +164,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                     Settings.hardmode ? 1 : 0,
                     Game.getMoves() + 1,
                     Game.getTime());
+            lastSolvedTimestamp = System.currentTimeMillis();
         });
 
         try {
@@ -364,6 +366,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * @param isUser <b>true</b>, если действие было вызвано пользователем
      */
     private void createNewGame(boolean isUser) {
+        if (System.currentTimeMillis() - lastSolvedTimestamp < Settings.NEW_GAME_DEBOUNCE) {
+            return;
+        }
+
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
