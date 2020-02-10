@@ -14,7 +14,6 @@ public class Tools {
     public static final int DIRECTION_RIGHT = 1;
     public static final int DIRECTION_DOWN = 2;
     public static final int DIRECTION_LEFT = 3;
-    private static final String LOG_TAG = "puzzie";
 
     /**
      * Функция "сглаживания" (анимации и т.д.)
@@ -70,8 +69,11 @@ public class Tools {
         if (dx == 0 && dy == 0) {
             return DIRECTION_DEFAULT;
         }
-        return (Math.abs(dx) > Math.abs(dy)) ? ((dx > 0) ?
-                DIRECTION_RIGHT : DIRECTION_LEFT) : ((dy > 0) ? DIRECTION_DOWN : DIRECTION_UP);
+        if (Math.abs(dx) > Math.abs(dy)) {
+            return dx > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+        } else {
+            return dy > 0 ? DIRECTION_DOWN : DIRECTION_UP;
+        }
     }
 
 
@@ -91,12 +93,7 @@ public class Tools {
 
     public static void log(String message) {
         if (BuildConfig.DEBUG) {
-            log(message, false);
+            Log.d("15puzzle", message);
         }
     }
-
-    public static void log(String message, boolean error) {
-        Log.println(error ? Log.ERROR : Log.DEBUG, LOG_TAG, message);
-    }
-
 }

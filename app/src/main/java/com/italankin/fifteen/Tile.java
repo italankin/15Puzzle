@@ -44,11 +44,11 @@ public class Tile {
     /**
      * Позиция X плитки на поле
      */
-    private float mCanvasX = 0.0f;
+    private float mCanvasX;
     /**
      * Позиция Y плитки на поле
      */
-    private float mCanvasY = 0.0f;
+    private float mCanvasY;
 
     private TileXAnimator mTileXAnimator;
     private TileYAnimator mTileYAnimator;
