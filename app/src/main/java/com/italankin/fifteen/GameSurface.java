@@ -299,6 +299,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
             case BTN_LEADERBOARD:
                 Game.setPaused(Game.getMoves() > 0);
+                if (Game.isPaused()) {
+                    mPauseOverlay.setVisible(true);
+                }
                 mLeaderboard.show();
                 break;
 
@@ -386,6 +389,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         if (System.currentTimeMillis() - lastSolvedTimestamp < Settings.NEW_GAME_DEBOUNCE) {
             return;
         }
+
+        mPauseOverlay.hide();
+        mSolvedOverlay.hide();
 
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
