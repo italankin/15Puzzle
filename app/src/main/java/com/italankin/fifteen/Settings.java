@@ -30,6 +30,7 @@ public class Settings {
     public static final String KEY_GAME_BF = "blind";
     public static final String KEY_GAME_ANTI_ALIAS = "antialias";
     public static final String KEY_GAME_ANIMATION = "animation";
+    public static final String KEY_FRINGE_COLORS = "fringe_colors";
 
     /**
      * ширина игры
@@ -67,6 +68,10 @@ public class Settings {
      * цвет плиток
      */
     public static int tileColor = 0;
+    /**
+     * красить плитки по "слоям"
+     */
+    public static boolean fringeColors = false;
     /**
      * цветовая тема приложения
      */
@@ -106,6 +111,7 @@ public class Settings {
         animations = prefs.getBoolean(KEY_GAME_ANIMATION, animations);
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
+        fringeColors = prefs.getBoolean(KEY_FRINGE_COLORS, fringeColors);
     }
 
     public static void save() {
@@ -137,6 +143,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
+        editor.putBoolean(KEY_FRINGE_COLORS, fringeColors);
         if (sync) {
             editor.commit();
         } else {
@@ -144,4 +151,7 @@ public class Settings {
         }
     }
 
+    static boolean useFringeColors() {
+        return fringeColors && !hardmode && gameMode == Game.MODE_CLASSIC;
+    }
 }

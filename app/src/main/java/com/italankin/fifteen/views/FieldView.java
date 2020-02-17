@@ -115,6 +115,9 @@ public class FieldView extends BaseView {
     public void update() {
         Tile.updatePaint();
         mPaintField.setAntiAlias(Settings.antiAlias);
+        for (Tile tile: mData) {
+            tile.update();
+        }
     }
 
 }

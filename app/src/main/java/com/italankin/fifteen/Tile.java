@@ -43,6 +43,10 @@ public class Tile {
      */
     private int mIndex;
     /**
+     *
+     */
+    private int mFringeIndex;
+    /**
      * Позиция X плитки на поле
      */
     private float mCanvasX;
@@ -60,6 +64,7 @@ public class Tile {
     private Matrix mMatrix = new Matrix();
     private String mDataText;
 
+    private boolean useFringeColors = Settings.useFringeColors();
     private boolean recycled = false;
 
     public static void updatePaint() {
@@ -87,6 +92,7 @@ public class Tile {
      */
     public Tile(int number, int index) {
         mIndex = index;
+        mFringeIndex = getFringeIndex(number);
         mDataText = Integer.toString(number);
 
         updatePaint();
@@ -136,6 +142,13 @@ public class Tile {
 
         if (mDrawPath == null) {
             return;
+        }
+
+        if (useFringeColors && !Game.isPaused()) {
+            int color = Colors.fringeTiles[mFringeIndex];
+            sPaintPath.setColor(color);
+        } else {
+            sPaintPath.setColor(Colors.getTileColor());
         }
 
         canvas.drawPath(mDrawPath, sPaintPath);
@@ -202,6 +215,10 @@ public class Tile {
         mDrawPath.transform(mMatrix);
     }
 
+    public void update() {
+        useFringeColors = Settings.useFringeColors();
+    }
+
     private void updatePath() {
         mShape.computeBounds(mRectShape, false);
         mDrawPath.set(mShape);
@@ -260,7 +277,6 @@ public class Tile {
             } // if animations
 
             return true;
-
         } // if index
 
         return false;
@@ -288,4 +304,10 @@ public class Tile {
         mTileScaleAnimator.cancel();
     }
 
+    private int getFringeIndex(int number) {
+        int index = number - 1;
+        int x = index % Settings.gameWidth;
+        int y = index / Settings.gameWidth;
+        return Math.min(x, y);
+    }
 }

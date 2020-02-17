@@ -58,6 +58,11 @@ public class SettingsView extends BaseView {
      */
     private String mTextColor;
     /**
+     * режим fringer
+     */
+    private String mTextFringeColors;
+    private String mTextFringeColorsValue[];
+    /**
      * цвет фона
      */
     private String mTextColorMode;
@@ -77,7 +82,7 @@ public class SettingsView extends BaseView {
     /**
      * кнопка "назад"
      */
-//    private String mTextAbout;
+    //    private String mTextAbout;
 
     /**
      * граница элемента настройки ширины
@@ -95,6 +100,10 @@ public class SettingsView extends BaseView {
      * граница элемента цвета
      */
     private RectF mRectColor;
+    /**
+     * режим fringe
+     */
+    private RectF mRectFringeColors;
     /**
      * граница элемента цвета фона
      */
@@ -124,7 +133,7 @@ public class SettingsView extends BaseView {
 
     public SettingsView(Resources res) {
         int h = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
-        int ch = (int) (Dimensions.surfaceHeight * 0.15f); // отступ от верхнего края экрана
+        int ch = (int) (Dimensions.surfaceHeight * 0.10f); // отступ от верхнего края экрана
         int sp = -h / 4;
 
         mPaintText = new Paint();
@@ -157,6 +166,8 @@ public class SettingsView extends BaseView {
         mTextBfValue = res.getStringArray(R.array.difficulty_modes);
         mTextAnimations = res.getString(R.string.pref_animation);
         mTextAnimationsValue = res.getStringArray(R.array.toggle);
+        mTextFringeColors = res.getString(R.string.pref_fringe);
+        mTextFringeColorsValue = res.getStringArray(R.array.toggle);
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
@@ -198,6 +209,10 @@ public class SettingsView extends BaseView {
                 Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(),
                 mRectColor.bottom + sp);
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
+
+        ch += h;
+        mRectFringeColors = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
+        mRectFringeColors.inset(0, sp);
 
 //        mRectAbout = new RectF(0.0f, Dimensions.surfaceHeight - h,
 //                Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h + r.height());
@@ -266,6 +281,15 @@ public class SettingsView extends BaseView {
             } else {
                 Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
             }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
+        // -- режим fringe --
+        if (mRectFringeColors.contains(x, y)) {
+            Settings.fringeColors = !Settings.fringeColors;
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onChanged(false);
@@ -343,6 +367,11 @@ public class SettingsView extends BaseView {
         mPaintIcon.setColor(Colors.getTileColor());
         canvas.drawRect(mRectColorIcon, mPaintIcon);
 
+        // fringe
+        canvas.drawText(mTextFringeColors, left, mRectFringeColors.bottom - s, mPaintText);
+        canvas.drawText(mTextFringeColorsValue[Settings.fringeColors ? 1 : 0],
+                right, mRectFringeColors.bottom - s, mPaintValue);
+
         // цвет фона
         canvas.drawText(mTextColorMode, left, mRectColorMode.bottom - s, mPaintText);
         canvas.drawText(mTextColorModeValue[Settings.colorMode],
@@ -383,7 +412,7 @@ public class SettingsView extends BaseView {
     }
 
     public interface Callbacks {
+
         void onChanged(boolean needUpdate);
     }
-
 }

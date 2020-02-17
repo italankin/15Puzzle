@@ -2,6 +2,14 @@ package com.italankin.fifteen;
 
 public class Colors {
 
+    private static final int MUTED_BLUE = 0xff5e707e;
+    private static final int RED = 0xff983030;
+    private static final int ORANGE = 0xffd2974c;
+    private static final int GREEN = 0xff39885a;
+    private static final int PURPLE = 0xff614d69;
+    private static final int BLUE = 0xff5893b5;
+    private static final int GREY = 0xff838383;
+
     /**
      * задний фон главного экрана
      */
@@ -34,13 +42,25 @@ public class Colors {
      * цвета спрайтов
      */
     public static int[] tiles = {
-            0xff5e707e, // синий+серый
-            0xff983030, // красный
-            0xffd2974c, // оранжевый
-            0xff39885a, // зеленый
-            0xff614d69, // фиолетовый
-            0xff5893b5, // синий
-            0xff838383  // серый
+            MUTED_BLUE,
+            RED,
+            ORANGE,
+            GREEN,
+            PURPLE,
+            BLUE,
+            GREY
+    };
+    /**
+     * цвета спрайтов
+     */
+    public static int[] fringeTiles = {
+            RED,
+            BLUE,
+            GREEN,
+            ORANGE,
+            PURPLE,
+            MUTED_BLUE,
+            GREY
     };
 
     /**
@@ -84,5 +104,4 @@ public class Colors {
     public static int getOverlayTextColor() {
         return overlayText[Settings.colorMode];
     }
-
 }
