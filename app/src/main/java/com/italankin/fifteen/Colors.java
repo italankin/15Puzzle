@@ -9,6 +9,8 @@ public class Colors {
     private static final int PURPLE = 0xff614d69;
     private static final int BLUE = 0xff5893b5;
     private static final int GREY = 0xff838383;
+    private static final int PINK = 0xff935783;
+    private static final int LIGHT_GREEN = 0xff8db368;
     private static final int BLACK = 0xff111111;
     private static final int WHITE = 0xffeeeeee;
 
@@ -50,6 +52,8 @@ public class Colors {
             GREEN,
             PURPLE,
             BLUE,
+            PINK,
+            LIGHT_GREEN,
             GREY,
             BLACK
     };
@@ -63,6 +67,8 @@ public class Colors {
             GREEN,
             PURPLE,
             BLUE,
+            PINK,
+            LIGHT_GREEN,
             GREY,
             WHITE
     };
