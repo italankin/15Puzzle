@@ -226,13 +226,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                     return true;
                 }
                 if (mTrail) {
-                    long currentTime = System.currentTimeMillis();
-                    long threshold = (long) (Settings.tileAnimDuration / 2.25);
-                    if (!Settings.animations || currentTime - mLastTrailFired > threshold) {
-                        if (mField.moveTiles(x, y, Tools.DIRECTION_DEFAULT)) {
-                            mLastTrailFired = currentTime;
-                        }
-                    }
+                    mField.moveTiles(x, y, Tools.DIRECTION_DEFAULT, false);
                     return true;
                 }
                 int dx = x - mStartX;

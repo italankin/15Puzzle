@@ -51,9 +51,20 @@ public class FieldView extends BaseView {
      * @param sx        координата x начальной ячейки в массиве
      * @param sy        координата y начальной ячейки в массиве
      * @param direction направление перемещения
-     * @return были ли перемещены какие-то элементы
      */
-    public boolean moveTiles(float sx, float sy, int direction) {
+    public void moveTiles(float sx, float sy, int direction) {
+        moveTiles(sx, sy, direction, true);
+    }
+
+    /**
+     * Перемещение элементов
+     *
+     * @param sx        координата x начальной ячейки в массиве
+     * @param sy        координата y начальной ячейки в массиве
+     * @param direction направление перемещения
+     * @param forced    перемещать элементы вне зависимости от состояния анимации
+     */
+    public void moveTiles(float sx, float sy, int direction, boolean forced) {
         int startIndex = at(sx, sy);
         if (startIndex >= 0) {
             if (direction == Tools.DIRECTION_DEFAULT) {
@@ -62,21 +73,23 @@ public class FieldView extends BaseView {
             // вычисляем индексы ячеек, которые нам нужно переместить
             ArrayList<Integer> numbersToMove = Game.getSlidingElements(direction, startIndex);
             if (numbersToMove.isEmpty()) {
-                return false;
+                return;
             }
             // перемещаем выбранные ячейки, если таковые есть
+            int moved = 0;
             for (int i = 0, s = numbersToMove.size(); i < s; i++) {
                 int num = numbersToMove.get(i);
                 for (Tile t : mData) {
-                    if (t.getIndex() == num) {
+                    if ((forced || !t.isAnimating()) && t.getIndex() == num) {
                         t.onClick();
+                        moved++;
                     }
                 }
             }
-            Game.incMoves();
-            return true;
+            if (moved > 0) {
+                Game.incMoves();
+            }
         }
-        return false;
     }
 
     public boolean emptySpaceAt(float x, float y) {

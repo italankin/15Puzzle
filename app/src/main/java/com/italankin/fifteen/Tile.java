@@ -219,6 +219,13 @@ public class Tile {
         useFringeColors = Settings.useFringeColors();
     }
 
+    public boolean isAnimating() {
+        if (!Settings.animations) {
+            return false;
+        }
+        return mTileScaleAnimator.isRunning() || mTileYAnimator.isRunning() || mTileXAnimator.isRunning();
+    }
+
     private void updatePath() {
         mShape.computeBounds(mRectShape, false);
         mDrawPath.set(mShape);
