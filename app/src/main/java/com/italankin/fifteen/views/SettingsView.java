@@ -274,12 +274,13 @@ public class SettingsView extends BaseView {
 
         // -- цвет спрайтов --
         if (mRectColor.contains(x, y)) {
+            int totalColors = Colors.getTileColors().length;
             if (dx < 0) {
                 if (--Settings.tileColor < 0) {
-                    Settings.tileColor += Colors.tiles.length;
+                    Settings.tileColor += totalColors;
                 }
             } else {
-                Settings.tileColor = (++Settings.tileColor % Colors.tiles.length);
+                Settings.tileColor = (++Settings.tileColor % totalColors);
             }
             Settings.save();
             if (mCallbacks != null) {

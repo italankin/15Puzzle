@@ -9,6 +9,8 @@ public class Colors {
     private static final int PURPLE = 0xff614d69;
     private static final int BLUE = 0xff5893b5;
     private static final int GREY = 0xff838383;
+    private static final int BLACK = 0xff111111;
+    private static final int WHITE = 0xffeeeeee;
 
     /**
      * задний фон главного экрана
@@ -39,16 +41,30 @@ public class Colors {
      */
     public static int menuTextValue = 0xfffefefe;
     /**
-     * цвета спрайтов
+     * цвета спрайтов (день)
      */
-    public static int[] tiles = {
+    public static int[] tilesDay = {
             MUTED_BLUE,
             RED,
             ORANGE,
             GREEN,
             PURPLE,
             BLUE,
-            GREY
+            GREY,
+            BLACK
+    };
+    /**
+     * цвета спрайтов (ночь)
+     */
+    public static int[] tilesNight = {
+            MUTED_BLUE,
+            RED,
+            ORANGE,
+            GREEN,
+            PURPLE,
+            BLUE,
+            GREY,
+            WHITE
     };
     /**
      * цвета спрайтов
@@ -74,7 +90,19 @@ public class Colors {
      * @return текущий цвет плиток
      */
     public static int getTileColor() {
-        return tiles[Settings.tileColor];
+        if (Settings.colorMode == 0) {
+            return tilesDay[Settings.tileColor];
+        } else {
+            return tilesNight[Settings.tileColor];
+        }
+    }
+
+    public static int[] getTileColors() {
+        if (Settings.colorMode == 0) {
+            return tilesDay;
+        } else {
+            return tilesNight;
+        }
     }
 
     /**
