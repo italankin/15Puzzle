@@ -35,17 +35,17 @@ public class LeaderboardView extends BaseView {
      * Hard Mode
      */
     private String mTextBf;
-    private String mTextBfValue[];
+    private String[] mTextBfValue;
     /**
      * Режим игры
      */
     private String mTextMode;
-    private String mTextModeValue[];
+    private String[] mTextModeValue;
     /**
      * Сортировка
      */
     private String mTextSort;
-    private String mTextSortValue[];
+    private String[] mTextSortValue;
     /**
      * Кнопка "Назад"
      */
@@ -62,13 +62,13 @@ public class LeaderboardView extends BaseView {
     private ArrayList<TableItem> mTableItems = new ArrayList<>();
     private DBHelper mDbHelper;
 
-    private float mTableGuides[] = {
+    private float[] mTableGuides = {
             Dimensions.surfaceWidth * 0.12f,
             Dimensions.surfaceWidth * 0.27f,
             Dimensions.surfaceWidth * 0.53f,
             Dimensions.surfaceWidth * 0.95f
     };
-    private int mSettingsGuides[] = {
+    private int[] mSettingsGuides = {
             (int) (Dimensions.surfaceWidth * 0.07f),
             (int) (Dimensions.surfaceWidth * 0.31f),
             (int) (Dimensions.surfaceWidth * 0.58f),

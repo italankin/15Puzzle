@@ -47,12 +47,12 @@ public class SettingsView extends BaseView {
      * hardmode
      */
     private String mTextBf;
-    private String mTextBfValue[];
+    private String[] mTextBfValue;
     /**
      * анимации
      */
     private String mTextAnimations;
-    private String mTextAnimationsValue[];
+    private String[] mTextAnimationsValue;
     /**
      * цвет плиток
      */
@@ -61,7 +61,7 @@ public class SettingsView extends BaseView {
      * режим fringer
      */
     private String mTextFringeColors;
-    private String mTextFringeColorsValue[];
+    private String[] mTextFringeColorsValue;
     /**
      * цвет фона
      */
@@ -69,20 +69,16 @@ public class SettingsView extends BaseView {
     /**
      * цветовая тема
      */
-    private String mTextColorModeValue[];
+    private String[] mTextColorModeValue;
     /**
      * режим игры
      */
     private String mTextMode;
-    private String mTextModeValue[];
+    private String[] mTextModeValue;
     /**
      * кнопка "назад"
      */
     private String mTextBack;
-    /**
-     * кнопка "назад"
-     */
-    //    private String mTextAbout;
 
     /**
      * граница элемента настройки ширины
@@ -172,7 +168,6 @@ public class SettingsView extends BaseView {
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
         mTextBack = res.getString(R.string.back);
-//        mTextAbout = res.getString(R.string.about);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -213,10 +208,6 @@ public class SettingsView extends BaseView {
         ch += h;
         mRectFringeColors = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
         mRectFringeColors.inset(0, sp);
-
-//        mRectAbout = new RectF(0.0f, Dimensions.surfaceHeight - h,
-//                Dimensions.surfaceWidth / 2.0f, Dimensions.surfaceHeight - h + r.height());
-//        mRectAbout.inset(0, sp);
 
         mRectBack = new RectF(0, Dimensions.surfaceHeight - h,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
@@ -391,10 +382,6 @@ public class SettingsView extends BaseView {
         // кнопка "назад"
         canvas.drawText(mTextBack, mRectBack.centerX(),
                 mRectBack.bottom - s, mPaintControls);
-
-        // кнопка "о программе"
-//        canvas.drawText(mTextAbout, mRectAbout.centerX(),
-//                mRectAbout.bottom - s, mPaintControls);
     }
 
     public void update() {

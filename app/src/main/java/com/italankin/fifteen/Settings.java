@@ -15,22 +15,22 @@ public class Settings {
     public static final int MAX_GAME_HEIGHT = 8;
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
-    public static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
-    public static final long NEW_GAME_DEBOUNCE = 500;
+    static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
+    static final long NEW_GAME_DEBOUNCE = 500;
 
-    public static final String KEY_GAME_WIDTH = "puzzle_width";
-    public static final String KEY_GAME_HEIGHT = "puzzle_height";
-    public static final String KEY_GAME_ARRAY = "puzzle_prev";
-    public static final String KEY_GAME_MOVES = "puzzle_prev_moves";
-    public static final String KEY_GAME_TIME = "puzzle_prev_time";
-    public static final String KEY_GAME_SAVE = "savegame";
-    public static final String KEY_GAME_TILE_COLOR = "tile_color";
-    public static final String KEY_GAME_BG_COLOR = "bg_color";
-    public static final String KEY_GAME_MODE = "mode";
-    public static final String KEY_GAME_BF = "blind";
-    public static final String KEY_GAME_ANTI_ALIAS = "antialias";
-    public static final String KEY_GAME_ANIMATION = "animation";
-    public static final String KEY_FRINGE_COLORS = "fringe_colors";
+    private static final String KEY_GAME_WIDTH = "puzzle_width";
+    private static final String KEY_GAME_HEIGHT = "puzzle_height";
+    static final String KEY_GAME_ARRAY = "puzzle_prev";
+    static final String KEY_GAME_MOVES = "puzzle_prev_moves";
+    static final String KEY_GAME_TIME = "puzzle_prev_time";
+    private static final String KEY_GAME_SAVE = "savegame";
+    private static final String KEY_GAME_TILE_COLOR = "tile_color";
+    private static final String KEY_GAME_BG_COLOR = "bg_color";
+    private static final String KEY_GAME_MODE = "mode";
+    private static final String KEY_GAME_BF = "blind";
+    private static final String KEY_GAME_ANTI_ALIAS = "antialias";
+    private static final String KEY_GAME_ANIMATION = "animation";
+    private static final String KEY_FRINGE_COLORS = "fringe_colors";
 
     /**
      * ширина игры
@@ -47,7 +47,7 @@ public class Settings {
     /**
      * сохранение игр между сессиями
      */
-    public static boolean saveGame = true;
+    static boolean saveGame = true;
     /**
      * анимации
      */
@@ -59,7 +59,7 @@ public class Settings {
     /**
      * длительность анимации плиток
      */
-    public static long tileAnimDuration = 300;
+    static long tileAnimDuration = 300;
     /**
      * кол-во кадров для анимирования элементов интерфейса
      */
@@ -88,13 +88,13 @@ public class Settings {
     /**
      * хранилище настроек приложения
      */
-    public static SharedPreferences prefs;
+    static SharedPreferences prefs;
     public static DateFormat dateFormat;
 
     /**
      * Чтение настроек приложения
      */
-    public static void load(Context context) {
+    static void load(Context context) {
         int w = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
         if (w >= Settings.MIN_GAME_WIDTH && w < Settings.MAX_GAME_WIDTH) {
             gameWidth = w;
@@ -122,7 +122,7 @@ public class Settings {
      * Запись настроек приложения
      */
     @SuppressLint("ApplySharedPref")
-    public static void save(boolean sync) {
+    static void save(boolean sync) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);

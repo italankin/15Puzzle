@@ -31,7 +31,7 @@ public class InfoPanelView extends BaseView {
     /**
      * режим игры
      */
-    private String mTextMode[];
+    private String[] mTextMode;
 
     /**
      * текущее количество ходов
