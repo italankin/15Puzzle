@@ -107,6 +107,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Координата y начальной точки жеста
      */
     private int mStartY;
+    private boolean mTrail = false;
+    private long mLastTrailFired = 0;
     private int animCurrentIndex = ANIM_TYPE_ALL;
     private long lastSolvedTimestamp = 0;
 
@@ -215,11 +217,22 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             case MotionEvent.ACTION_DOWN: {
                 mStartX = x;
                 mStartY = y;
+                mTrail = isFieldFullyVisible() && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
                 return true;
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (Game.isPaused() || Game.isSolved() || Game.isNotStarted()) {
+                if (Game.isPaused() || Game.isSolved() || !isFieldFullyVisible()) {
+                    return true;
+                }
+                if (mTrail) {
+                    long currentTime = System.currentTimeMillis();
+                    long threshold = (long) (Settings.tileAnimDuration / 2.25);
+                    if (!Settings.animations || currentTime - mLastTrailFired > threshold) {
+                        if (mField.moveTiles(x, y, Tools.DIRECTION_DEFAULT)) {
+                            mLastTrailFired = currentTime;
+                        }
+                    }
                     return true;
                 }
                 int dx = x - mStartX;
@@ -233,6 +246,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             }
 
             case MotionEvent.ACTION_UP: {
+                if (mTrail) {
+                    return true;
+                }
+
                 int dx = x - mStartX;
                 int dy = y - mStartY;
 
@@ -481,6 +498,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             }
         }
     } // END createNewGame
+
+    private boolean isFieldFullyVisible() {
+        return !(mLeaderboard.isShown() || mSettings.isShown() || mSolvedOverlay.isShown() || mPauseOverlay.isShown());
+    }
 
     private static int fromPoint(int x0, int y0, int index) {
         int x1 = index % Settings.gameWidth;

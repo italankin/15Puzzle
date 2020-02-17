@@ -51,8 +51,9 @@ public class FieldView extends BaseView {
      * @param sx        координата x начальной ячейки в массиве
      * @param sy        координата y начальной ячейки в массиве
      * @param direction направление перемещения
+     * @return были ли перемещены какие-то элементы
      */
-    public void moveTiles(float sx, float sy, int direction) {
+    public boolean moveTiles(float sx, float sy, int direction) {
         int startIndex = at(sx, sy);
         if (startIndex >= 0) {
             if (direction == Tools.DIRECTION_DEFAULT) {
@@ -60,6 +61,9 @@ public class FieldView extends BaseView {
             }
             // вычисляем индексы ячеек, которые нам нужно переместить
             ArrayList<Integer> numbersToMove = Game.getSlidingElements(direction, startIndex);
+            if (numbersToMove.isEmpty()) {
+                return false;
+            }
             // перемещаем выбранные ячейки, если таковые есть
             for (int i = 0, s = numbersToMove.size(); i < s; i++) {
                 int num = numbersToMove.get(i);
@@ -69,11 +73,14 @@ public class FieldView extends BaseView {
                     }
                 }
             }
-
-            if (numbersToMove.size() > 0) {
-                Game.incMoves();
-            }
+            Game.incMoves();
+            return true;
         }
+        return false;
+    }
+
+    public boolean emptySpaceAt(float x, float y) {
+        return at(x, y) == -1;
     }
 
     /**
@@ -115,9 +122,8 @@ public class FieldView extends BaseView {
     public void update() {
         Tile.updatePaint();
         mPaintField.setAntiAlias(Settings.antiAlias);
-        for (Tile tile: mData) {
+        for (Tile tile : mData) {
             tile.update();
         }
     }
-
 }
