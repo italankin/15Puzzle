@@ -39,6 +39,12 @@
         <item>classic</item>
         <item>snake</item>
     </string-array>
+    <string-array name="multi_color_modes">
+        <item>off</item>
+        <item>rows</item>
+        <item>columns</item>
+        <item>fringe</item>
+    </string-array>
     <string-array name="sort_types">
         <item>fewer moves</item>
         <item>less time</item>

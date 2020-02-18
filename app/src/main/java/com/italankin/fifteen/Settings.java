@@ -15,8 +15,14 @@ public class Settings {
     public static final int MAX_GAME_HEIGHT = 8;
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
+    public static final int MULTI_COLOR_MODES = 4;
     static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
     static final long NEW_GAME_DEBOUNCE = 500;
+
+    public static final int MULTI_COLOR_OFF = 0;
+    public static final int MULTI_COLOR_ROWS = 1;
+    public static final int MULTI_COLOR_COLUMNS = 2;
+    public static final int MULTI_COLOR_FRINGE = 3;
 
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
@@ -30,7 +36,7 @@ public class Settings {
     private static final String KEY_GAME_BF = "blind";
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
-    private static final String KEY_FRINGE_COLORS = "fringe_colors";
+    private static final String KEY_MULTI_COLOR = "multi_color";
 
     /**
      * ширина игры
@@ -71,7 +77,7 @@ public class Settings {
     /**
      * красить плитки по "слоям"
      */
-    public static boolean fringeColors = false;
+    public static int multiColor = MULTI_COLOR_OFF;
     /**
      * цветовая тема приложения
      */
@@ -111,7 +117,7 @@ public class Settings {
         animations = prefs.getBoolean(KEY_GAME_ANIMATION, animations);
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
-        fringeColors = prefs.getBoolean(KEY_FRINGE_COLORS, fringeColors);
+        multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
     }
 
     public static void save() {
@@ -143,7 +149,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
-        editor.putBoolean(KEY_FRINGE_COLORS, fringeColors);
+        editor.putInt(KEY_MULTI_COLOR, multiColor);
         if (sync) {
             editor.commit();
         } else {
@@ -151,7 +157,7 @@ public class Settings {
         }
     }
 
-    static boolean useFringeColors() {
-        return fringeColors && !hardmode && gameMode == Game.MODE_CLASSIC;
+    static boolean useMultiColor() {
+        return multiColor != MULTI_COLOR_OFF && !hardmode;
     }
 }

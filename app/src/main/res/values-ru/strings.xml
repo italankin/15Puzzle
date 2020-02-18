@@ -38,6 +38,12 @@
         <item>классика</item>
         <item>змейка</item>
     </string-array>
+    <string-array name="multi_color_modes">
+        <item>выкл.</item>
+        <item>строки</item>
+        <item>стоблцы</item>
+        <item>края</item>
+    </string-array>
     <string-array name="sort_types">
         <item>меньше ходов</item>
         <item>лучшее время</item>

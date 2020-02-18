@@ -123,7 +123,7 @@ public class SettingsView extends BaseView {
     /**
      * граница элемента "about"
      */
-//    private RectF mRectAbout;
+    //    private RectF mRectAbout;
 
     private Callbacks mCallbacks;
 
@@ -163,7 +163,7 @@ public class SettingsView extends BaseView {
         mTextAnimations = res.getString(R.string.pref_animation);
         mTextAnimationsValue = res.getStringArray(R.array.toggle);
         mTextFringeColors = res.getString(R.string.pref_fringe);
-        mTextFringeColorsValue = res.getStringArray(R.array.toggle);
+        mTextFringeColorsValue = res.getStringArray(R.array.multi_color_modes);
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
@@ -281,7 +281,13 @@ public class SettingsView extends BaseView {
 
         // -- режим fringe --
         if (mRectFringeColors.contains(x, y)) {
-            Settings.fringeColors = !Settings.fringeColors;
+            if (dx < 0) {
+                if (--Settings.multiColor < 0) {
+                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
+                }
+            } else {
+                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
+            }
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onChanged(false);
@@ -361,7 +367,7 @@ public class SettingsView extends BaseView {
 
         // fringe
         canvas.drawText(mTextFringeColors, left, mRectFringeColors.bottom - s, mPaintText);
-        canvas.drawText(mTextFringeColorsValue[Settings.fringeColors ? 1 : 0],
+        canvas.drawText(mTextFringeColorsValue[Settings.multiColor],
                 right, mRectFringeColors.bottom - s, mPaintValue);
 
         // цвет фона

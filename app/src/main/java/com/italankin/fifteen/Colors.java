@@ -75,7 +75,7 @@ public class Colors {
     /**
      * цвета спрайтов
      */
-    public static int[] fringeTiles = {
+    public static int[] multiColorTiles = {
             RED,
             BLUE,
             GREEN,

@@ -43,9 +43,10 @@ public class Tile {
      */
     private int mIndex;
     /**
-     *
+     * раскрашивание по слоям
      */
-    private int mFringeIndex;
+    private int mMultiColorIndex;
+    private int mNumber;
     /**
      * Позиция X плитки на поле
      */
@@ -64,7 +65,7 @@ public class Tile {
     private Matrix mMatrix = new Matrix();
     private String mDataText;
 
-    private boolean useFringeColors = Settings.useFringeColors();
+    private boolean useMultiColor = Settings.useMultiColor();
     private boolean recycled = false;
 
     public static void updatePaint() {
@@ -92,7 +93,8 @@ public class Tile {
      */
     public Tile(int number, int index) {
         mIndex = index;
-        mFringeIndex = getFringeIndex(number);
+        mNumber = number;
+        mMultiColorIndex = getMultiColorIndex(number);
         mDataText = Integer.toString(number);
 
         updatePaint();
@@ -144,8 +146,8 @@ public class Tile {
             return;
         }
 
-        if (useFringeColors && !Game.isPaused()) {
-            int color = Colors.fringeTiles[mFringeIndex];
+        if (mMultiColorIndex >= 0 && useMultiColor && !Game.isPaused()) {
+            int color = Colors.multiColorTiles[mMultiColorIndex];
             sPaintPath.setColor(color);
         } else {
             sPaintPath.setColor(Colors.getTileColor());
@@ -216,7 +218,8 @@ public class Tile {
     }
 
     public void update() {
-        useFringeColors = Settings.useFringeColors();
+        useMultiColor = Settings.useMultiColor();
+        mMultiColorIndex = getMultiColorIndex(mNumber);
     }
 
     public boolean isAnimating() {
@@ -311,10 +314,20 @@ public class Tile {
         mTileScaleAnimator.cancel();
     }
 
-    private int getFringeIndex(int number) {
+    private int getMultiColorIndex(int number) {
         int index = number - 1;
         int x = index % Settings.gameWidth;
         int y = index / Settings.gameWidth;
-        return Math.min(x, y);
+        switch (Settings.multiColor) {
+            case Settings.MULTI_COLOR_ROWS:
+                return y;
+            case Settings.MULTI_COLOR_COLUMNS:
+                return x;
+            case Settings.MULTI_COLOR_FRINGE:
+                return Settings.gameMode == Game.MODE_SNAKE ? -1 : Math.min(x, y);
+            case Settings.MULTI_COLOR_OFF:
+            default:
+                return -1;
+        }
     }
 }
