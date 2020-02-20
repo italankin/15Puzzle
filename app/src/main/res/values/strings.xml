@@ -44,6 +44,7 @@
         <item>rows</item>
         <item>columns</item>
         <item>fringe</item>
+        <item>solved</item>
     </string-array>
     <string-array name="sort_types">
         <item>fewer moves</item>

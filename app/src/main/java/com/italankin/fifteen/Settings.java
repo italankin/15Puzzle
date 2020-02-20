@@ -15,7 +15,7 @@ public class Settings {
     public static final int MAX_GAME_HEIGHT = 8;
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
-    public static final int MULTI_COLOR_MODES = 4;
+    public static final int MULTI_COLOR_MODES = 5;
     static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
     static final long NEW_GAME_DEBOUNCE = 500;
 
@@ -23,6 +23,7 @@ public class Settings {
     public static final int MULTI_COLOR_ROWS = 1;
     public static final int MULTI_COLOR_COLUMNS = 2;
     public static final int MULTI_COLOR_FRINGE = 3;
+    public static final int MULTI_COLOR_SOLVED = 4;
 
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";

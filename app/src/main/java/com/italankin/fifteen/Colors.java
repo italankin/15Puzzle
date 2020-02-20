@@ -111,6 +111,10 @@ public class Colors {
         }
     }
 
+    public static int getUnsolvedTileColor(int color) {
+        return color & 0x60ffffff;
+    }
+
     /**
      * @return цвет текста на плитках
      */

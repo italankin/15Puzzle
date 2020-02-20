@@ -146,12 +146,7 @@ public class Tile {
             return;
         }
 
-        if (mMultiColorIndex >= 0 && useMultiColor && !Game.isPaused()) {
-            int color = Colors.multiColorTiles[mMultiColorIndex];
-            sPaintPath.setColor(color);
-        } else {
-            sPaintPath.setColor(Colors.getTileColor());
-        }
+        sPaintPath.setColor(getTileColor());
 
         canvas.drawPath(mDrawPath, sPaintPath);
 
@@ -307,6 +302,31 @@ public class Tile {
         mTileScaleAnimator.start();
     }
 
+    private int getTileColor() {
+        int tileColor = Colors.getTileColor();
+        if (useMultiColor && !Game.isPaused()) {
+            if (Settings.multiColor == Settings.MULTI_COLOR_SOLVED) {
+                int targetIndex;
+                if (Settings.gameMode == Game.MODE_CLASSIC) {
+                    targetIndex = mNumber - 1;
+                } else {
+                    int n = mNumber - 1;
+                    int row = n / Settings.gameWidth;
+                    if (row % 2 == 0) {
+                        targetIndex = n;
+                    } else {
+                        int column = Settings.gameWidth - n % Settings.gameWidth - 1;
+                        targetIndex = row * Settings.gameWidth + column;
+                    }
+                }
+                return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor(tileColor);
+            } else if (mMultiColorIndex >= 0) {
+                return Colors.multiColorTiles[mMultiColorIndex];
+            }
+        }
+        return tileColor;
+    }
+
     public void recycle() {
         recycled = true;
         mTileXAnimator.cancel();
@@ -326,6 +346,7 @@ public class Tile {
             case Settings.MULTI_COLOR_FRINGE:
                 return Settings.gameMode == Game.MODE_SNAKE ? -1 : Math.min(x, y);
             case Settings.MULTI_COLOR_OFF:
+            case Settings.MULTI_COLOR_SOLVED:
             default:
                 return -1;
         }
