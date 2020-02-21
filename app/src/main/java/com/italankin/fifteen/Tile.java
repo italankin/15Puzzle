@@ -66,6 +66,7 @@ public class Tile {
     private String mDataText;
 
     private boolean useMultiColor = Settings.useMultiColor();
+    private int tileColor;
     private boolean recycled = false;
 
     public static void updatePaint() {
@@ -80,7 +81,6 @@ public class Tile {
             sPaintPath = new Paint();
         }
 
-        sPaintPath.setColor(Colors.getTileColor());
         sPaintPath.setAntiAlias(Settings.antiAlias);
 
         sPaintText.setColor(Colors.getTileTextColor());
@@ -95,6 +95,7 @@ public class Tile {
         mIndex = index;
         mNumber = number;
         mMultiColorIndex = getMultiColorIndex(number);
+        tileColor = getTileColor();
         mDataText = Integer.toString(number);
 
         updatePaint();
@@ -146,7 +147,7 @@ public class Tile {
             return;
         }
 
-        sPaintPath.setColor(getTileColor());
+        sPaintPath.setColor(tileColor);
 
         canvas.drawPath(mDrawPath, sPaintPath);
 
@@ -215,6 +216,7 @@ public class Tile {
     public void update() {
         useMultiColor = Settings.useMultiColor();
         mMultiColorIndex = getMultiColorIndex(mNumber);
+        tileColor = getTileColor();
     }
 
     public boolean isAnimating() {
@@ -250,6 +252,7 @@ public class Tile {
         // (т.е. был сделан ход и ситуация на поле изменилась)
         if (mIndex != newIndex) {
             mIndex = newIndex;
+            tileColor = getTileColor();
 
             float newX = Dimensions.fieldMarginLeft +
                     (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
@@ -311,17 +314,21 @@ public class Tile {
                     targetIndex = mNumber - 1;
                 } else {
                     int n = mNumber - 1;
-                    int row = n / Settings.gameWidth;
+                    int gameWidth = Settings.gameWidth;
+                    int row = n / gameWidth;
                     if (row % 2 == 0) {
                         targetIndex = n;
                     } else {
-                        int column = Settings.gameWidth - n % Settings.gameWidth - 1;
-                        targetIndex = row * Settings.gameWidth + column;
+                        int column = gameWidth - n % gameWidth - 1;
+                        targetIndex = row * gameWidth + column;
                     }
                 }
                 return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor(tileColor);
-            } else if (mMultiColorIndex >= 0) {
-                return Colors.multiColorTiles[mMultiColorIndex];
+            } else {
+                int colorIndex = mMultiColorIndex;
+                if (colorIndex >= 0) {
+                    return Colors.multiColorTiles[colorIndex];
+                }
             }
         }
         return tileColor;
