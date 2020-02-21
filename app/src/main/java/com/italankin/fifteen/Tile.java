@@ -323,7 +323,7 @@ public class Tile {
                         targetIndex = row * gameWidth + column;
                     }
                 }
-                return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor(tileColor);
+                return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor();
             } else {
                 int colorIndex = mMultiColorIndex;
                 if (colorIndex >= 0) {
