@@ -21,11 +21,15 @@ public abstract class BaseView {
     /**
      * Скрыть элемент.
      *
-     * @return {@code true}, если элемент будет скрыт, {@code}, если он уже находился в скрытом
+     * @return {@code true}, если элемент будет скрыт, {@code false}, если он уже находился в скрытом
      * состоянии
      */
     public boolean hide() {
-        return mShow && !(mShow = false);
+        if (mShow) {
+            mShow = false;
+            return true;
+        }
+        return false;
     }
 
     /**

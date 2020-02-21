@@ -54,20 +54,14 @@ public class FieldOverlay extends BaseView {
 
     @Override
     public boolean show() {
+        if (mShow) {
+            return true;
+        }
         if (Settings.animations) {
             mAlphaAnimator.setDuration(Settings.screenAnimDuration);
             mAlphaAnimator.start();
         }
         return (mShow = true);
-    }
-
-    /**
-     * Устанавливает видимость элемента.
-     *
-     * @param visible видимость элемента
-     */
-    public void setVisible(boolean visible) {
-        mShow = visible;
     }
 
     /**

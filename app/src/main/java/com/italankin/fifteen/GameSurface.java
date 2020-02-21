@@ -265,6 +265,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 } else if (Game.isPaused() && mRectField.contains(x, y)) {
                     Game.setPaused(false);
                     mPauseOverlay.hide();
+                    mField.update();
                 } else if (!Game.isSolved()) {
                     mField.moveTiles(mStartX, mStartY, Tools.DIRECTION_DEFAULT);
                 }
@@ -286,16 +287,18 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             case BTN_SETTINGS:
                 Game.setPaused(Game.getMoves() > 0);
                 if (Game.isPaused()) {
-                    mPauseOverlay.setVisible(true);
+                    mPauseOverlay.show();
                 }
+                mField.update();
                 mSettings.show();
                 break;
 
             case BTN_LEADERBOARD:
                 Game.setPaused(Game.getMoves() > 0);
                 if (Game.isPaused()) {
-                    mPauseOverlay.setVisible(true);
+                    mPauseOverlay.show();
                 }
+                mField.update();
                 mLeaderboard.show();
                 break;
 
@@ -303,6 +306,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 if (!Game.isSolved()) {
                     Game.invertPaused();
                 }
+                mField.update();
                 if (mPauseOverlay.isShown()) {
                     mPauseOverlay.hide();
                 } else {
