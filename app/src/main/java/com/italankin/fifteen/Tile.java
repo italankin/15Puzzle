@@ -342,16 +342,45 @@ public class Tile {
     }
 
     private int getMultiColorIndex(int number) {
+        switch (Settings.gameMode) {
+            case Game.MODE_SNAKE:
+                return getSnakeMultiColorIndex(number);
+            case Game.MODE_CLASSIC:
+                return getClassicMultiColorIndex(number);
+            default:
+                return -1;
+        }
+    }
+
+    private int getSnakeMultiColorIndex(int number) {
         int index = number - 1;
-        int x = index % Settings.gameWidth;
-        int y = index / Settings.gameWidth;
+        int gameWidth = Settings.gameWidth;
+        int row = index / gameWidth;
+        int column = ((row % 2) == 0) ? (index % gameWidth) : (gameWidth - (index % gameWidth) - 1);
         switch (Settings.multiColor) {
             case Settings.MULTI_COLOR_ROWS:
-                return y;
+                return row;
             case Settings.MULTI_COLOR_COLUMNS:
-                return x;
+                return column;
             case Settings.MULTI_COLOR_FRINGE:
-                return Settings.gameMode == Game.MODE_SNAKE ? -1 : Math.min(x, y);
+                return Math.min(row, column);
+            case Settings.MULTI_COLOR_OFF:
+            case Settings.MULTI_COLOR_SOLVED:
+            default:
+                return -1;
+        }
+    }
+
+    private int getClassicMultiColorIndex(int number) {
+        int index = number - 1;
+        int gameWidth = Settings.gameWidth;
+        switch (Settings.multiColor) {
+            case Settings.MULTI_COLOR_ROWS:
+                return index / gameWidth;
+            case Settings.MULTI_COLOR_COLUMNS:
+                return index % gameWidth;
+            case Settings.MULTI_COLOR_FRINGE:
+                return Math.min(index % gameWidth, index / gameWidth);
             case Settings.MULTI_COLOR_OFF:
             case Settings.MULTI_COLOR_SOLVED:
             default:
