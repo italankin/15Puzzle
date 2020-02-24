@@ -144,7 +144,7 @@ public class SettingsView extends BaseView {
 
     public SettingsView(Resources res) {
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
-        int topMargin = (int) (Dimensions.surfaceHeight * 0.05f); // отступ от верхнего края экрана
+        int topMargin = (int) (Dimensions.surfaceHeight * 0.10f); // отступ от верхнего края экрана
         int padding = -lineSpacing / 4;
 
         mPaintText = new Paint();
@@ -325,13 +325,13 @@ public class SettingsView extends BaseView {
                 Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + textHeight,
                 mRectColor.bottom + padding);
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
-
-        topMargin += lineSpacing;
-        mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectMultiColor.inset(0, padding);
     }
 
     private void initAdvancedPage(int lineSpacing, int topMargin, int padding, int textHeight) {
+        topMargin += lineSpacing;
+        mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMultiColor.inset(0, padding);
+
         topMargin += lineSpacing;
         mRectAntiAlias = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectAntiAlias.inset(0, padding);
@@ -364,11 +364,6 @@ public class SettingsView extends BaseView {
         mPaintIcon.setColor(Colors.getTileColor());
         canvas.drawRect(mRectColorIcon, mPaintIcon);
 
-        // fringe
-        canvas.drawText(mTextMultiColor, textLeft, mRectMultiColor.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextMultiColorValue[Settings.multiColor],
-                valueRight, mRectMultiColor.bottom - textYOffset, mPaintValue);
-
         // цвет фона
         canvas.drawText(mTextColorMode, textLeft, mRectColorMode.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextColorModeValue[Settings.colorMode],
@@ -386,6 +381,10 @@ public class SettingsView extends BaseView {
     }
 
     private void drawAdvanced(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
+        canvas.drawText(mTextMultiColor, textLeft, mRectMultiColor.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextMultiColorValue[Settings.multiColor],
+                valueRight, mRectMultiColor.bottom - textYOffset, mPaintValue);
+
         canvas.drawText(mTextAntiAlias, textLeft, mRectAntiAlias.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextAntiAliasValue[Settings.antiAlias ? 1 : 0],
                 valueRight, mRectAntiAlias.bottom - textYOffset, mPaintValue);
@@ -448,21 +447,6 @@ public class SettingsView extends BaseView {
             }
         }
 
-        // -- режим fringe --
-        if (mRectMultiColor.contains(x, y)) {
-            if (dx < 0) {
-                if (--Settings.multiColor < 0) {
-                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
-                }
-            } else {
-                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
-            }
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(false);
-            }
-        }
-
         // -- цвет фона --
         if (mRectColorMode.contains(x, y)) {
             Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
@@ -492,6 +476,20 @@ public class SettingsView extends BaseView {
     }
 
     private void onClickAdvanced(int x, int y, int dx) {
+        if (mRectMultiColor.contains(x, y)) {
+            if (dx < 0) {
+                if (--Settings.multiColor < 0) {
+                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
+                }
+            } else {
+                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
+            }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
         if (mRectAntiAlias.contains(x, y)) {
             Settings.antiAlias = !Settings.antiAlias;
             Settings.save();
