@@ -22,6 +22,10 @@
     <string name="action_about">ПАУЗА</string>
     <string name="info_no_data">нет данных</string>
 
+    <string-array name="settings_pages">
+        <item>дополнительные</item>
+        <item>базовые</item>
+    </string-array>
     <string-array name="toggle">
         <item>выкл.</item>
         <item>вкл.</item>

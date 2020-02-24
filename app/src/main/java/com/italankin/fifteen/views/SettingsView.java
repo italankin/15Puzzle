@@ -16,6 +16,10 @@ import com.italankin.fifteen.Settings;
  */
 public class SettingsView extends BaseView {
 
+    private static final int PAGE_COUNT = 2;
+    private static final int PAGE_BASIC = 0;
+    private static final int PAGE_ADVANCED = 1;
+
     /**
      * заголовок элемента настроек
      */
@@ -60,8 +64,8 @@ public class SettingsView extends BaseView {
     /**
      * режим fringer
      */
-    private String mTextFringeColors;
-    private String[] mTextFringeColorsValue;
+    private String mTextMultiColor;
+    private String[] mTextMultiColorValue;
     /**
      * цвет фона
      */
@@ -79,6 +83,7 @@ public class SettingsView extends BaseView {
      * кнопка "назад"
      */
     private String mTextBack;
+    private String[] mTextSettingsPage;
 
     /**
      * граница элемента настройки ширины
@@ -99,7 +104,7 @@ public class SettingsView extends BaseView {
     /**
      * режим fringe
      */
-    private RectF mRectFringeColors;
+    private RectF mRectMultiColor;
     /**
      * граница элемента цвета фона
      */
@@ -116,6 +121,7 @@ public class SettingsView extends BaseView {
      * граница элемента режим игры
      */
     private RectF mRectMode;
+    private RectF mRectSettingsPage;
     /**
      * граница элемента "назад"
      */
@@ -126,6 +132,7 @@ public class SettingsView extends BaseView {
     //    private RectF mRectAbout;
 
     private Callbacks mCallbacks;
+    private int mPage = PAGE_BASIC;
 
     public SettingsView(Resources res) {
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
@@ -152,6 +159,9 @@ public class SettingsView extends BaseView {
         mPaintIcon = new Paint();
         mPaintIcon.setAntiAlias(Settings.antiAlias);
 
+        mTextBack = res.getString(R.string.back);
+        mTextSettingsPage = res.getStringArray(R.array.settings_pages);
+
         mTextHeight = res.getString(R.string.pref_height);
         mTextHeightValue = Integer.toString(Settings.gameHeight);
         mTextWidth = res.getString(R.string.pref_width);
@@ -162,56 +172,25 @@ public class SettingsView extends BaseView {
         mTextBfValue = res.getStringArray(R.array.difficulty_modes);
         mTextAnimations = res.getString(R.string.pref_animation);
         mTextAnimationsValue = res.getStringArray(R.array.toggle);
-        mTextFringeColors = res.getString(R.string.pref_fringe);
-        mTextFringeColorsValue = res.getStringArray(R.array.multi_color_modes);
+        mTextMultiColor = res.getString(R.string.pref_fringe);
+        mTextMultiColorValue = res.getStringArray(R.array.multi_color_modes);
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
-        mTextBack = res.getString(R.string.back);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
         int textHeight = r.height();
 
-        topMargin += lineSpacing;
-        mRectMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectMode.inset(0, padding);
+        initBasicPage(lineSpacing, topMargin, padding, textHeight);
+        initAdvancedPage(lineSpacing, topMargin, padding, textHeight);
 
-        topMargin += lineSpacing;
-        mRectBf = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectBf.inset(0, padding);
+        mRectSettingsPage = new RectF(0, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight * 2,
+                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight);
+        mRectSettingsPage.inset(0, padding);
 
-        topMargin += lineSpacing;
-        mRectWidth = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectWidth.inset(0, padding);
-
-        topMargin += lineSpacing;
-        mRectHeight = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectHeight.inset(0, padding);
-
-        topMargin += lineSpacing;
-        mRectAnimations = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectAnimations.inset(0, padding);
-
-        topMargin += lineSpacing;
-        mRectColorMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectColorMode.inset(0, padding);
-
-        topMargin += lineSpacing;
-        mRectColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectColor.inset(0, padding);
-        mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing,
-                mRectColor.top - padding,
-                Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + textHeight,
-                mRectColor.bottom + padding);
-        mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
-
-        topMargin += lineSpacing;
-        mRectFringeColors = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectFringeColors.inset(0, padding);
-
-        mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing,
-                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing + textHeight);
+        mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing - textHeight,
+                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing);
         mRectBack.inset(0, padding);
     }
 
@@ -223,7 +202,6 @@ public class SettingsView extends BaseView {
      * @param dx направление жеста
      */
     public void onClick(int x, int y, int dx) {
-
         if (Math.abs(dx) < 15) {
             dx = 0;
         }
@@ -281,7 +259,7 @@ public class SettingsView extends BaseView {
         }
 
         // -- режим fringe --
-        if (mRectFringeColors.contains(x, y)) {
+        if (mRectMultiColor.contains(x, y)) {
             if (dx < 0) {
                 if (--Settings.multiColor < 0) {
                     Settings.multiColor += Settings.MULTI_COLOR_MODES;
@@ -322,6 +300,10 @@ public class SettingsView extends BaseView {
             }
         }
 
+        if (mRectSettingsPage.contains(x, y)) {
+            mPage = (mPage + 1) % PAGE_COUNT;
+        }
+
         // -- назад --
         if (mRectBack.contains(x, y)) {
             hide();
@@ -335,60 +317,32 @@ public class SettingsView extends BaseView {
         }
 
         // отступ от центра
-        float right = Dimensions.surfaceWidth / 2 + Dimensions.spacing;
+        float valueRight = Dimensions.surfaceWidth / 2 + Dimensions.spacing;
         // для выравнивания элементов
-        float left = Dimensions.surfaceWidth / 2 - Dimensions.spacing;
+        float textLeft = Dimensions.surfaceWidth / 2 - Dimensions.spacing;
         // смещение по вертикали
-        float s = (int) (Dimensions.surfaceHeight * 0.02f);
+        float textYOffset = (int) (Dimensions.surfaceHeight * 0.02f);
 
         // фон
         canvas.drawColor(Colors.getOverlayColor());
 
-        // чтение настроек игры
-        mTextWidthValue = Integer.toString(Settings.gameWidth);
-        mTextHeightValue = Integer.toString(Settings.gameHeight);
+        // страница настроек
+        switch (mPage) {
+            case PAGE_BASIC:
+                drawBasic(canvas, valueRight, textLeft, textYOffset);
+                break;
+            case PAGE_ADVANCED:
+                drawAdvanced(canvas, valueRight, textLeft, textYOffset);
+                break;
+        }
 
-        // ширина поля
-        canvas.drawText(mTextWidth, left, mRectWidth.bottom - s, mPaintText);
-        canvas.drawText(mTextWidthValue, right, mRectWidth.bottom - s, mPaintValue);
-
-        // высота поля
-        canvas.drawText(mTextHeight, left, mRectHeight.bottom - s, mPaintText);
-        canvas.drawText(mTextHeightValue, right, mRectHeight.bottom - s, mPaintValue);
-
-        // анимации
-        canvas.drawText(mTextAnimations, left, mRectAnimations.bottom - s, mPaintText);
-        canvas.drawText(mTextAnimationsValue[Settings.animations ? 1 : 0],
-                right, mRectAnimations.bottom - s, mPaintValue);
-
-        // цвет
-        canvas.drawText(mTextColor, left, mRectColor.bottom - s, mPaintText);
-        mPaintIcon.setColor(Colors.getTileColor());
-        canvas.drawRect(mRectColorIcon, mPaintIcon);
-
-        // fringe
-        canvas.drawText(mTextFringeColors, left, mRectFringeColors.bottom - s, mPaintText);
-        canvas.drawText(mTextFringeColorsValue[Settings.multiColor],
-                right, mRectFringeColors.bottom - s, mPaintValue);
-
-        // цвет фона
-        canvas.drawText(mTextColorMode, left, mRectColorMode.bottom - s, mPaintText);
-        canvas.drawText(mTextColorModeValue[Settings.colorMode],
-                right, mRectColorMode.bottom - s, mPaintValue);
-
-        // режим
-        canvas.drawText(mTextMode, left, mRectMode.bottom - s, mPaintText);
-        canvas.drawText(mTextModeValue[Settings.gameMode],
-                right, mRectMode.bottom - s, mPaintValue);
-
-        // bf
-        canvas.drawText(mTextBf, left, mRectBf.bottom - s, mPaintText);
-        canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
-                right, mRectBf.bottom - s, mPaintValue);
+        // кнопка страницы настроек
+        canvas.drawText(mTextSettingsPage[mPage], mRectSettingsPage.centerX(),
+                mRectSettingsPage.bottom - textYOffset, mPaintControls);
 
         // кнопка "назад"
         canvas.drawText(mTextBack, mRectBack.centerX(),
-                mRectBack.bottom - s, mPaintControls);
+                mRectBack.bottom - textYOffset, mPaintControls);
     }
 
     public void update() {
@@ -404,6 +358,95 @@ public class SettingsView extends BaseView {
 
     public void addCallback(Callbacks callbacks) {
         mCallbacks = callbacks;
+    }
+
+    private void initBasicPage(int lineSpacing, int topMargin, int padding, int textHeight) {
+        topMargin += lineSpacing;
+        mRectMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMode.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectBf = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectBf.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectWidth = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectWidth.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectHeight = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectHeight.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectAnimations = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectAnimations.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectColorMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectColorMode.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectColor.inset(0, padding);
+        mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing,
+                mRectColor.top - padding,
+                Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + textHeight,
+                mRectColor.bottom + padding);
+        mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
+
+        topMargin += lineSpacing;
+        mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMultiColor.inset(0, padding);
+    }
+
+    private void initAdvancedPage(int lineSpacing, int topMargin, int padding, int textHeight) {
+    }
+
+    private void drawAdvanced(Canvas canvas, float valueRight, float textLeft, float s) {
+    }
+
+    private void drawBasic(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
+        // чтение настроек игры
+        mTextWidthValue = Integer.toString(Settings.gameWidth);
+        mTextHeightValue = Integer.toString(Settings.gameHeight);
+
+        // ширина поля
+        canvas.drawText(mTextWidth, textLeft, mRectWidth.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextWidthValue, valueRight, mRectWidth.bottom - textYOffset, mPaintValue);
+
+        // высота поля
+        canvas.drawText(mTextHeight, textLeft, mRectHeight.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextHeightValue, valueRight, mRectHeight.bottom - textYOffset, mPaintValue);
+
+        // анимации
+        canvas.drawText(mTextAnimations, textLeft, mRectAnimations.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextAnimationsValue[Settings.animations ? 1 : 0],
+                valueRight, mRectAnimations.bottom - textYOffset, mPaintValue);
+
+        // цвет
+        canvas.drawText(mTextColor, textLeft, mRectColor.bottom - textYOffset, mPaintText);
+        mPaintIcon.setColor(Colors.getTileColor());
+        canvas.drawRect(mRectColorIcon, mPaintIcon);
+
+        // fringe
+        canvas.drawText(mTextMultiColor, textLeft, mRectMultiColor.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextMultiColorValue[Settings.multiColor],
+                valueRight, mRectMultiColor.bottom - textYOffset, mPaintValue);
+
+        // цвет фона
+        canvas.drawText(mTextColorMode, textLeft, mRectColorMode.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextColorModeValue[Settings.colorMode],
+                valueRight, mRectColorMode.bottom - textYOffset, mPaintValue);
+
+        // режим
+        canvas.drawText(mTextMode, textLeft, mRectMode.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextModeValue[Settings.gameMode],
+                valueRight, mRectMode.bottom - textYOffset, mPaintValue);
+
+        // bf
+        canvas.drawText(mTextBf, textLeft, mRectBf.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
+                valueRight, mRectBf.bottom - textYOffset, mPaintValue);
     }
 
     public interface Callbacks {
