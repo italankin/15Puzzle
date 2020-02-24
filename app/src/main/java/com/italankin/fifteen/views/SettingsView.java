@@ -206,6 +206,12 @@ public class SettingsView extends BaseView {
         mRectBack.inset(0, padding);
     }
 
+    @Override
+    public boolean show() {
+        mPage = PAGE_BASIC;
+        return super.show();
+    }
+
     /**
      * Обработка событий нажатия
      *
