@@ -38,6 +38,7 @@ public class Settings {
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
     private static final String KEY_MULTI_COLOR = "multi_color";
+    private static final String KEY_NEW_GAME_DEBOUNCE = "new_game_debounce";
 
     /**
      * ширина игры
@@ -91,6 +92,7 @@ public class Settings {
      * Typeface текста
      */
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
+    public static boolean newGameDebounce = true;
 
     /**
      * хранилище настроек приложения
@@ -119,6 +121,7 @@ public class Settings {
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
+        newGameDebounce = prefs.getBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
     }
 
     public static void save() {
@@ -151,6 +154,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
+        editor.putBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
         if (sync) {
             editor.commit();
         } else {

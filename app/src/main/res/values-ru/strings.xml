@@ -54,5 +54,6 @@
         <item>лучшее время</item>
     </string-array>
     <string name="about">инфо</string>
+    <string name="pref_anti_alias">Сглаживание</string>
 
 </resources>

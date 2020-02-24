@@ -108,7 +108,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      */
     private int mStartY;
     private boolean mTrail = false;
-    private long mLastTrailFired = 0;
     private int animCurrentIndex = ANIM_TYPE_ALL;
     private long lastSolvedTimestamp = 0;
 
@@ -384,7 +383,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * @param isUser <b>true</b>, если действие было вызвано пользователем
      */
     private void createNewGame(boolean isUser) {
-        if (System.currentTimeMillis() - lastSolvedTimestamp < Settings.NEW_GAME_DEBOUNCE) {
+        if (Settings.newGameDebounce &&
+                ((System.currentTimeMillis() - lastSolvedTimestamp) < Settings.NEW_GAME_DEBOUNCE)) {
             return;
         }
 

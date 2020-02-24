@@ -85,6 +85,12 @@ public class SettingsView extends BaseView {
     private String mTextBack;
     private String[] mTextSettingsPage;
 
+    private String mTextAntiAlias;
+    private String[] mTextAntiAliasValue;
+
+    private String mTextNewGameDebounce;
+    private String[] mTextNewGameDebounceValue;
+
     /**
      * граница элемента настройки ширины
      */
@@ -121,6 +127,8 @@ public class SettingsView extends BaseView {
      * граница элемента режим игры
      */
     private RectF mRectMode;
+    private RectF mRectAntiAlias;
+    private RectF mRectNewGameDebounce;
     private RectF mRectSettingsPage;
     /**
      * граница элемента "назад"
@@ -177,6 +185,10 @@ public class SettingsView extends BaseView {
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValue = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
+        mTextAntiAlias = res.getString(R.string.pref_anti_alias);
+        mTextAntiAliasValue = res.getStringArray(R.array.toggle);
+        mTextNewGameDebounce = res.getString(R.string.pref_new_game_debounce);
+        mTextNewGameDebounceValue = res.getStringArray(R.array.toggle);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -206,105 +218,19 @@ public class SettingsView extends BaseView {
             dx = 0;
         }
 
-        // -- ширина поля --
-        if (mRectWidth.contains(x, y)) {
-            Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
-            if (Settings.gameWidth < Settings.MIN_GAME_WIDTH) {
-                Settings.gameWidth = Settings.MAX_GAME_WIDTH;
-            }
-            if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
-                Settings.gameWidth = Settings.MIN_GAME_WIDTH;
-            }
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(true);
-            }
-        }
-
-        // -- высота поля --
-        if (mRectHeight.contains(x, y)) {
-            Settings.gameHeight += ((dx == 0) ? 1 : Math.signum(dx));
-            if (Settings.gameHeight < Settings.MIN_GAME_HEIGHT) {
-                Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
-            }
-            if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
-                Settings.gameHeight = Settings.MIN_GAME_HEIGHT;
-            }
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(true);
-            }
-        }
-
-        // -- переключение анимаций --
-        if (mRectAnimations.contains(x, y)) {
-            Settings.animations = !Settings.animations;
-            Settings.save();
-        }
-
-        // -- цвет спрайтов --
-        if (mRectColor.contains(x, y)) {
-            int totalColors = Colors.getTileColors().length;
-            if (dx < 0) {
-                if (--Settings.tileColor < 0) {
-                    Settings.tileColor += totalColors;
-                }
-            } else {
-                Settings.tileColor = (++Settings.tileColor % totalColors);
-            }
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(false);
-            }
-        }
-
-        // -- режим fringe --
-        if (mRectMultiColor.contains(x, y)) {
-            if (dx < 0) {
-                if (--Settings.multiColor < 0) {
-                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
-                }
-            } else {
-                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
-            }
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(false);
-            }
-        }
-
-        // -- цвет фона --
-        if (mRectColorMode.contains(x, y)) {
-            Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(false);
-            }
-        }
-
-        // -- режим игры --
-        if (mRectMode.contains(x, y)) {
-            Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(true);
-            }
-        }
-
-        // -- режим игры --
-        if (mRectBf.contains(x, y)) {
-            Settings.hardmode = !Settings.hardmode;
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onChanged(true);
-            }
+        switch (mPage) {
+            case PAGE_BASIC:
+                onClickBasic(x, y, dx);
+                break;
+            case PAGE_ADVANCED:
+                onClickAdvanced(x, y, dx);
+                break;
         }
 
         if (mRectSettingsPage.contains(x, y)) {
             mPage = (mPage + 1) % PAGE_COUNT;
         }
 
-        // -- назад --
         if (mRectBack.contains(x, y)) {
             hide();
         }
@@ -400,9 +326,13 @@ public class SettingsView extends BaseView {
     }
 
     private void initAdvancedPage(int lineSpacing, int topMargin, int padding, int textHeight) {
-    }
+        topMargin += lineSpacing;
+        mRectAntiAlias = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectAntiAlias.inset(0, padding);
 
-    private void drawAdvanced(Canvas canvas, float valueRight, float textLeft, float s) {
+        topMargin += lineSpacing;
+        mRectNewGameDebounce = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectNewGameDebounce.inset(0, padding);
     }
 
     private void drawBasic(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
@@ -447,6 +377,127 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextBf, textLeft, mRectBf.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
                 valueRight, mRectBf.bottom - textYOffset, mPaintValue);
+    }
+
+    private void drawAdvanced(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
+        canvas.drawText(mTextAntiAlias, textLeft, mRectAntiAlias.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextAntiAliasValue[Settings.antiAlias ? 1 : 0],
+                valueRight, mRectAntiAlias.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextNewGameDebounce, textLeft, mRectNewGameDebounce.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextNewGameDebounceValue[Settings.newGameDebounce ? 1 : 0],
+                valueRight, mRectNewGameDebounce.bottom - textYOffset, mPaintValue);
+    }
+
+    private void onClickBasic(int x, int y, int dx) {
+        // -- ширина поля --
+        if (mRectWidth.contains(x, y)) {
+            Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
+            if (Settings.gameWidth < Settings.MIN_GAME_WIDTH) {
+                Settings.gameWidth = Settings.MAX_GAME_WIDTH;
+            }
+            if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
+                Settings.gameWidth = Settings.MIN_GAME_WIDTH;
+            }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(true);
+            }
+        }
+
+        // -- высота поля --
+        if (mRectHeight.contains(x, y)) {
+            Settings.gameHeight += ((dx == 0) ? 1 : Math.signum(dx));
+            if (Settings.gameHeight < Settings.MIN_GAME_HEIGHT) {
+                Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
+            }
+            if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
+                Settings.gameHeight = Settings.MIN_GAME_HEIGHT;
+            }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(true);
+            }
+        }
+
+        // -- переключение анимаций --
+        if (mRectAnimations.contains(x, y)) {
+            Settings.animations = !Settings.animations;
+            Settings.save();
+        }
+
+        // -- цвет спрайтов --
+        if (mRectColor.contains(x, y)) {
+            int totalColors = Colors.getTileColors().length;
+            if (dx < 0) {
+                if (--Settings.tileColor < 0) {
+                    Settings.tileColor += totalColors;
+                }
+            } else {
+                Settings.tileColor = (++Settings.tileColor % totalColors);
+            }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
+        // -- режим fringe --
+        if (mRectMultiColor.contains(x, y)) {
+            if (dx < 0) {
+                if (--Settings.multiColor < 0) {
+                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
+                }
+            } else {
+                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
+            }
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
+        // -- цвет фона --
+        if (mRectColorMode.contains(x, y)) {
+            Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
+        // -- режим игры --
+        if (mRectMode.contains(x, y)) {
+            Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(true);
+            }
+        }
+
+        // -- режим игры --
+        if (mRectBf.contains(x, y)) {
+            Settings.hardmode = !Settings.hardmode;
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(true);
+            }
+        }
+    }
+
+    private void onClickAdvanced(int x, int y, int dx) {
+        if (mRectAntiAlias.contains(x, y)) {
+            Settings.antiAlias = !Settings.antiAlias;
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
+        }
+
+        if (mRectNewGameDebounce.contains(x, y)) {
+            Settings.newGameDebounce = !Settings.newGameDebounce;
+            Settings.save();
+        }
     }
 
     public interface Callbacks {
