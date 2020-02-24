@@ -128,9 +128,9 @@ public class SettingsView extends BaseView {
     private Callbacks mCallbacks;
 
     public SettingsView(Resources res) {
-        int h = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
-        int ch = (int) (Dimensions.surfaceHeight * 0.10f); // отступ от верхнего края экрана
-        int sp = -h / 4;
+        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
+        int topMargin = (int) (Dimensions.surfaceHeight * 0.05f); // отступ от верхнего края экрана
+        int padding = -lineSpacing / 4;
 
         mPaintText = new Paint();
         mPaintText.setAntiAlias(Settings.antiAlias);
@@ -171,47 +171,48 @@ public class SettingsView extends BaseView {
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
+        int textHeight = r.height();
 
-        ch += h;
-        mRectMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectMode.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMode.inset(0, padding);
 
-        ch += h;
-        mRectBf = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectBf.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectBf = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectBf.inset(0, padding);
 
-        ch += h;
-        mRectWidth = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectWidth.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectWidth = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectWidth.inset(0, padding);
 
-        ch += h;
-        mRectHeight = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectHeight.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectHeight = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectHeight.inset(0, padding);
 
-        ch += h;
-        mRectAnimations = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectAnimations.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectAnimations = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectAnimations.inset(0, padding);
 
-        ch += h;
-        mRectColorMode = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectColorMode.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectColorMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectColorMode.inset(0, padding);
 
-        ch += h;
-        mRectColor = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectColor.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectColor.inset(0, padding);
         mRectColorIcon = new RectF(Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing,
-                mRectColor.top - sp,
-                Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + r.height(),
-                mRectColor.bottom + sp);
+                mRectColor.top - padding,
+                Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + textHeight,
+                mRectColor.bottom + padding);
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
 
-        ch += h;
-        mRectFringeColors = new RectF(0, ch, Dimensions.surfaceWidth, ch + r.height());
-        mRectFringeColors.inset(0, sp);
+        topMargin += lineSpacing;
+        mRectFringeColors = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectFringeColors.inset(0, padding);
 
-        mRectBack = new RectF(0, Dimensions.surfaceHeight - h,
-                Dimensions.surfaceWidth, Dimensions.surfaceHeight - h + r.height());
-        mRectBack.inset(0, sp);
+        mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing,
+                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing + textHeight);
+        mRectBack.inset(0, padding);
     }
 
     /**
