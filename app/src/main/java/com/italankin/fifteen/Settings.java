@@ -26,7 +26,6 @@ public class Settings {
     public static final int MULTI_COLOR_FRINGE = 3;
     public static final int MULTI_COLOR_SOLVED = 4;
 
-    public static final int INGAME_INFO_NONE = 0;
     public static final int INGAME_INFO_MOVES = 0x1;
     public static final int INGAME_INFO_TIME = 0x2;
     public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
