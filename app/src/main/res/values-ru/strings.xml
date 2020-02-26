@@ -56,5 +56,6 @@
     <string name="about">инфо</string>
     <string name="pref_anti_alias">Сглаживание</string>
     <string name="pref_ingame_info">Инфо</string>
+    <string name="pref_new_game_delay">Задержка</string>
 
 </resources>

@@ -18,7 +18,7 @@ public class Settings {
     public static final int MULTI_COLOR_MODES = 5;
     public static final int INGAME_INFO_MODES = 4;
     static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
-    static final long NEW_GAME_DEBOUNCE = 500;
+    static final long NEW_GAME_DELAY = 500;
 
     public static final int MULTI_COLOR_OFF = 0;
     public static final int MULTI_COLOR_ROWS = 1;
@@ -44,7 +44,7 @@ public class Settings {
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
     private static final String KEY_MULTI_COLOR = "multi_color";
-    private static final String KEY_NEW_GAME_DEBOUNCE = "new_game_debounce";
+    private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
 
     /**
@@ -99,7 +99,7 @@ public class Settings {
      * Typeface текста
      */
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-    public static boolean newGameDebounce = true;
+    public static boolean newGameDelay = true;
     public static int ingameInfo = INGAME_INFO_ALL;
 
     /**
@@ -129,7 +129,7 @@ public class Settings {
         hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
-        newGameDebounce = prefs.getBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
+        newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
     }
 
@@ -163,7 +163,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
         editor.putBoolean(KEY_GAME_BF, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
-        editor.putBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
+        editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         editor.putInt(KEY_INGAME_INFO, ingameInfo);
         if (sync) {
             editor.commit();

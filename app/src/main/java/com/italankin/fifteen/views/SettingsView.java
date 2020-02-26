@@ -88,8 +88,8 @@ public class SettingsView extends BaseView {
     private String mTextAntiAlias;
     private String[] mTextAntiAliasValue;
 
-    private String mTextNewGameDebounce;
-    private String[] mTextNewGameDebounceValue;
+    private String mTextNewGameDelay;
+    private String[] mTextNewGameDelayValue;
 
     private String mTextIngameInfo;
     private String[] mTextIngameInfoValues;
@@ -131,7 +131,7 @@ public class SettingsView extends BaseView {
      */
     private RectF mRectMode;
     private RectF mRectAntiAlias;
-    private RectF mRectNewGameDebounce;
+    private RectF mRectNewGameDelay;
     private RectF mRectIngameInfo;
     private RectF mRectSettingsPage;
     /**
@@ -191,8 +191,8 @@ public class SettingsView extends BaseView {
         mTextColor = res.getString(R.string.pref_color);
         mTextAntiAlias = res.getString(R.string.pref_anti_alias);
         mTextAntiAliasValue = res.getStringArray(R.array.toggle);
-        mTextNewGameDebounce = res.getString(R.string.pref_new_game_debounce);
-        mTextNewGameDebounceValue = res.getStringArray(R.array.toggle);
+        mTextNewGameDelay = res.getString(R.string.pref_new_game_delay);
+        mTextNewGameDelayValue = res.getStringArray(R.array.toggle);
         mTextIngameInfo = res.getString(R.string.pref_ingame_info);
         mTextIngameInfoValues = res.getStringArray(R.array.ingame_info);
 
@@ -343,8 +343,8 @@ public class SettingsView extends BaseView {
         mRectAntiAlias.inset(0, padding);
 
         topMargin += lineSpacing;
-        mRectNewGameDebounce = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectNewGameDebounce.inset(0, padding);
+        mRectNewGameDelay = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectNewGameDelay.inset(0, padding);
 
         topMargin += lineSpacing;
         mRectIngameInfo = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
@@ -399,9 +399,9 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextAntiAliasValue[Settings.antiAlias ? 1 : 0],
                 valueRight, mRectAntiAlias.bottom - textYOffset, mPaintValue);
 
-        canvas.drawText(mTextNewGameDebounce, textLeft, mRectNewGameDebounce.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextNewGameDebounceValue[Settings.newGameDebounce ? 1 : 0],
-                valueRight, mRectNewGameDebounce.bottom - textYOffset, mPaintValue);
+        canvas.drawText(mTextNewGameDelay, textLeft, mRectNewGameDelay.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextNewGameDelayValue[Settings.newGameDelay ? 1 : 0],
+                valueRight, mRectNewGameDelay.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextIngameInfo, textLeft, mRectIngameInfo.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextIngameInfoValues[Settings.ingameInfo],
@@ -512,8 +512,8 @@ public class SettingsView extends BaseView {
             }
         }
 
-        if (mRectNewGameDebounce.contains(x, y)) {
-            Settings.newGameDebounce = !Settings.newGameDebounce;
+        if (mRectNewGameDelay.contains(x, y)) {
+            Settings.newGameDelay = !Settings.newGameDelay;
             Settings.save();
         }
 

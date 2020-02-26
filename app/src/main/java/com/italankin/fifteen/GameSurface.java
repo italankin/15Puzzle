@@ -383,8 +383,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * @param isUser <b>true</b>, если действие было вызвано пользователем
      */
     private void createNewGame(boolean isUser) {
-        if (Settings.newGameDebounce &&
-                ((System.currentTimeMillis() - lastSolvedTimestamp) < Settings.NEW_GAME_DEBOUNCE)) {
+        if (Settings.newGameDelay &&
+                ((System.currentTimeMillis() - lastSolvedTimestamp) < Settings.NEW_GAME_DELAY)) {
             return;
         }
 
