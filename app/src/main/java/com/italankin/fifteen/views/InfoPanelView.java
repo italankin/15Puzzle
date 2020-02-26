@@ -49,6 +49,8 @@ public class InfoPanelView extends BaseView {
 
     private int mValueTextOffset;
     private int mCaptionTextOffset;
+    private final float firstRowY;
+    private final float secondRowY;
 
     public InfoPanelView(Resources res) {
         mPaintBg = new Paint();
@@ -75,6 +77,9 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.getTextBounds("A", 0, 1, r);
         mCaptionTextOffset = r.centerY();
 
+        firstRowY = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
+        secondRowY = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
+
         mTextMode = res.getStringArray(R.array.game_modes);
         mTextMoves = res.getString(R.string.info_moves);
         mTextTime = res.getString(R.string.info_time);
@@ -97,20 +102,36 @@ public class InfoPanelView extends BaseView {
                 Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,
                 mPaintTextValue);
 
-        float row1 = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
-        float row2 = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
-        // надписи
+        if (showInfo(Settings.INGAME_INFO_MOVES)) {
+            prepareTitlePaint();
+            canvas.drawText(mTextMoves, Dimensions.surfaceWidth / 2.0f, firstRowY, mPaintTextCaption);
+
+            prepareValuePaint();
+            canvas.drawText(Integer.toString(Game.getMoves()),
+                    Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, firstRowY, mPaintTextCaption);
+        }
+        if (showInfo(Settings.INGAME_INFO_TIME)) {
+            prepareTitlePaint();
+            canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
+
+            prepareValuePaint();
+            canvas.drawText(Tools.timeToString(Game.getTime()),
+                    Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
+        }
+    }
+
+    private void prepareTitlePaint() {
         mPaintTextCaption.setColor(Colors.getTileTextColor());
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(mTextMoves, Dimensions.surfaceWidth / 2.0f, row1, mPaintTextCaption);
-        canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, row2, mPaintTextCaption);
-        // значения
+    }
+
+    private void prepareValuePaint() {
         mPaintTextCaption.setColor(Colors.getInfoTextColor());
         mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText(Integer.toString(Game.getMoves()),
-                Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row1, mPaintTextCaption);
-        canvas.drawText(Tools.timeToString(Game.getTime()),
-                Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, row2, mPaintTextCaption);
+    }
+
+    private boolean showInfo(int infoMoves) {
+        return Game.isNotStarted() || Game.isSolved() || (Settings.ingameInfo & infoMoves) == infoMoves;
     }
 
     public boolean onClick(float x, float y) {

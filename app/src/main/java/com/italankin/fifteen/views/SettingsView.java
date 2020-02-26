@@ -91,6 +91,9 @@ public class SettingsView extends BaseView {
     private String mTextNewGameDebounce;
     private String[] mTextNewGameDebounceValue;
 
+    private String mTextIngameInfo;
+    private String[] mTextIngameInfoValues;
+
     /**
      * граница элемента настройки ширины
      */
@@ -129,6 +132,7 @@ public class SettingsView extends BaseView {
     private RectF mRectMode;
     private RectF mRectAntiAlias;
     private RectF mRectNewGameDebounce;
+    private RectF mRectIngameInfo;
     private RectF mRectSettingsPage;
     /**
      * граница элемента "назад"
@@ -189,6 +193,8 @@ public class SettingsView extends BaseView {
         mTextAntiAliasValue = res.getStringArray(R.array.toggle);
         mTextNewGameDebounce = res.getString(R.string.pref_new_game_debounce);
         mTextNewGameDebounceValue = res.getStringArray(R.array.toggle);
+        mTextIngameInfo = res.getString(R.string.pref_ingame_info);
+        mTextIngameInfoValues = res.getStringArray(R.array.ingame_info);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -339,6 +345,10 @@ public class SettingsView extends BaseView {
         topMargin += lineSpacing;
         mRectNewGameDebounce = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectNewGameDebounce.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectIngameInfo = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectIngameInfo.inset(0, padding);
     }
 
     private void drawBasic(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
@@ -392,6 +402,10 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextNewGameDebounce, textLeft, mRectNewGameDebounce.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextNewGameDebounceValue[Settings.newGameDebounce ? 1 : 0],
                 valueRight, mRectNewGameDebounce.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextIngameInfo, textLeft, mRectIngameInfo.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextIngameInfoValues[Settings.ingameInfo],
+                valueRight, mRectIngameInfo.bottom - textYOffset, mPaintValue);
     }
 
     private void onClickBasic(int x, int y, int dx) {
@@ -501,6 +515,14 @@ public class SettingsView extends BaseView {
         if (mRectNewGameDebounce.contains(x, y)) {
             Settings.newGameDebounce = !Settings.newGameDebounce;
             Settings.save();
+        }
+
+        if (mRectIngameInfo.contains(x, y)) {
+            Settings.ingameInfo = (++Settings.ingameInfo % Settings.INGAME_INFO_MODES);
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
         }
     }
 

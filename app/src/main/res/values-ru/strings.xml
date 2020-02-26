@@ -55,5 +55,6 @@
     </string-array>
     <string name="about">инфо</string>
     <string name="pref_anti_alias">Сглаживание</string>
+    <string name="pref_ingame_info">Инфо</string>
 
 </resources>

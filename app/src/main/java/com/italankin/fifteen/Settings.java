@@ -16,6 +16,7 @@ public class Settings {
     public static final int COLOR_MODES = 2;
     public static final int GAME_MODES = 2;
     public static final int MULTI_COLOR_MODES = 5;
+    public static final int INGAME_INFO_MODES = 4;
     static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
     static final long NEW_GAME_DEBOUNCE = 500;
 
@@ -24,6 +25,11 @@ public class Settings {
     public static final int MULTI_COLOR_COLUMNS = 2;
     public static final int MULTI_COLOR_FRINGE = 3;
     public static final int MULTI_COLOR_SOLVED = 4;
+
+    public static final int INGAME_INFO_NONE = 0;
+    public static final int INGAME_INFO_MOVES = 0x1;
+    public static final int INGAME_INFO_TIME = 0x2;
+    public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
 
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
@@ -39,6 +45,7 @@ public class Settings {
     private static final String KEY_GAME_ANIMATION = "animation";
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DEBOUNCE = "new_game_debounce";
+    private static final String KEY_INGAME_INFO = "ingame_info";
 
     /**
      * ширина игры
@@ -93,6 +100,7 @@ public class Settings {
      */
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDebounce = true;
+    public static int ingameInfo = INGAME_INFO_ALL;
 
     /**
      * хранилище настроек приложения
@@ -122,6 +130,7 @@ public class Settings {
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
         newGameDebounce = prefs.getBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
+        ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
     }
 
     public static void save() {
@@ -155,6 +164,7 @@ public class Settings {
         editor.putBoolean(KEY_GAME_BF, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DEBOUNCE, newGameDebounce);
+        editor.putInt(KEY_INGAME_INFO, ingameInfo);
         if (sync) {
             editor.commit();
         } else {
