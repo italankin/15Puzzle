@@ -331,12 +331,12 @@ public class SettingsView extends BaseView {
 
     private void initAdvancedPage(int lineSpacing, int topMargin, int padding, int textHeight) {
         topMargin += lineSpacing;
-        mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectMultiColor.inset(0, padding);
-
-        topMargin += lineSpacing;
         mRectAntiAlias = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectAntiAlias.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMultiColor.inset(0, padding);
 
         topMargin += lineSpacing;
         mRectNewGameDelay = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
