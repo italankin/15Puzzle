@@ -135,7 +135,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mTopPanel.addButton(BTN_NEW, mResources.getString(R.string.action_new));
         mTopPanel.addButton(BTN_SETTINGS, mResources.getString(R.string.action_settings));
         mTopPanel.addButton(BTN_LEADERBOARD, mResources.getString(R.string.action_leaderboard));
-        mTopPanel.addButton(BTN_PAUSE, mResources.getString(R.string.action_about));
+        mTopPanel.addButton(BTN_PAUSE, mResources.getString(R.string.action_pause));
         mTopPanel.addCallback(this);
 
         mInfoPanel = new InfoPanelView(mResources);

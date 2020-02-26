@@ -138,10 +138,6 @@ public class SettingsView extends BaseView {
      * граница элемента "назад"
      */
     private RectF mRectBack;
-    /**
-     * граница элемента "about"
-     */
-    //    private RectF mRectAbout;
 
     private Callbacks mCallbacks;
     private int mPage = PAGE_BASIC;

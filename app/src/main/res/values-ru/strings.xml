@@ -2,13 +2,18 @@
 <resources>
 
     <string name="app_name">15</string>
+
     <string name="action_settings">ОПЦИИ</string>
     <string name="action_new">НОВАЯ</string>
     <string name="action_leaderboard">РЕКОРДЫ</string>
+    <string name="action_pause">ПАУЗА</string>
+
     <string name="info_moves">ХОДЫ</string>
     <string name="info_time">ВРЕМЯ</string>
     <string name="info_win">СОБРАНО!</string>
     <string name="info_pause">ПАУЗА</string>
+    <string name="info_no_data">нет данных</string>
+
     <string name="pref_width">Ширина</string>
     <string name="pref_height">Высота</string>
     <string name="pref_animation">Анимация</string>
@@ -18,9 +23,11 @@
     <string name="pref_fringe">Мульти-цвет</string>
     <string name="pref_bf">Режим</string>
     <string name="pref_sort">Сорт.</string>
+    <string name="pref_anti_alias">Сглаживание</string>
+    <string name="pref_ingame_info">Инфо</string>
+    <string name="pref_new_game_delay">Задержка</string>
+
     <string name="back">назад</string>
-    <string name="action_about">ПАУЗА</string>
-    <string name="info_no_data">нет данных</string>
 
     <string-array name="settings_pages">
         <item>дополнительные</item>
@@ -49,13 +56,15 @@
         <item>края</item>
         <item>решенные</item>
     </string-array>
+    <string-array name="ingame_info">
+        <item>выкл.</item>
+        <item>ходы</item>
+        <item>время</item>
+        <item>ходы и время</item>
+    </string-array>
     <string-array name="sort_types">
         <item>меньше ходов</item>
         <item>лучшее время</item>
     </string-array>
-    <string name="about">инфо</string>
-    <string name="pref_anti_alias">Сглаживание</string>
-    <string name="pref_ingame_info">Инфо</string>
-    <string name="pref_new_game_delay">Задержка</string>
 
 </resources>

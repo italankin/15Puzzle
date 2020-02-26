@@ -2,14 +2,18 @@
 <resources>
 
     <string name="app_name">15 Puzzle</string>
+
     <string name="action_settings">SETTINGS</string>
     <string name="action_new">NEW</string>
-    <string name="action_about">PAUSE</string>
+    <string name="action_pause">PAUSE</string>
     <string name="action_leaderboard">RECORDS</string>
+
     <string name="info_moves">MOVES</string>
     <string name="info_time">TIME</string>
     <string name="info_win">SOLVED!</string>
     <string name="info_pause">PAUSED</string>
+    <string name="info_no_data">no data</string>
+
     <string name="pref_width">Width</string>
     <string name="pref_height">Height</string>
     <string name="pref_color">Color</string>
@@ -22,9 +26,8 @@
     <string name="pref_anti_alias">Anti-alias</string>
     <string name="pref_new_game_delay">Delay</string>
     <string name="pref_ingame_info">Ingame info</string>
+
     <string name="back">back</string>
-    <string name="info_no_data">no data</string>
-    <string name="about">about</string>
 
     <string-array name="toggle">
         <item>off</item>
