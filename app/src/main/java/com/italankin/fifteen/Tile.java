@@ -32,29 +32,29 @@ public class Tile {
     /**
      * Path для рисования фона плитки
      */
-    private Path mShape;
+    private final Path mShape;
     /**
      * RectF для определения границ плитки и создания пути
      */
-    private RectF mRectShape;
+    private final RectF mRectShape;
 
     /**
      * Индекс плитки в общем массиве
      */
-    private int mIndex;
+    private volatile int mIndex;
     /**
      * раскрашивание по слоям
      */
     private int mMultiColorIndex;
-    private int mNumber;
+    private final int mNumber;
     /**
      * Позиция X плитки на поле
      */
-    private float mCanvasX;
+    private volatile float mCanvasX;
     /**
      * Позиция Y плитки на поле
      */
-    private float mCanvasY;
+    private volatile float mCanvasY;
 
     private TileXAnimator mTileXAnimator;
     private TileYAnimator mTileYAnimator;
