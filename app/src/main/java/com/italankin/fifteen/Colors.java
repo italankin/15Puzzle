@@ -38,35 +38,35 @@ public class Colors {
     /**
      * задний фон главного экрана
      */
-    public static int[] background = {0xffcacaca, 0xff181818};
+    public static final int[] background = {0xffcacaca, 0xff181818};
     /**
      * цвет фона поля
      */
-    public static int backgroundField = 0xff373737;
+    public static final int backgroundField = 0xff373737;
     /**
      * цвет фона оверлеев
      */
-    public static int[] overlay = {0xdaa0a0a0, 0xda373737};
+    public static final int[] overlay = {0xdaa0a0a0, 0xda373737};
     /**
      * цвет текста оверлея
      */
-    public static int[] overlayText = {0xff373737, 0xff787878};
+    public static final int[] overlayText = {0xff373737, 0xff787878};
     /**
      * цвет текста спрайтов
      */
-    public static int[] spriteText = {0xfff8f8f8, 0xff181818};
+    public static final int[] spriteText = {0xfff8f8f8, 0xff181818};
     /**
      * цвет текста инфо
      */
-    public static int[] textInfo = {0xffcacaca, 0xff787878};
+    public static final int[] textInfo = {0xffcacaca, 0xff787878};
     /**
      * цвет текста значений в меню настроек
      */
-    public static int menuTextValue = 0xfffefefe;
+    public static final int menuTextValue = 0xfffefefe;
     /**
      * цвета спрайтов (день)
      */
-    public static int[] tilesDay = {
+    public static final int[] tilesDay = {
             MUTED_BLUE,
             RED,
             ORANGE,
@@ -78,7 +78,7 @@ public class Colors {
             GREY,
             BLACK
     };
-    public static int[] tilesDayUnsolved = {
+    public static final int[] tilesDayUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
@@ -93,7 +93,7 @@ public class Colors {
     /**
      * цвета спрайтов (ночь)
      */
-    public static int[] tilesNight = {
+    public static final int[] tilesNight = {
             MUTED_BLUE,
             RED,
             ORANGE,
@@ -105,7 +105,7 @@ public class Colors {
             GREY,
             WHITE
     };
-    public static int[] tilesNightUnsolved = {
+    public static final int[] tilesNightUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
@@ -120,7 +120,7 @@ public class Colors {
     /**
      * цвета спрайтов
      */
-    public static int[] multiColorTiles = {
+    public static final int[] multiColorTiles = {
             RED,
             BLUE,
             GREEN,
