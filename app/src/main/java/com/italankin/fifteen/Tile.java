@@ -326,7 +326,7 @@ public class Tile {
                 return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor();
             } else {
                 int colorIndex = mMultiColorIndex;
-                if (colorIndex >= 0) {
+                if (colorIndex >= 0 && colorIndex < Colors.multiColorTiles.length) {
                     return Colors.multiColorTiles[colorIndex];
                 }
             }
