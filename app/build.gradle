@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         applicationId 'com.italankin.fifteen'
-        versionCode 16
-        versionName "1.6.1"
+        versionCode 17
+        versionName "1.6.2"
         minSdkVersion 11
         targetSdkVersion 29
     }
