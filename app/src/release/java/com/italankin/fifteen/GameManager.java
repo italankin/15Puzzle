@@ -28,8 +28,8 @@ public class GameManager extends AbstractGameManager {
                     mSurfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
-            elapsed = System.currentTimeMillis() - startTime;
             delay();
+            elapsed = System.currentTimeMillis() - startTime;
         }
     }
 
