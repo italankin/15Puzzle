@@ -148,7 +148,7 @@ public class SettingsView extends BaseView {
 
     public SettingsView(Resources res) {
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f); // промежуток между строками
-        int topMargin = (int) (Dimensions.surfaceHeight * 0.10f); // отступ от верхнего края экрана
+        int topMargin = (int) (Dimensions.surfaceHeight * 0.07f); // отступ от верхнего края экрана
         int padding = -lineSpacing / 4;
 
         mPaintText = new Paint();
@@ -306,10 +306,6 @@ public class SettingsView extends BaseView {
         mRectMode.inset(0, padding);
 
         topMargin += lineSpacing;
-        mRectBf = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectBf.inset(0, padding);
-
-        topMargin += lineSpacing;
         mRectWidth = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectWidth.inset(0, padding);
 
@@ -336,6 +332,10 @@ public class SettingsView extends BaseView {
     }
 
     private void initAdvancedPage(int lineSpacing, int topMargin, int padding, int textHeight) {
+        topMargin += lineSpacing;
+        mRectBf = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectBf.inset(0, padding);
+
         topMargin += lineSpacing;
         mRectAntiAlias = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectAntiAlias.inset(0, padding);
@@ -389,14 +389,13 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextMode, textLeft, mRectMode.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextModeValue[Settings.gameMode],
                 valueRight, mRectMode.bottom - textYOffset, mPaintValue);
-
-        // bf
-        canvas.drawText(mTextBf, textLeft, mRectBf.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
-                valueRight, mRectBf.bottom - textYOffset, mPaintValue);
     }
 
     private void drawAdvanced(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
+        canvas.drawText(mTextBf, textLeft, mRectBf.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextBfValue[Settings.hardmode ? 1 : 0],
+                valueRight, mRectBf.bottom - textYOffset, mPaintValue);
+
         canvas.drawText(mTextMultiColor, textLeft, mRectMultiColor.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextMultiColorValue[Settings.multiColor],
                 valueRight, mRectMultiColor.bottom - textYOffset, mPaintValue);
@@ -488,8 +487,9 @@ public class SettingsView extends BaseView {
                 mCallbacks.onChanged(true);
             }
         }
+    }
 
-        // -- режим игры --
+    private void onClickAdvanced(int x, int y, int dx) {
         if (mRectBf.contains(x, y)) {
             Settings.hardmode = !Settings.hardmode;
             Settings.save();
@@ -497,9 +497,7 @@ public class SettingsView extends BaseView {
                 mCallbacks.onChanged(true);
             }
         }
-    }
 
-    private void onClickAdvanced(int x, int y, int dx) {
         if (mRectMultiColor.contains(x, y)) {
             if (dx < 0) {
                 if (--Settings.multiColor < 0) {
