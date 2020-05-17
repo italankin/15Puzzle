@@ -64,7 +64,7 @@ public class LeaderboardView extends BaseView {
     private float[] mTableGuides = {
             Dimensions.surfaceWidth * 0.11f,
             Dimensions.surfaceWidth * 0.28f,
-            Dimensions.surfaceWidth * 0.59f,
+            Dimensions.surfaceWidth * 0.62f,
             Dimensions.surfaceWidth * 0.95f
     };
     private int[] mSettingsGuides = {
