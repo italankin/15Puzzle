@@ -61,11 +61,11 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
         mPaintTextValue.setTypeface(Settings.typeface);
         mPaintTextValue.setTextAlign(Paint.Align.CENTER);
-        mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.8f);
+        mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.4f);
         mPaintTextValue.setColor(Colors.getInfoTextColor());
 
         mPaintTextCaption = new Paint(mPaintTextValue);
-        mPaintTextCaption.setTextSize(Dimensions.interfaceFontSize * 1.4f);
+        mPaintTextCaption.setTextSize(Dimensions.interfaceFontSize * 1.2f);
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
 
         mRectInfo = new RectF(0.0f, Dimensions.topBarHeight + Dimensions.infoBarHeight / 2,
@@ -115,8 +115,13 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
 
             prepareValuePaint();
-            canvas.drawText(Tools.timeToString(Game.getTime()),
-                    Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
+            String time;
+            if (Settings.preciseTime) {
+                time = Tools.timeToStringPrecise(Game.getTime());
+            } else {
+                time = Tools.timeToString(Game.getTime());
+            }
+            canvas.drawText(time, Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
         }
     }
 

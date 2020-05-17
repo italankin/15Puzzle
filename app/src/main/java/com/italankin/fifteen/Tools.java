@@ -42,6 +42,14 @@ public class Tools {
         return String.format(Locale.US, "%d:%02d.%d", min, sec, ms);
     }
 
+    public static String timeToStringPrecise(long duration) {
+        long ms = (duration % 1000);
+        long sec = (duration /= 1000) % 60;
+        long min = (duration % 3600) / 60;
+
+        return String.format(Locale.US, "%d:%02d.%03d", min, sec, ms);
+    }
+
     /**
      * Преобразование массива строк в массив чисел
      */

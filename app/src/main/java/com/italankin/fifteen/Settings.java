@@ -45,6 +45,7 @@ public class Settings {
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
+    private static final String KEY_PRECISE_TIME = "precise_time";
 
     /**
      * ширина игры
@@ -100,6 +101,7 @@ public class Settings {
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDelay = true;
     public static int ingameInfo = INGAME_INFO_ALL;
+    public static boolean preciseTime = false;
 
     /**
      * хранилище настроек приложения
@@ -130,6 +132,7 @@ public class Settings {
         multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
+        preciseTime = prefs.getBoolean(KEY_PRECISE_TIME, preciseTime);
     }
 
     public static void save() {
@@ -164,6 +167,7 @@ public class Settings {
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         editor.putInt(KEY_INGAME_INFO, ingameInfo);
+        editor.putBoolean(KEY_PRECISE_TIME, preciseTime);
         if (sync) {
             editor.commit();
         } else {

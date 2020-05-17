@@ -66,5 +66,6 @@
         <item>меньше ходов</item>
         <item>лучшее время</item>
     </string-array>
+    <string name="pref_precise_time">Точн. время</string>
 
 </resources>

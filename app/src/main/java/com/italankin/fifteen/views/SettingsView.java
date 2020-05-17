@@ -94,6 +94,9 @@ public class SettingsView extends BaseView {
     private String mTextIngameInfo;
     private String[] mTextIngameInfoValues;
 
+    private String mTextPreciseTime;
+    private String[] mTextPreciseTimeValues;
+
     /**
      * граница элемента настройки ширины
      */
@@ -133,6 +136,7 @@ public class SettingsView extends BaseView {
     private RectF mRectAntiAlias;
     private RectF mRectNewGameDelay;
     private RectF mRectIngameInfo;
+    private RectF mRectPreciseTime;
     private RectF mRectSettingsPage;
     /**
      * граница элемента "назад"
@@ -191,6 +195,8 @@ public class SettingsView extends BaseView {
         mTextNewGameDelayValue = res.getStringArray(R.array.toggle);
         mTextIngameInfo = res.getString(R.string.pref_ingame_info);
         mTextIngameInfoValues = res.getStringArray(R.array.ingame_info);
+        mTextPreciseTime = res.getString(R.string.pref_precise_time);
+        mTextPreciseTimeValues = res.getStringArray(R.array.toggle);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -345,6 +351,10 @@ public class SettingsView extends BaseView {
         topMargin += lineSpacing;
         mRectIngameInfo = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectIngameInfo.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectPreciseTime = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectPreciseTime.inset(0, padding);
     }
 
     private void drawBasic(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
@@ -402,6 +412,10 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextIngameInfo, textLeft, mRectIngameInfo.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextIngameInfoValues[Settings.ingameInfo],
                 valueRight, mRectIngameInfo.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextPreciseTime, textLeft, mRectPreciseTime.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextPreciseTimeValues[Settings.preciseTime ? 1 : 0],
+                valueRight, mRectPreciseTime.bottom - textYOffset, mPaintValue);
     }
 
     private void onClickBasic(int x, int y, int dx) {
@@ -519,6 +533,11 @@ public class SettingsView extends BaseView {
             if (mCallbacks != null) {
                 mCallbacks.onChanged(false);
             }
+        }
+
+        if (mRectPreciseTime.contains(x, y)) {
+            Settings.preciseTime = !Settings.preciseTime;
+            Settings.save();
         }
     }
 
