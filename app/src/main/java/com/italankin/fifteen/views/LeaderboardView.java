@@ -63,16 +63,16 @@ public class LeaderboardView extends BaseView {
     private DBHelper mDbHelper;
 
     private float[] mTableGuides = {
-            Dimensions.surfaceWidth * 0.12f,
-            Dimensions.surfaceWidth * 0.27f,
-            Dimensions.surfaceWidth * 0.53f,
+            Dimensions.surfaceWidth * 0.11f,
+            Dimensions.surfaceWidth * 0.28f,
+            Dimensions.surfaceWidth * 0.59f,
             Dimensions.surfaceWidth * 0.95f
     };
     private int[] mSettingsGuides = {
             (int) (Dimensions.surfaceWidth * 0.07f),
-            (int) (Dimensions.surfaceWidth * 0.31f),
+            (int) (Dimensions.surfaceWidth * 0.28f),
             (int) (Dimensions.surfaceWidth * 0.58f),
-            (int) (Dimensions.surfaceWidth * 0.86f)
+            (int) (Dimensions.surfaceWidth * 0.84f)
     };
 
     private float mTableMarginTop;
@@ -88,23 +88,25 @@ public class LeaderboardView extends BaseView {
     public LeaderboardView(DBHelper helper, Resources res) {
         mDbHelper = helper;
 
+        float textSize = Dimensions.menuFontSize * 0.8f;
+
         mPaintText = new Paint();
         mPaintText.setAntiAlias(Settings.antiAlias);
         mPaintText.setColor(Colors.getOverlayTextColor());
-        mPaintText.setTextSize(Dimensions.menuFontSize * 0.9f);
+        mPaintText.setTextSize(textSize);
         mPaintText.setTypeface(Settings.typeface);
         mPaintText.setTextAlign(Paint.Align.LEFT);
 
         mPaintValue = new Paint();
         mPaintValue.setAntiAlias(Settings.antiAlias);
         mPaintValue.setColor(Colors.menuTextValue);
-        mPaintValue.setTextSize(Dimensions.menuFontSize * 0.9f);
+        mPaintValue.setTextSize(textSize);
         mPaintValue.setTypeface(Settings.typeface);
         mPaintValue.setTextAlign(Paint.Align.LEFT);
 
         mPaintTable = new Paint();
         mPaintTable.setAntiAlias(Settings.antiAlias);
-        mPaintTable.setTextSize(Dimensions.menuFontSize * 0.9f);
+        mPaintTable.setTextSize(textSize);
         mPaintTable.setTypeface(Settings.typeface);
         mPaintTable.setTextAlign(Paint.Align.RIGHT);
 
