@@ -213,7 +213,7 @@ public class LeaderboardView extends BaseView {
                 item.id = Integer.toString(cursor.getPosition() + 1);
                 item.moves = Integer.toString(cursor.getInt(indexMoves));
                 int timeValue = cursor.getInt(indexTime);
-                item.time = Settings.preciseTime ? Tools.timeToStringPrecise(timeValue) : Tools.timeToString(timeValue);
+                item.time = Tools.timeToString(Settings.timeFormat, timeValue);
 
                 Date d = new Date(cursor.getLong(indexTimestamp));
                 item.timestamp = Settings.dateFormat.format(d);

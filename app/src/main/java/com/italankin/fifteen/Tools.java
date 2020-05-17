@@ -28,26 +28,20 @@ public class Tools {
         return 1.0f - b * Math.pow(2.0f, 10.0f * (t / d - 1.0f)) + a;
     }
 
-    /**
-     * Форматирование строки для отображения времени
-     *
-     * @param duration время в мс
-     * @return форматированная строка времени
-     */
-    public static String timeToString(long duration) {
-        long ms = (duration % 1000) / 100;
-        long sec = (duration /= 1000) % 60;
-        long min = (duration % 3600) / 60;
-
-        return String.format(Locale.US, "%d:%02d.%d", min, sec, ms);
-    }
-
-    public static String timeToStringPrecise(long duration) {
+    public static String timeToString(int style, long duration) {
         long ms = (duration % 1000);
         long sec = (duration /= 1000) % 60;
         long min = (duration % 3600) / 60;
 
-        return String.format(Locale.US, "%d:%02d.%03d", min, sec, ms);
+        switch (style) {
+            case Settings.TIME_FORMAT_MIN_SEC_MS:
+                return String.format(Locale.ROOT, "%d:%02d.%d", min, sec, ms / 100);
+            case Settings.TIME_FORMAT_MIN_SEC_MS_LONG:
+                return String.format(Locale.ROOT, "%d:%02d.%03d", min, sec, ms);
+            case Settings.TIME_FORMAT_MIN_SEC:
+            default:
+                return String.format(Locale.ROOT, "%d:%02d", min, sec);
+        }
     }
 
     /**
@@ -83,7 +77,6 @@ public class Tools {
             return dy > 0 ? DIRECTION_DOWN : DIRECTION_UP;
         }
     }
-
 
     /**
      * Вычисление расстояния между клетками на игровом поле

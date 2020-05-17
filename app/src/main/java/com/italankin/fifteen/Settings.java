@@ -17,6 +17,7 @@ public class Settings {
     public static final int GAME_MODES = 2;
     public static final int MULTI_COLOR_MODES = 5;
     public static final int INGAME_INFO_MODES = 4;
+    public static final int TIME_FORMATS = 3;
     static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
     static final long NEW_GAME_DELAY = 500;
 
@@ -29,6 +30,10 @@ public class Settings {
     public static final int INGAME_INFO_MOVES = 0x1;
     public static final int INGAME_INFO_TIME = 0x2;
     public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
+
+    public static final int TIME_FORMAT_MIN_SEC = 0;
+    public static final int TIME_FORMAT_MIN_SEC_MS = 1;
+    public static final int TIME_FORMAT_MIN_SEC_MS_LONG = 2;
 
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
@@ -45,7 +50,7 @@ public class Settings {
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
-    private static final String KEY_PRECISE_TIME = "precise_time";
+    private static final String KEY_TIME_FORMAT = "time_format";
 
     /**
      * ширина игры
@@ -101,7 +106,7 @@ public class Settings {
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDelay = true;
     public static int ingameInfo = INGAME_INFO_ALL;
-    public static boolean preciseTime = false;
+    public static int timeFormat = TIME_FORMAT_MIN_SEC_MS;
 
     /**
      * хранилище настроек приложения
@@ -132,7 +137,7 @@ public class Settings {
         multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
-        preciseTime = prefs.getBoolean(KEY_PRECISE_TIME, preciseTime);
+        timeFormat = prefs.getInt(KEY_TIME_FORMAT, timeFormat);
     }
 
     public static void save() {
@@ -167,7 +172,7 @@ public class Settings {
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         editor.putInt(KEY_INGAME_INFO, ingameInfo);
-        editor.putBoolean(KEY_PRECISE_TIME, preciseTime);
+        editor.putInt(KEY_TIME_FORMAT, timeFormat);
         if (sync) {
             editor.commit();
         } else {

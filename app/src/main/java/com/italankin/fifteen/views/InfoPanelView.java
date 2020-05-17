@@ -115,12 +115,7 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
 
             prepareValuePaint();
-            String time;
-            if (Settings.preciseTime) {
-                time = Tools.timeToStringPrecise(Game.getTime());
-            } else {
-                time = Tools.timeToString(Game.getTime());
-            }
+            String time = Tools.timeToString(Settings.timeFormat, Game.getTime());
             canvas.drawText(time, Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
         }
     }

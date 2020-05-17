@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">15 Puzzle</string>
 
@@ -26,7 +26,7 @@
     <string name="pref_anti_alias">Anti-alias</string>
     <string name="pref_new_game_delay">Delay</string>
     <string name="pref_ingame_info">Ingame info</string>
-    <string name="pref_precise_time">Precise time</string>
+    <string name="pref_time_format">Time format</string>
 
     <string name="back">back</string>
 
@@ -62,6 +62,11 @@
         <item>moves</item>
         <item>time</item>
         <item>moves &amp; time</item>
+    </string-array>
+    <string-array name="time_format" tools:ignore="MissingTranslation">
+        <item>0:12</item>
+        <item>0:12.3</item>
+        <item>0:12.345</item>
     </string-array>
     <string-array name="sort_types">
         <item>fewer moves</item>
