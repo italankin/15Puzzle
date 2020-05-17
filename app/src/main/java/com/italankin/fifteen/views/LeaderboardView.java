@@ -1,6 +1,5 @@
 package com.italankin.fifteen.views;
 
-
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -194,13 +193,12 @@ public class LeaderboardView extends BaseView {
         if (mRectBack.contains(x, y)) {
             hide();
         }
-
     }
 
     /**
      * Запрос данных из бд, обновление {@link #mTableItems}
      */
-    public void updateData() {
+    private void updateData() {
         mTableItems.clear();
 
         Cursor cursor = mDbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
@@ -313,11 +311,12 @@ public class LeaderboardView extends BaseView {
     /**
      * Хранит данные о записи в таблице рекордов
      */
-    private class TableItem {
-        public String id;
-        public String moves;
-        public String time;
-        public String timestamp;
+    private static class TableItem {
+
+        String id;
+        String moves;
+        String time;
+        String timestamp;
     }
 
     public void addCallback(Callbacks callbacks) {
@@ -325,6 +324,7 @@ public class LeaderboardView extends BaseView {
     }
 
     public interface Callbacks {
+
         void onChanged();
     }
 }
