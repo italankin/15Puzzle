@@ -87,7 +87,7 @@ public class LeaderboardView extends BaseView {
     public LeaderboardView(DBHelper helper, Resources res) {
         mDbHelper = helper;
 
-        float textSize = Dimensions.menuFontSize * 0.8f;
+        float textSize = Dimensions.menuFontSize * 0.85f;
 
         mPaintText = new Paint();
         mPaintText.setAntiAlias(Settings.antiAlias);
