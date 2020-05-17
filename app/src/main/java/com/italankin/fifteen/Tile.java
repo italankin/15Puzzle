@@ -105,6 +105,7 @@ public class Tile {
 
         mCanvasX = Dimensions.fieldMarginLeft +
                 (Dimensions.tileSize + Dimensions.spacing) * (mIndex % Settings.gameWidth);
+        //noinspection IntegerDivisionInFloatingPointContext
         mCanvasY = Dimensions.fieldMarginTop +
                 (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
@@ -236,9 +237,9 @@ public class Tile {
      *
      * @return <b>true</b>, если
      */
-    public boolean onClick() {
+    public void onClick() {
         if (recycled) {
-            return false;
+            return;
         }
 
         // получение текущих координат спрайта на поле
@@ -283,11 +284,7 @@ public class Tile {
                 setCanvasX(newX);
                 setCanvasY(newY);
             } // if animations
-
-            return true;
         } // if index
-
-        return false;
     }
 
     public void animateAppearance(int delay) {
@@ -308,9 +305,9 @@ public class Tile {
     private int getTileColor() {
         int tileColor = Colors.getTileColor();
         if (useMultiColor && !Game.isPaused()) {
-            if (Settings.multiColor == Settings.MULTI_COLOR_SOLVED) {
+            if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
                 int targetIndex;
-                if (Settings.gameMode == Game.MODE_CLASSIC) {
+                if (Settings.gameMode == Constants.MODE_CLASSIC) {
                     targetIndex = mNumber - 1;
                 } else {
                     int n = mNumber - 1;
@@ -343,9 +340,9 @@ public class Tile {
 
     private int getMultiColorIndex(int number) {
         switch (Settings.gameMode) {
-            case Game.MODE_SNAKE:
+            case Constants.MODE_SNAKE:
                 return getSnakeMultiColorIndex(number);
-            case Game.MODE_CLASSIC:
+            case Constants.MODE_CLASSIC:
                 return getClassicMultiColorIndex(number);
             default:
                 return -1;
@@ -358,14 +355,14 @@ public class Tile {
         int row = index / gameWidth;
         int column = ((row % 2) == 0) ? (index % gameWidth) : (gameWidth - (index % gameWidth) - 1);
         switch (Settings.multiColor) {
-            case Settings.MULTI_COLOR_ROWS:
+            case Constants.MULTI_COLOR_ROWS:
                 return row;
-            case Settings.MULTI_COLOR_COLUMNS:
+            case Constants.MULTI_COLOR_COLUMNS:
                 return column;
-            case Settings.MULTI_COLOR_FRINGE:
+            case Constants.MULTI_COLOR_FRINGE:
                 return Math.min(row, column);
-            case Settings.MULTI_COLOR_OFF:
-            case Settings.MULTI_COLOR_SOLVED:
+            case Constants.MULTI_COLOR_OFF:
+            case Constants.MULTI_COLOR_SOLVED:
             default:
                 return -1;
         }
@@ -375,14 +372,14 @@ public class Tile {
         int index = number - 1;
         int gameWidth = Settings.gameWidth;
         switch (Settings.multiColor) {
-            case Settings.MULTI_COLOR_ROWS:
+            case Constants.MULTI_COLOR_ROWS:
                 return index / gameWidth;
-            case Settings.MULTI_COLOR_COLUMNS:
+            case Constants.MULTI_COLOR_COLUMNS:
                 return index % gameWidth;
-            case Settings.MULTI_COLOR_FRINGE:
+            case Constants.MULTI_COLOR_FRINGE:
                 return Math.min(index % gameWidth, index / gameWidth);
-            case Settings.MULTI_COLOR_OFF:
-            case Settings.MULTI_COLOR_SOLVED:
+            case Constants.MULTI_COLOR_OFF:
+            case Constants.MULTI_COLOR_SOLVED:
             default:
                 return -1;
         }

@@ -141,7 +141,7 @@ public class Colors {
      * @return текущий цвет плиток
      */
     public static int getTileColor() {
-        if (Settings.colorMode == 0) {
+        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
             return tilesDay[Settings.tileColor];
         } else {
             return tilesNight[Settings.tileColor];
@@ -149,7 +149,7 @@ public class Colors {
     }
 
     public static int[] getTileColors() {
-        if (Settings.colorMode == 0) {
+        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
             return tilesDay;
         } else {
             return tilesNight;
@@ -157,7 +157,7 @@ public class Colors {
     }
 
     public static int getUnsolvedTileColor() {
-        if (Settings.colorMode == 0) {
+        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
             return tilesDayUnsolved[Settings.tileColor];
         } else {
             return tilesNightUnsolved[Settings.tileColor];

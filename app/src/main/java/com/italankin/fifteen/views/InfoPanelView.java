@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.Constants;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Game;
 import com.italankin.fifteen.R;
@@ -102,7 +103,7 @@ public class InfoPanelView extends BaseView {
                 Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,
                 mPaintTextValue);
 
-        if (showInfo(Settings.INGAME_INFO_MOVES)) {
+        if (shouldShowInfo(Constants.INGAME_INFO_MOVES)) {
             prepareTitlePaint();
             canvas.drawText(mTextMoves, Dimensions.surfaceWidth / 2.0f, firstRowY, mPaintTextCaption);
 
@@ -110,7 +111,7 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(Integer.toString(Game.getMoves()),
                     Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, firstRowY, mPaintTextCaption);
         }
-        if (showInfo(Settings.INGAME_INFO_TIME)) {
+        if (shouldShowInfo(Constants.INGAME_INFO_TIME)) {
             prepareTitlePaint();
             canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
 
@@ -130,12 +131,8 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
     }
 
-    private boolean showInfo(int infoMoves) {
+    private static boolean shouldShowInfo(int infoMoves) {
         return Game.isNotStarted() || Game.isSolved() || (Settings.ingameInfo & infoMoves) == infoMoves;
-    }
-
-    public boolean onClick(float x, float y) {
-        return false;
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class TopPanelView extends BaseView {
 
     private ArrayList<Button> mButtons;
-    private Callbacks mCallbacks;
+    private Callback mCallback;
 
     private int mButtonTextOffset;
     private Paint mPaintButton;
@@ -79,8 +79,8 @@ public class TopPanelView extends BaseView {
         for (Button b : mButtons) {
             if (b.contains(x, y)) {
                 b.setOverlay(Settings.screenAnimDuration);
-                if (mCallbacks != null) {
-                    mCallbacks.onTopPanelButtonClick(b.id);
+                if (mCallback != null) {
+                    mCallback.onTopPanelButtonClick(b.id);
                 }
                 return true;
             }
@@ -116,8 +116,8 @@ public class TopPanelView extends BaseView {
         mPaintButton.setColor(Colors.getTileColor());
     }
 
-    public void addCallback(Callbacks callbacks) {
-        mCallbacks = callbacks;
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     /**
@@ -148,7 +148,7 @@ public class TopPanelView extends BaseView {
     /**
      * Интерфейс для отслеживания нажатий
      */
-    public interface Callbacks {
+    public interface Callback {
 
         void onTopPanelButtonClick(int id);
     }

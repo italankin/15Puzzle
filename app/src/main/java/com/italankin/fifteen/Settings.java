@@ -9,32 +9,6 @@ import java.text.DateFormat;
 
 public class Settings {
 
-    public static final int MIN_GAME_WIDTH = 3;
-    public static final int MIN_GAME_HEIGHT = 3;
-    public static final int MAX_GAME_WIDTH = 8;
-    public static final int MAX_GAME_HEIGHT = 8;
-    public static final int COLOR_MODES = 2;
-    public static final int GAME_MODES = 2;
-    public static final int MULTI_COLOR_MODES = 5;
-    public static final int INGAME_INFO_MODES = 4;
-    public static final int TIME_FORMATS = 3;
-    static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
-    static final long NEW_GAME_DELAY = 500;
-
-    public static final int MULTI_COLOR_OFF = 0;
-    public static final int MULTI_COLOR_ROWS = 1;
-    public static final int MULTI_COLOR_COLUMNS = 2;
-    public static final int MULTI_COLOR_FRINGE = 3;
-    public static final int MULTI_COLOR_SOLVED = 4;
-
-    public static final int INGAME_INFO_MOVES = 0x1;
-    public static final int INGAME_INFO_TIME = 0x2;
-    public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
-
-    public static final int TIME_FORMAT_MIN_SEC = 0;
-    public static final int TIME_FORMAT_MIN_SEC_MS = 1;
-    public static final int TIME_FORMAT_MIN_SEC_MS_LONG = 2;
-
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
     static final String KEY_GAME_ARRAY = "puzzle_prev";
@@ -56,35 +30,35 @@ public class Settings {
     /**
      * ширина игры
      */
-    public static int gameWidth = 4;
+    public static int gameWidth = Defaults.GAME_WIDTH;
     /**
      * высота игры
      */
-    public static int gameHeight = 4;
+    public static int gameHeight = Defaults.GAME_HEIGHT;
     /**
      * сложный режим
      */
-    public static boolean hardmode = false;
+    public static boolean hardmode = Defaults.HARD_MODE;
     /**
      * сохранение игр между сессиями
      */
-    static boolean saveGame = true;
+    static boolean saveGame = Defaults.HARD_MODE;
     /**
      * анимации
      */
-    public static boolean animations = true;
+    public static boolean animations = Defaults.ANIMATIONS;
     /**
      * сглаживание
      */
-    public static boolean antiAlias = true;
+    public static boolean antiAlias = Defaults.ANTI_ALIAS;
     /**
      * длительность анимации плиток
      */
-    static long tileAnimDuration = 300;
+    static long tileAnimDuration = Defaults.ANIMATION_DURATION;
     /**
      * кол-во кадров для анимирования элементов интерфейса
      */
-    public static long screenAnimDuration = 300;
+    public static long screenAnimDuration = Defaults.ANIMATION_DURATION;
     /**
      * цвет плиток
      */
@@ -92,23 +66,23 @@ public class Settings {
     /**
      * красить плитки по "слоям"
      */
-    public static int multiColor = MULTI_COLOR_OFF;
+    public static int multiColor = Defaults.MULTI_COLOR;
     /**
      * цветовая тема приложения
      */
-    public static int colorMode = 0;
+    public static int colorMode = Defaults.COLOR_MODE;
     /**
      * текущий режим игры
      */
-    public static int gameMode = Game.MODE_CLASSIC;
+    public static int gameMode = Defaults.GAME_MODE;
     /**
      * Typeface текста
      */
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-    public static boolean newGameDelay = true;
-    public static int ingameInfo = INGAME_INFO_ALL;
-    public static int timeFormat = TIME_FORMAT_MIN_SEC_MS;
-    public static boolean stats = false;
+    public static boolean newGameDelay = Defaults.NEW_GAME_DELAY;
+    public static int ingameInfo = Defaults.INGAME_INFO;
+    public static int timeFormat = Defaults.TIME_FORMAT;
+    public static boolean stats = Defaults.STATS;
 
     /**
      * хранилище настроек приложения
@@ -116,31 +90,36 @@ public class Settings {
     static SharedPreferences prefs;
     public static DateFormat dateFormat;
 
+    static SharedPreferences getPreferences(Context context) {
+        String preferencesName = context.getPackageName() + "_preferences";
+        return context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE);
+    }
+
     /**
      * Чтение настроек приложения
      */
     static void load(Context context) {
-        int w = prefs.getInt(KEY_GAME_WIDTH, gameWidth);
-        if (w >= Settings.MIN_GAME_WIDTH && w < Settings.MAX_GAME_WIDTH) {
+        int w = prefs.getInt(KEY_GAME_WIDTH, Defaults.GAME_WIDTH);
+        if (w >= Constants.MIN_GAME_WIDTH && w < Constants.MAX_GAME_WIDTH) {
             gameWidth = w;
         }
-        int h = prefs.getInt(KEY_GAME_HEIGHT, gameHeight);
-        if (h >= Settings.MIN_GAME_HEIGHT && h < Settings.MAX_GAME_HEIGHT) {
+        int h = prefs.getInt(KEY_GAME_HEIGHT, Defaults.GAME_HEIGHT);
+        if (h >= Constants.MIN_GAME_HEIGHT && h < Constants.MAX_GAME_HEIGHT) {
             gameHeight = h;
         }
-        saveGame = prefs.getBoolean(KEY_GAME_SAVE, saveGame);
-        tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, tileColor);
-        colorMode = prefs.getInt(KEY_GAME_BG_COLOR, colorMode);
-        gameMode = prefs.getInt(KEY_GAME_MODE, gameMode);
-        antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
-        animations = prefs.getBoolean(KEY_GAME_ANIMATION, animations);
-        hardmode = prefs.getBoolean(KEY_GAME_BF, hardmode);
+        saveGame = prefs.getBoolean(KEY_GAME_SAVE, Defaults.SAVE_GAME);
+        tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, Defaults.TILE_COLOR);
+        colorMode = prefs.getInt(KEY_GAME_BG_COLOR, Defaults.COLOR_MODE);
+        gameMode = prefs.getInt(KEY_GAME_MODE, Defaults.GAME_MODE);
+        antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, Defaults.ANTI_ALIAS);
+        animations = prefs.getBoolean(KEY_GAME_ANIMATION, Defaults.ANIMATIONS);
+        hardmode = prefs.getBoolean(KEY_GAME_BF, Defaults.HARD_MODE);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
-        multiColor = prefs.getInt(KEY_MULTI_COLOR, multiColor);
-        newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
-        ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
-        timeFormat = prefs.getInt(KEY_TIME_FORMAT, timeFormat);
-        stats = prefs.getBoolean(KEY_STATS, stats);
+        multiColor = prefs.getInt(KEY_MULTI_COLOR, Defaults.MULTI_COLOR);
+        newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, Defaults.NEW_GAME_DELAY);
+        ingameInfo = prefs.getInt(KEY_INGAME_INFO, Defaults.INGAME_INFO);
+        timeFormat = prefs.getInt(KEY_TIME_FORMAT, Defaults.TIME_FORMAT);
+        stats = prefs.getBoolean(KEY_STATS, Defaults.STATS);
     }
 
     public static void save() {
@@ -185,6 +164,6 @@ public class Settings {
     }
 
     static boolean useMultiColor() {
-        return multiColor != MULTI_COLOR_OFF && !hardmode;
+        return multiColor != Constants.MULTI_COLOR_OFF && !hardmode;
     }
 }

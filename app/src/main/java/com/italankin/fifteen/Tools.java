@@ -34,11 +34,11 @@ public class Tools {
         long min = (duration % 3600) / 60;
 
         switch (style) {
-            case Settings.TIME_FORMAT_MIN_SEC_MS:
+            case Constants.TIME_FORMAT_MIN_SEC_MS:
                 return String.format(Locale.ROOT, "%d:%02d.%d", min, sec, ms / 100);
-            case Settings.TIME_FORMAT_MIN_SEC_MS_LONG:
+            case Constants.TIME_FORMAT_MIN_SEC_MS_LONG:
                 return String.format(Locale.ROOT, "%d:%02d.%03d", min, sec, ms);
-            case Settings.TIME_FORMAT_MIN_SEC:
+            case Constants.TIME_FORMAT_MIN_SEC:
             default:
                 return String.format(Locale.ROOT, "%d:%02d", min, sec);
         }

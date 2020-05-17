@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,7 +23,7 @@ import com.italankin.fifteen.views.TopPanelView;
 import java.util.List;
 import java.util.Random;
 
-public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, SurfaceHolder.Callback {
+public class GameSurface extends SurfaceView implements TopPanelView.Callback, SurfaceHolder.Callback {
 
     private static final int BTN_NEW = 0;
     private static final int BTN_SETTINGS = 1;
@@ -141,7 +140,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mTopPanel.addButton(BTN_LEADERBOARD, mResources.getString(R.string.action_leaderboard));
         int btnFourTitle = Settings.stats ? R.string.action_stats : R.string.action_pause;
         mTopPanel.addButton(BTN_FOUR, mResources.getString(btnFourTitle));
-        mTopPanel.addCallback(this);
+        mTopPanel.setCallback(this);
 
         mInfoPanel = new InfoPanelView(mResources);
 
@@ -164,7 +163,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mPauseOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_pause));
         mStatistics = new StatisticsView(mResources);
 
-        Game.addCallback(() -> {
+        Game.setCallback(() -> {
             mSolvedOverlay.show();
             int moves = Game.getMoves() + 1;
             long time = Game.getTime();
@@ -275,7 +274,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 } else if (Game.isSolved() && mRectField.contains(x, y)) {
                     createNewGame(true);
                     return true;
-                } else if (mTopPanel.onClick(x, y) || mInfoPanel.onClick(x, y)) {
+                } else if (mTopPanel.onClick(x, y)) {
                     return true;
                 }
 
@@ -411,7 +410,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      */
     private void createNewGame(boolean isUser) {
         if (Settings.newGameDelay &&
-                ((System.currentTimeMillis() - lastSolvedTimestamp) < Settings.NEW_GAME_DELAY)) {
+                ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
             return;
         }
 
@@ -420,7 +419,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences prefs = Settings.getPreferences(getContext());
         // если создание новой игры не было инициировано пользователем,
         // загружаем сохрененную игру (если имеется)
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
@@ -523,7 +522,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                             // все вместе
                             delay = 0;
                     }
-                    t.animateAppearance(delay * Settings.TILE_ANIM_FRAME_MULTIPLIER);
+                    t.animateAppearance(delay * Constants.TILE_ANIM_FRAME_MULTIPLIER);
                 }
                 mField.addTile(t);
             }

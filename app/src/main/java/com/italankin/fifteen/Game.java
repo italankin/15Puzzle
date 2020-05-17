@@ -7,9 +7,6 @@ import java.util.Random;
 
 public class Game {
 
-    public static final int MODE_CLASSIC = 0;
-    public static final int MODE_SNAKE = 1;
-
     /**
      * Singleton
      */
@@ -123,7 +120,7 @@ public class Game {
         int summ = 0, size = height * width;
         int n, m, s;
         switch (Settings.gameMode) {
-            case MODE_CLASSIC:
+            case Constants.MODE_CLASSIC:
                 // для каждого числа высчитываем количество чисел, которые
                 // 1) меньше данного числа
                 // 2) стоят после него (по строкам)
@@ -151,7 +148,7 @@ public class Game {
                 return summ % 2 == 0;
             // MODE_CLASSIC
 
-            case MODE_SNAKE:
+            case Constants.MODE_SNAKE:
                 // для "змейки" нужно проверить,
                 // является ли номер текущей строки четным
                 for (int i = 0; i < size; i++) {
@@ -197,7 +194,7 @@ public class Game {
         int v, i;
 
         switch (Settings.gameMode) {
-            case MODE_CLASSIC:
+            case Constants.MODE_CLASSIC:
                 for (i = 0; i < size - 1; i++) {
                     if (grid.get(i) != (i + 1)) {
                         return false;
@@ -205,7 +202,7 @@ public class Game {
                 }
                 break; // MODE_CLASSIC
 
-            case MODE_SNAKE:
+            case Constants.MODE_SNAKE:
                 for (i = 0; i < size - 1; i++) {
                     // если номер текущей строки четный
                     if ((i / width) % 2 == 0) {
@@ -367,6 +364,7 @@ public class Game {
      * @see Tools
      */
     public static int getDirection(int index) {
+        //noinspection IntegerDivisionInFloatingPointContext
         return Tools.direction(instance.zeroPos % instance.width - index % instance.width,
                 instance.zeroPos / instance.width - index / instance.width);
     }
@@ -441,7 +439,7 @@ public class Game {
      *
      * @param callback обработчик событий
      */
-    public static void addCallback(Callback callback) {
+    public static void setCallback(Callback callback) {
         instance.mCallbacks = callback;
     }
 

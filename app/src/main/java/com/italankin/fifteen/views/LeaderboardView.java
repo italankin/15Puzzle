@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.Constants;
 import com.italankin.fifteen.DBHelper;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.R;
@@ -147,13 +148,12 @@ public class LeaderboardView extends BaseView {
     }
 
     public void onClick(int x, int y, int dx) {
-
         if (Math.abs(dx) < 15) {
             dx = 0;
         }
 
         if (mRectMode.contains(x, y)) {
-            mGameMode = ++mGameMode % Settings.GAME_MODES;
+            mGameMode = ++mGameMode % Constants.GAME_MODES;
             updateData();
         }
 
@@ -169,11 +169,11 @@ public class LeaderboardView extends BaseView {
 
         if (mRectWidth.contains(x, y)) {
             mGameWidth += ((dx == 0) ? 1 : Math.signum(dx));
-            if (mGameWidth < Settings.MIN_GAME_WIDTH) {
-                mGameWidth = Settings.MAX_GAME_WIDTH;
+            if (mGameWidth < Constants.MIN_GAME_WIDTH) {
+                mGameWidth = Constants.MAX_GAME_WIDTH;
             }
-            if (mGameWidth > Settings.MAX_GAME_WIDTH) {
-                mGameWidth = Settings.MIN_GAME_WIDTH;
+            if (mGameWidth > Constants.MAX_GAME_WIDTH) {
+                mGameWidth = Constants.MIN_GAME_WIDTH;
             }
             updateData();
         }
@@ -181,11 +181,11 @@ public class LeaderboardView extends BaseView {
         // -- высота поля --
         if (mRectHeight.contains(x, y)) {
             mGameHeight += ((dx == 0) ? 1 : Math.signum(dx));
-            if (mGameHeight < Settings.MIN_GAME_HEIGHT) {
-                mGameHeight = Settings.MAX_GAME_HEIGHT;
+            if (mGameHeight < Constants.MIN_GAME_HEIGHT) {
+                mGameHeight = Constants.MAX_GAME_HEIGHT;
             }
-            if (mGameHeight > Settings.MAX_GAME_HEIGHT) {
-                mGameHeight = Settings.MIN_GAME_HEIGHT;
+            if (mGameHeight > Constants.MAX_GAME_HEIGHT) {
+                mGameHeight = Constants.MIN_GAME_HEIGHT;
             }
             updateData();
         }

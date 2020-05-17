@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.Constants;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
@@ -435,11 +436,11 @@ public class SettingsView extends BaseView {
         // -- ширина поля --
         if (mRectWidth.contains(x, y)) {
             Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
-            if (Settings.gameWidth < Settings.MIN_GAME_WIDTH) {
-                Settings.gameWidth = Settings.MAX_GAME_WIDTH;
+            if (Settings.gameWidth < Constants.MIN_GAME_WIDTH) {
+                Settings.gameWidth = Constants.MAX_GAME_WIDTH;
             }
-            if (Settings.gameWidth > Settings.MAX_GAME_WIDTH) {
-                Settings.gameWidth = Settings.MIN_GAME_WIDTH;
+            if (Settings.gameWidth > Constants.MAX_GAME_WIDTH) {
+                Settings.gameWidth = Constants.MIN_GAME_WIDTH;
             }
             Settings.save();
             if (mCallbacks != null) {
@@ -450,11 +451,11 @@ public class SettingsView extends BaseView {
         // -- высота поля --
         if (mRectHeight.contains(x, y)) {
             Settings.gameHeight += ((dx == 0) ? 1 : Math.signum(dx));
-            if (Settings.gameHeight < Settings.MIN_GAME_HEIGHT) {
-                Settings.gameHeight = Settings.MAX_GAME_HEIGHT;
+            if (Settings.gameHeight < Constants.MIN_GAME_HEIGHT) {
+                Settings.gameHeight = Constants.MAX_GAME_HEIGHT;
             }
-            if (Settings.gameHeight > Settings.MAX_GAME_HEIGHT) {
-                Settings.gameHeight = Settings.MIN_GAME_HEIGHT;
+            if (Settings.gameHeight > Constants.MAX_GAME_HEIGHT) {
+                Settings.gameHeight = Constants.MIN_GAME_HEIGHT;
             }
             Settings.save();
             if (mCallbacks != null) {
@@ -486,7 +487,7 @@ public class SettingsView extends BaseView {
 
         // -- цвет фона --
         if (mRectColorMode.contains(x, y)) {
-            Settings.colorMode = (++Settings.colorMode % Settings.COLOR_MODES);
+            Settings.colorMode = (++Settings.colorMode % Constants.COLOR_MODES);
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onChanged(false);
@@ -495,7 +496,7 @@ public class SettingsView extends BaseView {
 
         // -- режим игры --
         if (mRectMode.contains(x, y)) {
-            Settings.gameMode = (++Settings.gameMode % Settings.GAME_MODES);
+            Settings.gameMode = (++Settings.gameMode % Constants.GAME_MODES);
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onChanged(true);
@@ -515,10 +516,10 @@ public class SettingsView extends BaseView {
         if (mRectMultiColor.contains(x, y)) {
             if (dx < 0) {
                 if (--Settings.multiColor < 0) {
-                    Settings.multiColor += Settings.MULTI_COLOR_MODES;
+                    Settings.multiColor += Constants.MULTI_COLOR_MODES;
                 }
             } else {
-                Settings.multiColor = (++Settings.multiColor % Settings.MULTI_COLOR_MODES);
+                Settings.multiColor = (++Settings.multiColor % Constants.MULTI_COLOR_MODES);
             }
             Settings.save();
             if (mCallbacks != null) {
@@ -540,7 +541,7 @@ public class SettingsView extends BaseView {
         }
 
         if (mRectIngameInfo.contains(x, y)) {
-            Settings.ingameInfo = (++Settings.ingameInfo % Settings.INGAME_INFO_MODES);
+            Settings.ingameInfo = (++Settings.ingameInfo % Constants.INGAME_INFO_MODES);
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onChanged(false);
@@ -548,7 +549,7 @@ public class SettingsView extends BaseView {
         }
 
         if (mRectTimeFormat.contains(x, y)) {
-            Settings.timeFormat = (++Settings.timeFormat % Settings.TIME_FORMATS);
+            Settings.timeFormat = (++Settings.timeFormat % Constants.TIME_FORMATS);
             Settings.save();
         }
 
