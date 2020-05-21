@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.italankin.fifteen.statistics.StatisticsManager;
 import com.italankin.fifteen.views.FieldOverlay;
 import com.italankin.fifteen.views.FieldView;
 import com.italankin.fifteen.views.InfoPanelView;
@@ -98,6 +99,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     private RectF mRectField = new RectF();
 
     private Paint mDebugPaint;
+    private StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
 
     /**
      * Координата x начальной точки жеста
@@ -158,13 +160,22 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
 
         Game.addCallback(() -> {
             mSolvedOverlay.show();
+            int moves = Game.getMoves() + 1;
+            long time = Game.getTime();
             dbHelper.insert(
                     Settings.gameMode,
                     Settings.gameWidth,
                     Settings.gameHeight,
                     Settings.hardmode ? 1 : 0,
-                    Game.getMoves() + 1,
-                    Game.getTime());
+                    moves,
+                    time);
+            statisticsManager.add(
+                    Settings.gameWidth,
+                    Settings.gameHeight,
+                    Settings.gameMode,
+                    Settings.hardmode,
+                    time,
+                    moves);
             lastSolvedTimestamp = System.currentTimeMillis();
         });
 
