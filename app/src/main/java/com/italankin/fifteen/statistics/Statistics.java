@@ -22,6 +22,17 @@ public class Statistics {
         return session == null;
     }
 
+    @Override
+    public String toString() {
+        return "Statistics{" +
+                "ao5=" + ao5 +
+                ", ao12=" + ao12 +
+                ", ao50=" + ao50 +
+                ", ao100=" + ao100 +
+                ", session=" + session +
+                '}';
+    }
+
     public static class Avg {
 
         public final long time;
@@ -32,6 +43,15 @@ public class Statistics {
             this.time = time;
             this.moves = moves;
             this.tps = tps;
+        }
+
+        @Override
+        public String toString() {
+            return '(' +
+                    "time=" + time +
+                    ", moves=" + moves +
+                    ", tps=" + tps +
+                    ')';
         }
     }
 }
