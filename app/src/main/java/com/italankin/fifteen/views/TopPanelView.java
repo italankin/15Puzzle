@@ -69,12 +69,6 @@ public class TopPanelView extends BaseView {
         }
     }
 
-    /**
-     * Обработка событий нажатия
-     *
-     * @param x координата x нажатия
-     * @param y координата y нажатия
-     */
     public boolean onClick(float x, float y) {
         for (Button b : mButtons) {
             if (b.contains(x, y)) {
@@ -120,9 +114,6 @@ public class TopPanelView extends BaseView {
         mCallback = callback;
     }
 
-    /**
-     * Класс кнопки верхней панели
-     */
     private static class Button {
 
         final RectF rect;
@@ -145,9 +136,6 @@ public class TopPanelView extends BaseView {
         }
     }
 
-    /**
-     * Интерфейс для отслеживания нажатий
-     */
     public interface Callback {
 
         void onTopPanelButtonClick(int id);

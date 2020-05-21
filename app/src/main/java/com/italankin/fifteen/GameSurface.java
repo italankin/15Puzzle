@@ -30,9 +30,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private static final int BTN_LEADERBOARD = 2;
     private static final int BTN_FOUR = 3;
 
-    /**
-     * Задержка анимации между тайлами в кадрах
-     */
     private static final int ANIM_WINDOW_FRAMES = 5;
     private static final int ANIM_TYPE_COUNT = 16;
 
@@ -54,71 +51,33 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private static final int ANIM_TYPE_TO_CENTER = 15;
 
     /**
-     * Главный поток для перерисовки изображения
+     * Main render thread looper
      */
     private GameManager mGameLoopThread;
-    /**
-     * Помощник для работы с базой данных
-     */
     private DBHelper dbHelper;
 
-    /**
-     * Ресурсы приложения
-     */
     private Resources mResources;
 
-    /**
-     * Верхняя панель
-     */
     private TopPanelView mTopPanel;
-    /**
-     * Инфо панель
-     */
     private InfoPanelView mInfoPanel;
     private FieldView mField;
-    /**
-     * Экран настроек
-     */
     private SettingsView mSettings;
     private StatisticsView mStatistics;
-    /**
-     * Экран рекордов
-     */
     private LeaderboardView mLeaderboard;
-    /**
-     * Оверлей конца игры
-     */
     private FieldOverlay mSolvedOverlay;
-    /**
-     * Оверлей паузы
-     */
     private FieldOverlay mPauseOverlay;
 
-    /**
-     * Область игрового поля
-     */
     private RectF mRectField = new RectF();
 
     private Paint mDebugPaint;
     private StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
 
-    /**
-     * Координата x начальной точки жеста
-     */
     private int mStartX;
-    /**
-     * Координата y начальной точки жеста
-     */
     private int mStartY;
     private boolean mTrail = false;
     private int animCurrentIndex = ANIM_TYPE_ALL;
     private long lastSolvedTimestamp = 0;
 
-    /**
-     * Конструктор по умолчанию
-     *
-     * @param context контекст приложения
-     */
     public GameSurface(Context context) {
         super(context);
 
@@ -132,7 +91,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     public void surfaceCreated(SurfaceHolder holder) {
         mGameLoopThread = new GameManager(this, holder);
 
-        Dimensions.update(this.getWidth(), this.getHeight(), 1.0f);
+        Dimensions.update(this.getWidth(), this.getHeight());
 
         mTopPanel = new TopPanelView();
         mTopPanel.addButton(BTN_NEW, mResources.getString(R.string.action_new));
@@ -220,9 +179,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mGameLoopThread = null;
     }
 
-    /**
-     * Обработка событий нажатия на экран
-     */
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         int x = (int) event.getX();
@@ -338,25 +295,16 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         }
     }
 
-    /**
-     * Нажатие клавиши "Назад" на устройстве
-     */
     public boolean onBackPressed() {
         return mSettings.hide() || mLeaderboard.hide() || mStatistics.hide();
     }
 
-    /**
-     * Приостановка {@link android.app.Activity}
-     */
     public void onPause() {
         if (mGameLoopThread != null) {
             mGameLoopThread.setRunning(false);
         }
     }
 
-    /**
-     * Рендер изображения
-     */
     public void draw(Canvas canvas, long elapsed, String info) {
         super.draw(canvas);
 
@@ -403,11 +351,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mStatistics.update();
     }
 
-    /**
-     * Создание новой игры
-     *
-     * @param isUser <b>true</b>, если действие было вызвано пользователем
-     */
     private void createNewGame(boolean isUser) {
         if (Settings.newGameDelay &&
                 ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
@@ -420,8 +363,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
         SharedPreferences prefs = Settings.getPreferences(getContext());
-        // если создание новой игры не было инициировано пользователем,
-        // загружаем сохрененную игру (если имеется)
         if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
             String strings = prefs.getString(Settings.KEY_GAME_ARRAY, null);
             if (strings != null) {
@@ -445,8 +386,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             }
         }
 
-        // вычисление размеров
-        Dimensions.update(this.getWidth(), this.getHeight(), 1.0f);
+        Dimensions.update(this.getWidth(), this.getHeight());
         mRectField.set(
                 Dimensions.fieldMarginLeft - Dimensions.spacing,
                 Dimensions.fieldMarginTop - Dimensions.spacing,
@@ -458,8 +398,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         Random rnd = new Random();
         int size = Game.getSize();
         int animationType = animCurrentIndex++ % ANIM_TYPE_COUNT;
-        int shift = size / 26 + 1; // коэффициент смещения анимации (группировка тайлов по shift штук)
-        int delay; // задержка появляения
+        int shift = size / 26 + 1; // group tiles by 'shift' count
+        int delay;
         for (int index = 0; index < size; index++) {
             int number = Game.getAt(index);
             if (number > 0) {
@@ -519,7 +459,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                         }
                         case ANIM_TYPE_ALL:
                         default:
-                            // все вместе
                             delay = 0;
                     }
                     t.animateAppearance(delay * Constants.TILE_ANIM_FRAME_MULTIPLIER);
@@ -527,7 +466,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 mField.addTile(t);
             }
         }
-    } // END createNewGame
+    }
 
     private boolean isFieldFullyVisible() {
         boolean overlayVisible = mLeaderboard.isShown()

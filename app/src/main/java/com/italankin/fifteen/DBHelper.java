@@ -38,16 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 ");");
     }
 
-    /**
-     * Добавляет данные в БД
-     *
-     * @param mode     режим игры
-     * @param width    ширина поля
-     * @param height   высота поля
-     * @param hardmode сложный режим
-     * @param moves    кол-во ходов
-     * @param time     затраченное время
-     */
     public void insert(int mode, int width, int height, int hardmode, int moves, long time) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -67,15 +57,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * Метод удаляет лишние записи в таблице
-     *
-     * @param db       база данных
-     * @param mode     режим игры
-     * @param width    ширина поля
-     * @param height   высота поля
-     * @param hardmode сложный режим
-     */
     public void delete(SQLiteDatabase db, int mode, int width, int height, int hardmode) {
         String selection = KEY_MODE + "=" + mode + " AND " +
                 KEY_WIDTH + "=" + width + " AND " +
@@ -88,6 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String lastByMoves = "SELECT id FROM (SELECT id FROM " + KEY_TABLE + " WHERE " + selection +
                 " ORDER BY " + KEY_MOVES + " ASC " + limit + ")";
 
+        // delete only those records, which are not part of any top 10
         String sql = "DELETE FROM " + KEY_TABLE + " WHERE " +
                 KEY_ID + " IN (" + lastByTime + " INTERSECT " + lastByMoves + ")";
 
@@ -96,16 +78,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    /**
-     * Запрос результатов
-     *
-     * @param mode     режим игры
-     * @param width    ширина поля
-     * @param height   высота поля
-     * @param hardmode сложный режим
-     * @param sort     сортировка
-     * @return {@link android.database.Cursor}, содержащий результаты запроса
-     */
     public Cursor query(int mode, int width, int height, int hardmode, int sort) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -139,5 +111,4 @@ public class DBHelper extends SQLiteOpenHelper {
             Tools.log("Upgraded from " + oldVersion + " to " + newVersion);
         }
     }
-
 }

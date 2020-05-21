@@ -16,44 +16,18 @@ import com.italankin.fifteen.anim.TileYAnimator;
 
 public class Tile {
 
-    /**
-     * Paint для рисования текста
-     */
     private static Paint sPaintText;
-    /**
-     * Paint для рисования фона плитки
-     */
     private static Paint sPaintPath;
-    /**
-     * Rect для определения границ текста
-     */
     private static final Rect mRectBounds = new Rect();
 
-    /**
-     * Path для рисования фона плитки
-     */
     private final Path mShape;
-    /**
-     * RectF для определения границ плитки и создания пути
-     */
     private final RectF mRectShape;
 
-    /**
-     * Индекс плитки в общем массиве
-     */
     private volatile int mIndex;
-    /**
-     * раскрашивание по слоям
-     */
     private int mMultiColorIndex;
     private final int mNumber;
-    /**
-     * Позиция X плитки на поле
-     */
+
     private volatile float mCanvasX;
-    /**
-     * Позиция Y плитки на поле
-     */
     private volatile float mCanvasY;
 
     private TileXAnimator mTileXAnimator;
@@ -87,10 +61,6 @@ public class Tile {
         sPaintText.setAntiAlias(Settings.antiAlias);
     }
 
-    /**
-     * @param number данные для отображения
-     * @param index  индекс в общем массиве
-     */
     public Tile(int number, int index) {
         mIndex = index;
         mNumber = number;
@@ -127,7 +97,7 @@ public class Tile {
         TimeInterpolator scaleInterpolator = new DecelerateInterpolator(1.5f);
         mTileScaleAnimator = new TileScaleAnimator(this);
         mTileScaleAnimator.setInterpolator(scaleInterpolator);
-    } // constructor
+    }
 
     public void draw(Canvas canvas, long elapsedTime) {
         if (recycled) {
@@ -162,21 +132,11 @@ public class Tile {
         }
     }
 
-    /**
-     * @return индекс данного спрайта в общем массиве
-     */
     public int getIndex() {
         return mIndex;
     }
 
-    /**
-     * Функция для опредления принадлежности координат спрайту
-     *
-     * @param x координата x
-     * @param y координата y
-     * @return принадлежат ли координаты {@link #mRectShape}
-     */
-    public boolean at(float x, float y) {
+    public boolean contains(float x, float y) {
         return mRectShape.contains(x, y);
     }
 
@@ -232,25 +192,17 @@ public class Tile {
         mDrawPath.set(mShape);
     }
 
-    /**
-     * Вызывается при нажатии на спрайт на экране
-     *
-     * @return <b>true</b>, если
-     */
     public void onClick() {
         if (recycled) {
             return;
         }
 
-        // получение текущих координат спрайта на поле
         int x = mIndex % Settings.gameWidth;
         int y = mIndex / Settings.gameWidth;
 
-        // новый индекс спрайта после перемещения
         int newIndex = Game.move(x, y);
 
-        // если текущий индекс не равен новому индексу
-        // (т.е. был сделан ход и ситуация на поле изменилась)
+        // if index has changed, we made a move
         if (mIndex != newIndex) {
             mIndex = newIndex;
             tileColor = getTileColor();
@@ -261,7 +213,6 @@ public class Tile {
                     (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
             if (Settings.animations) {
-                // задание значений анимации
                 if (mTileXAnimator.isRunning()) {
                     mTileXAnimator.cancel();
                 }
@@ -272,19 +223,16 @@ public class Tile {
                 mTileXAnimator.setValues(mCanvasX, newX);
                 mTileYAnimator.setValues(mCanvasY, newY);
 
-                // задание длительности
                 mTileXAnimator.setDuration(Settings.tileAnimDuration);
                 mTileYAnimator.setDuration(Settings.tileAnimDuration);
 
-                // старт анимации
                 mTileXAnimator.start();
                 mTileYAnimator.start();
             } else {
-                // обновление позиции плитки
                 setCanvasX(newX);
                 setCanvasY(newY);
-            } // if animations
-        } // if index
+            }
+        }
     }
 
     public void animateAppearance(int delay) {
@@ -300,6 +248,13 @@ public class Tile {
         mTileScaleAnimator.setValues(0, 1);
         mTileScaleAnimator.setStartDelay(delay);
         mTileScaleAnimator.start();
+    }
+
+    public void recycle() {
+        recycled = true;
+        mTileXAnimator.cancel();
+        mTileYAnimator.cancel();
+        mTileScaleAnimator.cancel();
     }
 
     private int getTileColor() {
@@ -329,13 +284,6 @@ public class Tile {
             }
         }
         return tileColor;
-    }
-
-    public void recycle() {
-        recycled = true;
-        mTileXAnimator.cancel();
-        mTileYAnimator.cancel();
-        mTileScaleAnimator.cancel();
     }
 
     private int getMultiColorIndex(int number) {

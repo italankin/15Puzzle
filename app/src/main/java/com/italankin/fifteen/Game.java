@@ -7,60 +7,23 @@ import java.util.Random;
 
 public class Game {
 
-    /**
-     * Singleton
-     */
     private static Game instance = new Game();
-    /**
-     * Ширина головоломки в ячейках
-     */
     private int width;
-    /**
-     * Высота головоломки в ячейках
-     */
     private int height;
-    /**
-     * Массив игрового поля
-     */
     private List<Integer> grid = new ArrayList<>();
 
-    /**
-     * Позиция нулевой (пустой) ячейки на поле
-     */
     private int zeroPos;
-    /**
-     * Счетчик ходов
-     */
     private int moves;
-    /**
-     * Счетчик времени
-     */
     private long time;
     private boolean solved = false;
     private boolean paused = false;
 
-    /**
-     * Обработчик событий
-     */
-    private Callback mCallbacks = null;
+    private Callback mCallback = null;
 
-    /**
-     * Конструктор
-     *
-     * @param w ширина головоломки
-     * @param h высота головоломки
-     */
     public static void create(int w, int h) {
         instance.init(w, h);
     }
 
-    /**
-     * Инициализация игры с помощью сохраненного массива
-     *
-     * @param savedGrid  сохраненный массив
-     * @param savedMoves количество сделанных ходов
-     * @param savedTime  прошедшее время
-     */
     public static void load(List<Integer> savedGrid, int savedMoves, long savedTime) {
         instance.grid = savedGrid;
         instance.moves = savedMoves;
@@ -68,12 +31,6 @@ public class Game {
         instance.zeroPos = savedGrid.indexOf(0);
     }
 
-    /**
-     * Инициализация новой игры
-     *
-     * @param w ширина головоломки
-     * @param h высота головоломки
-     */
     public void init(int w, int h) {
         height = h;
         width = w;
@@ -81,15 +38,12 @@ public class Game {
 
         grid.clear();
 
-        // создаем игровое поле
         for (int i = 0; i < size; i++) {
             grid.add(i);
         }
 
-        // перемешивание массива
         Collections.shuffle(grid, new Random());
 
-        // позиция нулевой ячейки
         zeroPos = grid.indexOf(0);
 
         moves = 0;
@@ -97,33 +51,26 @@ public class Game {
         solved = false;
         paused = false;
 
-        // проверка на возможность решения данной раскладки
         if (!isSolvable()) {
-            // если паззл не решается, достаточно лишь поменять местами
-            // последнее и предпоследнее число
+            // if puzzle is not solvable
+            // we swap last two digits (e.g. 14 and 15)
             Collections.swap(grid, grid.indexOf(size - 1), grid.indexOf(size - 2));
         }
 
-        // редкий случай, когда после всех перемещений получается собранный паззл
+        // a rare case where we have solved puzzle, create another
         if (checkSolution() && size > 3) {
-            // в этом случае мы создаем поле заного
             init(width, height);
         }
     }
 
-    /**
-     * Проверка решаемости головоломки
-     *
-     * @return <b>true</b>, если головоломка решаема, иначе <b>false</b>
-     */
     private boolean isSolvable() {
-        int summ = 0, size = height * width;
+        int sum = 0, size = height * width;
         int n, m, s;
         switch (Settings.gameMode) {
             case Constants.MODE_CLASSIC:
-                // для каждого числа высчитываем количество чисел, которые
-                // 1) меньше данного числа
-                // 2) стоят после него (по строкам)
+                // for every number we need to count:
+                // - numbers less than chosen
+                // - follow chosen number (by rows)
                 for (int i = 0; i < size; i++) {
                     n = grid.get(i);
                     s = 0;
@@ -133,62 +80,46 @@ public class Game {
                             s++;
                         }
                     }
-                    summ += s;
+                    sum += s;
                 }
-
-                // для головоломок с четным количеством столбцов нужно прибавить номер
-                // строки (считая снизу), в которой находится нулевая ячейка
+                // if we got an even number of columns
+                // we need to add row number (counting from down) where zero is located
                 if (width % 2 == 0) {
                     int z = height - zeroPos / width;
                     if (z % 2 == 0) {
-                        return summ % 2 == 1;
+                        return sum % 2 == 1;
                     }
                 }
-
-                return summ % 2 == 0;
-            // MODE_CLASSIC
+                // sum should be even
+                return sum % 2 == 0;
 
             case Constants.MODE_SNAKE:
-                // для "змейки" нужно проверить,
-                // является ли номер текущей строки четным
+                // same as above, but for even rows we reverse the order
                 for (int i = 0; i < size; i++) {
-                    // если строка имеет четный номер,
-                    // элементы массива нужно перебирать в обратном порядке
                     if ((i / width) % 2 == 0) {
                         n = grid.get(i);
                     } else {
                         n = grid.get(width * (1 + i / width) - i % width - 1);
                     }
-
                     s = 0;
                     for (int j = i + 1; j < size; j++) {
-
                         if ((j / width) % 2 == 0) {
                             m = grid.get(j);
                         } else {
                             m = grid.get(width * (1 + j / width) - j % width - 1);
                         }
-
                         if (n > m && m > 0) {
                             s++;
                         }
                     }
-                    summ += s;
+                    sum += s;
                 }
-
-                return summ % 2 == 0;
-            // MODE_SNAKE
-
-        } // switch
+                return sum % 2 == 0;
+        }
 
         return false;
-    } // isSolvable
+    }
 
-    /**
-     * Проверка решения
-     *
-     * @return <b>true</b>, если головоломка решена, иначе <b>false</b>
-     */
     private boolean checkSolution() {
         int size = height * width;
         int v, i;
@@ -200,19 +131,16 @@ public class Game {
                         return false;
                     }
                 }
-                break; // MODE_CLASSIC
+                break;
 
             case Constants.MODE_SNAKE:
                 for (i = 0; i < size - 1; i++) {
-                    // если номер текущей строки четный
                     if ((i / width) % 2 == 0) {
-                        // порядок чисел соответствует обычному порядку
                         v = i + 1;
                         if (grid.get(i) != v) {
                             return false;
                         }
                     } else {
-                        // иначе получаем числа в обратном порядке
                         v = (width * (1 + i / width) - i % width);
                         if (v == size) {
                             v = 0;
@@ -222,84 +150,69 @@ public class Game {
                         }
                     }
                 }
-                break; // MODE_SNAKE
-
-        } // switch
-
-        // головоломка решена
+                break;
+        }
         return true;
-    } // checkSolution
+    }
 
     /**
-     * Перемещение ячейки (базовый ход)
+     * Move a tile on [x, y]
      *
-     * @param x координата x ячейки
-     * @param y координа y ячейки
-     * @return конечная позиция ячейки
+     * @return new index of index
      */
     public static int move(int x, int y) {
-        // вычисление позиции ячейки в массиве
+        // find position in array of tile at [x, y]
         int pos = y * instance.width + x;
 
         if (instance.grid.get(pos) == 0) {
             return pos;
         }
-        // вычисление координат пустой ячейки
         int x0 = instance.zeroPos % instance.width;
         int y0 = instance.zeroPos / instance.width;
 
-        // проверка дистанции
+        // if distance to zero more than 1, we cant move
         if (Tools.manhattan(x0, y0, x, y) > 1) {
             return pos;
         }
 
-        // меняются местами пустая и выбранная ячейка
         Collections.swap(instance.grid, pos, instance.zeroPos);
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 
-        // обработка событий
-        if (instance.mCallbacks != null) {
-            // решение головоломки
+        if (instance.mCallback != null) {
             if (instance.checkSolution()) {
                 instance.solved = true;
-                instance.mCallbacks.onGameSolve();
+                instance.mCallback.onGameSolve();
             }
         }
 
         return newPos;
-    } // move
+    }
 
     /**
-     * Определяет элементы, которые необходимо переместить в выбранном жестом направлении
+     * Find elements we should move in a given {@code direction} starting at {@code startIndex}
      *
-     * @param direction направление перемещения
-     * @param index     индекс начального элемента
-     * @return массив элементов, которые требуется переместить
+     * @return numbers to move
      */
-    public static ArrayList<Integer> getSlidingElements(int direction, int index) {
-        // массив индексов ячеек, которые будут перемещены
-        ArrayList<Integer> result = new ArrayList<>();
-
-        // проверка принадлежности начальной точки перемещения игровому полю
-        if (index < 0) {
-            return result;
+    public static List<Integer> findMovingTiles(int direction, int startIndex) {
+        if (startIndex < 0) {
+            // maybe we're outside the universe
+            return Collections.emptyList();
         }
 
         int x, y;
 
-        // вычисление координат ячейки начальной точки жеста
-        int x1 = index % instance.width;
-        int y1 = index / instance.width;
+        int x1 = startIndex % instance.width;
+        int y1 = startIndex / instance.width;
 
-        // вычисление позиции пустой ячейки
         int x0 = instance.zeroPos % instance.width;
         int y0 = instance.zeroPos / instance.width;
 
+        ArrayList<Integer> result = new ArrayList<>();
+
         switch (direction) {
             case Tools.DIRECTION_UP:
-                // перемещение должно срабатывать только в том столбце,
-                // в котором оно возможно
+                // check we're moving tiles in the same column
                 if (x1 != x0) {
                     break;
                 }
@@ -309,8 +222,7 @@ public class Game {
                 break;
 
             case Tools.DIRECTION_RIGHT:
-                // перемещение должно срабатывать только в той строке,
-                // в которой оно возможно
+                // check we're moving tiles in the same row
                 if (y1 != y0) {
                     break;
                 }
@@ -320,8 +232,7 @@ public class Game {
                 break;
 
             case Tools.DIRECTION_DOWN:
-                // перемещение должно срабатывать только в том столбце,
-                // в котором оно возможно
+                // check we're moving tiles in the same column
                 if (x1 != x0) {
                     break;
                 }
@@ -331,8 +242,7 @@ public class Game {
                 break;
 
             case Tools.DIRECTION_LEFT:
-                // перемещение должно срабатывать только в той строке,
-                // в которой оно возможно
+                // check we're moving tiles in the same row
                 if (y1 != y0) {
                     break;
                 }
@@ -340,28 +250,19 @@ public class Game {
                     result.add(y0 * instance.width + x);
                 }
                 break;
-
         }
 
         return result;
-    } // getSlidingElements
+    }
 
-    /**
-     * Возвращает число в ячейке по его индексу в массиве
-     *
-     * @param index индекс элемента в массиве
-     * @return элемент массива
-     */
     public static int getAt(int index) {
         return instance.grid.get(index);
     }
 
     /**
-     * Вычисляет направление вектора перемещения с концом в {@link #zeroPos}
+     * Find direction in which we should move a tile at {@code index}
      *
-     * @param index начальный индекс
-     * @return идентификатор направления
-     * @see Tools
+     * @see Tools#direction(float, float)
      */
     public static int getDirection(int index) {
         //noinspection IntegerDivisionInFloatingPointContext
@@ -407,40 +308,21 @@ public class Game {
         return instance.paused;
     }
 
-    /**
-     * @return массив элементов поля
-     */
     public static String getGridStr() {
         String gridAsStr = instance.grid.toString();
         return gridAsStr.substring(1, gridAsStr.length() - 1);
     }
 
-    /**
-     * @return размер поля (высота * ширина)
-     */
     public static int getSize() {
         return instance.grid.size();
     }
 
-    /**
-     * Интерфейс для отслеживания событий в игре
-     */
+    public static void setCallback(Callback callback) {
+        instance.mCallback = callback;
+    }
+
     public interface Callback {
 
-        /**
-         * Вызывается при решении головоломки
-         */
         void onGameSolve();
-
     }
-
-    /**
-     * Привязывает обработчик событий к игре
-     *
-     * @param callback обработчик событий
-     */
-    public static void setCallback(Callback callback) {
-        instance.mCallbacks = callback;
-    }
-
 }

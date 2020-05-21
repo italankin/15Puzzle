@@ -23,32 +23,14 @@ public class LeaderboardView extends BaseView {
     private Paint mPaintValue;
     private Paint mPaintTable;
 
-    /**
-     * Ширина поля
-     */
     private String mTextWidth;
-    /**
-     * Высота поля
-     */
     private String mTextHeight;
-    /**
-     * Hard Mode
-     */
     private String mTextBf;
     private String[] mTextBfValue;
-    /**
-     * Режим игры
-     */
     private String mTextMode;
     private String[] mTextModeValue;
-    /**
-     * Сортировка
-     */
     private String mTextSort;
     private String[] mTextSortValue;
-    /**
-     * Кнопка "Назад"
-     */
     private String mTextBack;
     private String mTextNoData;
 
@@ -178,7 +160,6 @@ public class LeaderboardView extends BaseView {
             updateData();
         }
 
-        // -- высота поля --
         if (mRectHeight.contains(x, y)) {
             mGameHeight += ((dx == 0) ? 1 : Math.signum(dx));
             if (mGameHeight < Constants.MIN_GAME_HEIGHT) {
@@ -195,9 +176,6 @@ public class LeaderboardView extends BaseView {
         }
     }
 
-    /**
-     * Запрос данных из бд, обновление {@link #mTableItems}
-     */
     private void updateData() {
         mTableItems.clear();
 
@@ -281,10 +259,7 @@ public class LeaderboardView extends BaseView {
             return;
         }
 
-        // отступ новой строки
         float gap = Dimensions.surfaceHeight * 0.05f;
-
-        // отрисовка таблицы
         int overlayTextColor = Colors.getOverlayTextColor();
         for (int i = 0; i < mTableItems.size(); i++) {
             TableItem item = mTableItems.get(i);
@@ -308,9 +283,6 @@ public class LeaderboardView extends BaseView {
         mPaintText.setColor(Colors.getOverlayTextColor());
     }
 
-    /**
-     * Хранит данные о записи в таблице рекордов
-     */
     private static class TableItem {
 
         String id;

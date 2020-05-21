@@ -5,9 +5,6 @@ import android.view.animation.LinearInterpolator;
 
 import com.italankin.fifteen.Tile;
 
-/**
- * Базовый класс для анимирования тайлов.
- */
 public abstract class TileAnimator {
 
     private final Tile target;
@@ -56,11 +53,6 @@ public abstract class TileAnimator {
         cancelled = true;
     }
 
-    /**
-     * Рендер следующего кадра
-     *
-     * @param timeDelta время, прошедшее после отрисовки предыдущего кадра
-     */
     public void nextFrame(long timeDelta) {
         if (cancelled) {
             return;
@@ -84,12 +76,5 @@ public abstract class TileAnimator {
         }
     }
 
-    /**
-     * Обновление состояния
-     *
-     * @param target тайл
-     * @param value  новое значение для анимируемого свойства
-     */
     protected abstract void update(Tile target, float value);
-
 }

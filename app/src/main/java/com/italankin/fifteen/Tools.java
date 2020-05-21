@@ -16,13 +16,11 @@ public class Tools {
     public static final int DIRECTION_LEFT = 3;
 
     /**
-     * Функция "сглаживания" (анимации и т.д.)
-     *
-     * @param t текущий кадр (или мс)
-     * @param a начальное значение
-     * @param b изменение значения
-     * @param d общая длительность (кадры или мс)
-     * @return число в промежутке [0.0 ... 1.0]
+     * @param t current frame
+     * @param a start value
+     * @param b value change
+     * @param d total frames
+     * @return [0.0 ... 1.0]
      */
     public static double easeOut(float t, float a, float b, float d) {
         return 1.0f - b * Math.pow(2.0f, 10.0f * (t / d - 1.0f)) + a;
@@ -44,9 +42,6 @@ public class Tools {
         }
     }
 
-    /**
-     * Преобразование массива строк в массив чисел
-     */
     public static List<Integer> getIntegerArray(String... strings) {
         ArrayList<Integer> result = new ArrayList<>();
         for (String s : strings) {
@@ -60,13 +55,6 @@ public class Tools {
         return result;
     }
 
-    /**
-     * Направление вектора движения
-     *
-     * @param dx изменение x
-     * @param dy изменение y
-     * @return константу направления
-     */
     public static int direction(float dx, float dy) {
         if (dx == 0 && dy == 0) {
             return DIRECTION_DEFAULT;
@@ -79,13 +67,6 @@ public class Tools {
     }
 
     /**
-     * Вычисление расстояния между клетками на игровом поле
-     *
-     * @param x1 x первой ячейки
-     * @param y1 y первой ячейки
-     * @param x2 x второй ячейки
-     * @param y2 y второй ячейки
-     * @return расстояние между ячейками
      * @see <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Taxicab geometry</a>
      */
     public static int manhattan(int x1, int y1, int x2, int y2) {

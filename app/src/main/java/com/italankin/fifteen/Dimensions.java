@@ -2,70 +2,25 @@ package com.italankin.fifteen;
 
 public class Dimensions {
 
-    /**
-     * ширина области рисования
-     */
     public static float surfaceWidth;
-    /**
-     * высота области рисования
-     */
     public static float surfaceHeight;
-    /**
-     * размер стороны плитки
-     */
     public static float tileSize;
-    /**
-     * радиус закругления углов спрайтов
-     */
     public static float tileCornerRadius;
-    /**
-     * ширина поля (на области рисования)
-     */
     public static float fieldWidth;
-    /**
-     * высота поля (на области рисования)
-     */
     public static float fieldHeight;
-    /**
-     * отступ поля от левого края
-     */
     public static float fieldMarginLeft;
-    /**
-     * отступ поля от верхнего края
-     */
     public static float fieldMarginTop;
-    /**
-     * размер шрифта на спрайтах
-     */
     public static float tileFontSize;
-    /**
-     * размер шрифта элементов интерфейса
-     */
     public static float interfaceFontSize;
-    /**
-     * размер шрифта меню
-     */
     public static float menuFontSize;
-    /**
-     * отступ между ячейками на поле
-     */
     public static float spacing;
-    /**
-     * высота верхней панели с кнопками
-     */
     public static float topBarHeight;
-    /**
-     * высота панели инфо
-     */
     public static float infoBarHeight;
 
-    /**
-     * Функция рассчитывает размеры элементов относительно текущих настроек игры
-     *
-     * @param width  ширина области рисования
-     * @param height высота области рисования
-     * @param scale  коэффициент масштабирования
-     */
+    public static void update(int width, int height) {
+        update(width, height, 1f);
+    }
+
     public static void update(int width, int height, float scale) {
         surfaceWidth = width * scale;
         surfaceHeight = height * scale;

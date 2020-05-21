@@ -27,66 +27,24 @@ public class Settings {
     private static final String KEY_TIME_FORMAT = "time_format";
     private static final String KEY_STATS = "stats";
 
-    /**
-     * ширина игры
-     */
     public static int gameWidth = Defaults.GAME_WIDTH;
-    /**
-     * высота игры
-     */
     public static int gameHeight = Defaults.GAME_HEIGHT;
-    /**
-     * сложный режим
-     */
     public static boolean hardmode = Defaults.HARD_MODE;
-    /**
-     * сохранение игр между сессиями
-     */
     static boolean saveGame = Defaults.HARD_MODE;
-    /**
-     * анимации
-     */
     public static boolean animations = Defaults.ANIMATIONS;
-    /**
-     * сглаживание
-     */
     public static boolean antiAlias = Defaults.ANTI_ALIAS;
-    /**
-     * длительность анимации плиток
-     */
     static long tileAnimDuration = Defaults.ANIMATION_DURATION;
-    /**
-     * кол-во кадров для анимирования элементов интерфейса
-     */
     public static long screenAnimDuration = Defaults.ANIMATION_DURATION;
-    /**
-     * цвет плиток
-     */
     public static int tileColor = 0;
-    /**
-     * красить плитки по "слоям"
-     */
     public static int multiColor = Defaults.MULTI_COLOR;
-    /**
-     * цветовая тема приложения
-     */
     public static int colorMode = Defaults.COLOR_MODE;
-    /**
-     * текущий режим игры
-     */
     public static int gameMode = Defaults.GAME_MODE;
-    /**
-     * Typeface текста
-     */
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDelay = Defaults.NEW_GAME_DELAY;
     public static int ingameInfo = Defaults.INGAME_INFO;
     public static int timeFormat = Defaults.TIME_FORMAT;
     public static boolean stats = Defaults.STATS;
 
-    /**
-     * хранилище настроек приложения
-     */
     static SharedPreferences prefs;
     public static DateFormat dateFormat;
 
@@ -95,9 +53,6 @@ public class Settings {
         return context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE);
     }
 
-    /**
-     * Чтение настроек приложения
-     */
     static void load(Context context) {
         int w = prefs.getInt(KEY_GAME_WIDTH, Defaults.GAME_WIDTH);
         if (w >= Constants.MIN_GAME_WIDTH && w < Constants.MAX_GAME_WIDTH) {
@@ -126,9 +81,6 @@ public class Settings {
         save(false);
     }
 
-    /**
-     * Запись настроек приложения
-     */
     @SuppressLint("ApplySharedPref")
     static void save(boolean sync) {
         SharedPreferences.Editor editor = prefs.edit();

@@ -35,38 +35,14 @@ public class Colors {
     private static final int WHITE = 0xffeeeeee;
     private static final int WHITE_U = 0xff7a7a7a;
 
-    /**
-     * задний фон главного экрана
-     */
-    public static final int[] background = {0xffcacaca, 0xff181818};
-    /**
-     * цвет фона поля
-     */
     public static final int backgroundField = 0xff373737;
-    /**
-     * цвет фона оверлеев
-     */
-    public static final int[] overlay = {0xdaa0a0a0, 0xda373737};
-    /**
-     * цвет текста оверлея
-     */
-    public static final int[] overlayText = {0xff373737, 0xff787878};
-    /**
-     * цвет текста спрайтов
-     */
-    public static final int[] spriteText = {0xfff8f8f8, 0xff181818};
-    /**
-     * цвет текста инфо
-     */
-    public static final int[] textInfo = {0xffcacaca, 0xff787878};
-    /**
-     * цвет текста значений в меню настроек
-     */
     public static final int menuTextValue = 0xfffefefe;
-    /**
-     * цвета спрайтов (день)
-     */
-    public static final int[] tilesDay = {
+    private static final int[] background = {0xffcacaca, 0xff181818};
+    private static final int[] overlay = {0xdaa0a0a0, 0xda373737};
+    private static final int[] overlayText = {0xff373737, 0xff787878};
+    private static final int[] spriteText = {0xfff8f8f8, 0xff181818};
+    private static final int[] textInfo = {0xffcacaca, 0xff787878};
+    private static final int[] tilesDay = {
             MUTED_BLUE,
             RED,
             ORANGE,
@@ -78,7 +54,7 @@ public class Colors {
             GREY,
             BLACK
     };
-    public static final int[] tilesDayUnsolved = {
+    private static final int[] tilesDayUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
@@ -90,10 +66,7 @@ public class Colors {
             GREY_U,
             BLACK_U
     };
-    /**
-     * цвета спрайтов (ночь)
-     */
-    public static final int[] tilesNight = {
+    private static final int[] tilesNight = {
             MUTED_BLUE,
             RED,
             ORANGE,
@@ -105,7 +78,7 @@ public class Colors {
             GREY,
             WHITE
     };
-    public static final int[] tilesNightUnsolved = {
+    private static final int[] tilesNightUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
@@ -117,9 +90,6 @@ public class Colors {
             GREY_U,
             WHITE_U
     };
-    /**
-     * цвета спрайтов
-     */
     public static final int[] multiColorTiles = {
             RED,
             BLUE,
@@ -130,16 +100,10 @@ public class Colors {
             GREY
     };
 
-    /**
-     * @return цвет фона для текущей цветовой схемы
-     */
     public static int getBackgroundColor() {
         return background[Settings.colorMode];
     }
 
-    /**
-     * @return текущий цвет плиток
-     */
     public static int getTileColor() {
         if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
             return tilesDay[Settings.tileColor];
@@ -164,30 +128,18 @@ public class Colors {
         }
     }
 
-    /**
-     * @return цвет текста на плитках
-     */
     public static int getTileTextColor() {
         return spriteText[Settings.colorMode];
     }
 
-    /**
-     * @return цвет текста информации
-     */
     public static int getInfoTextColor() {
         return textInfo[Settings.colorMode];
     }
 
-    /**
-     * @return цвет оверлея для текущей цветовой схемы
-     */
     public static int getOverlayColor() {
         return overlay[Settings.colorMode];
     }
 
-    /**
-     * @return цвет текста оверлея для текущей цветовой схемы
-     */
     public static int getOverlayTextColor() {
         return overlayText[Settings.colorMode];
     }

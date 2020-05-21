@@ -16,40 +16,17 @@ import com.italankin.fifteen.Tools;
 
 public class InfoPanelView extends BaseView {
 
-    /**
-     * фон игрового поля
-     */
     private Paint mPaintBg;
-    /**
-     * отображение текстов инфо
-     */
     private Paint mPaintTextValue;
-    /**
-     * отображение заголовков инфо
-     */
     private Paint mPaintTextCaption;
 
-    /**
-     * режим игры
-     */
     private String[] mTextMode;
-
-    /**
-     * текущее количество ходов
-     */
     private String mTextMoves;
-    /**
-     * текущее время
-     */
     private String mTextTime;
 
-    /**
-     * панель инфо
-     */
     private RectF mRectInfo;
 
     private int mValueTextOffset;
-    private int mCaptionTextOffset;
     private final float firstRowY;
     private final float secondRowY;
 
@@ -76,7 +53,7 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.getTextBounds("A", 0, 1, r);
         mValueTextOffset = r.centerY();
         mPaintTextCaption.getTextBounds("A", 0, 1, r);
-        mCaptionTextOffset = r.centerY();
+        int mCaptionTextOffset = r.centerY();
 
         firstRowY = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
         secondRowY = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
@@ -97,7 +74,6 @@ public class InfoPanelView extends BaseView {
         canvas.drawRoundRect(mRectInfo, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                 mPaintBg);
 
-        // режим игры
         canvas.drawText(
                 mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
                 Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,

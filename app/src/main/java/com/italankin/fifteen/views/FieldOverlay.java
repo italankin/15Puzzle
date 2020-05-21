@@ -17,23 +17,20 @@ import com.italankin.fifteen.Settings;
  */
 public class FieldOverlay extends BaseView {
 
-    private Paint mPaintBg;                         // Paint для отрисовки фона
-    private Paint mPaintText;                       // Paint для отрисовки текста
+    private Paint mPaintBg;
+    private Paint mPaintText;
 
-    private Rect mRectBounds;                       // рассчет границ текста
+    private Rect mRectBounds;
 
-    private String mCaption;                        // отображаемый текст
-    private RectF mRectField;                        // границы игрового поля
+    private String mCaption;
+    private RectF mRectField;
 
     private ObjectAnimator mAlphaAnimator;
     private float mAlpha = 1;
 
-    /**
-     * @param s текст надписи на оверлее
-     */
-    public FieldOverlay(RectF field, String s) {
+    public FieldOverlay(RectF field, String caption) {
         mRectField = field;
-        mCaption = s;
+        mCaption = caption;
         mPaintBg = new Paint();
         mPaintBg.setAntiAlias(Settings.antiAlias);
         mPaintBg.setColor(Colors.getOverlayColor());
@@ -64,11 +61,6 @@ public class FieldOverlay extends BaseView {
         return (mShow = true);
     }
 
-    /**
-     * Устанавливает прозрачность элемента. Используется для анимации.
-     *
-     * @param alpha значение прозрачности в интервале [0, 1]
-     */
     public void setAlpha(float alpha) {
         mAlpha = alpha;
     }
@@ -93,7 +85,6 @@ public class FieldOverlay extends BaseView {
                 Dimensions.fieldMarginLeft + Dimensions.fieldWidth / 2.0f,
                 Dimensions.fieldMarginTop + Dimensions.fieldHeight / 2.0f - mRectBounds.centerY(),
                 mPaintText);
-
     }
 
     @Override
@@ -104,5 +95,4 @@ public class FieldOverlay extends BaseView {
         mPaintBg.setAntiAlias(Settings.antiAlias);
         mPaintText.setAntiAlias(Settings.antiAlias);
     }
-
 }

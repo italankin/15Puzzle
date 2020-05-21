@@ -11,7 +11,7 @@ import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
 import com.italankin.fifteen.Tools;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FieldView extends BaseView {
@@ -36,46 +36,24 @@ public class FieldView extends BaseView {
         mShow = true;
     }
 
-    /**
-     * Добавление элемента в массив
-     *
-     * @param tile элемент
-     */
-    public boolean addTile(Tile tile) {
-        return mData.add(tile);
+    public void addTile(Tile tile) {
+        mData.add(tile);
     }
 
-    /**
-     * Перемещение элементов
-     *
-     * @param sx        координата x начальной ячейки в массиве
-     * @param sy        координата y начальной ячейки в массиве
-     * @param direction направление перемещения
-     */
-    public void moveTiles(float sx, float sy, int direction) {
-        moveTiles(sx, sy, direction, true);
+    public void moveTiles(float startX, float startY, int direction) {
+        moveTiles(startX, startY, direction, true);
     }
 
-    /**
-     * Перемещение элементов
-     *
-     * @param sx        координата x начальной ячейки в массиве
-     * @param sy        координата y начальной ячейки в массиве
-     * @param direction направление перемещения
-     * @param forced    перемещать элементы вне зависимости от состояния анимации
-     */
-    public void moveTiles(float sx, float sy, int direction, boolean forced) {
-        int startIndex = at(sx, sy);
+    public void moveTiles(float startX, float startY, int direction, boolean forced) {
+        int startIndex = at(startX, startY);
         if (startIndex >= 0) {
             if (direction == Tools.DIRECTION_DEFAULT) {
                 direction = Game.getDirection(startIndex);
             }
-            // вычисляем индексы ячеек, которые нам нужно переместить
-            ArrayList<Integer> numbersToMove = Game.getSlidingElements(direction, startIndex);
+            List<Integer> numbersToMove = Game.findMovingTiles(direction, startIndex);
             if (numbersToMove.isEmpty()) {
                 return;
             }
-            // перемещаем выбранные ячейки, если таковые есть
             int moved = 0;
             for (int i = 0, s = numbersToMove.size(); i < s; i++) {
                 int num = numbersToMove.get(i);
@@ -96,25 +74,15 @@ public class FieldView extends BaseView {
         return at(x, y) == -1;
     }
 
-    /**
-     * Определяет спрайт, находящийся по координатам
-     *
-     * @param x координата x на экране
-     * @param y координата y на экране
-     * @return индекс элемента в игровом массиве
-     */
     private int at(float x, float y) {
         for (Tile t : mData) {
-            if (t.at(x, y)) {
+            if (t.contains(x, y)) {
                 return t.getIndex();
             }
         }
         return -1;
     }
 
-    /**
-     * Отрисовка спрайтов
-     */
     @Override
     public void draw(Canvas canvas, long elapsedTime) {
         canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius,
