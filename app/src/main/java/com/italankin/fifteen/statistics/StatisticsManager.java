@@ -40,7 +40,7 @@ public class StatisticsManager {
         Statistics.Avg ao50 = avg(entries, 50);
         Statistics.Avg ao100 = avg(entries, 100);
         Statistics.Avg session = avg(entries, entries.size());
-        return new Statistics(ao5, ao12, ao50, ao100, session);
+        return new Statistics(entries.size(), ao5, ao12, ao50, ao100, session);
     }
 
     public void clear(int width, int height, int mode, boolean hard) {
