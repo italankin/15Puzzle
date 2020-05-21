@@ -18,6 +18,7 @@ import com.italankin.fifteen.views.FieldView;
 import com.italankin.fifteen.views.InfoPanelView;
 import com.italankin.fifteen.views.LeaderboardView;
 import com.italankin.fifteen.views.SettingsView;
+import com.italankin.fifteen.views.StatisticsView;
 import com.italankin.fifteen.views.TopPanelView;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     private static final int BTN_NEW = 0;
     private static final int BTN_SETTINGS = 1;
     private static final int BTN_LEADERBOARD = 2;
-    private static final int BTN_PAUSE = 3;
+    private static final int BTN_FOUR = 3;
 
     /**
      * Задержка анимации между тайлами в кадрах
@@ -80,6 +81,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Экран настроек
      */
     private SettingsView mSettings;
+    private StatisticsView mStatistics;
     /**
      * Экран рекордов
      */
@@ -137,7 +139,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mTopPanel.addButton(BTN_NEW, mResources.getString(R.string.action_new));
         mTopPanel.addButton(BTN_SETTINGS, mResources.getString(R.string.action_settings));
         mTopPanel.addButton(BTN_LEADERBOARD, mResources.getString(R.string.action_leaderboard));
-        mTopPanel.addButton(BTN_PAUSE, mResources.getString(R.string.action_pause));
+        int btnFourTitle = Settings.stats ? R.string.action_stats : R.string.action_pause;
+        mTopPanel.addButton(BTN_FOUR, mResources.getString(btnFourTitle));
         mTopPanel.addCallback(this);
 
         mInfoPanel = new InfoPanelView(mResources);
@@ -149,6 +152,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             if (needUpdate) {
                 createNewGame(true);
             }
+            int title = Settings.stats ? R.string.action_stats : R.string.action_pause;
+            mTopPanel.setButtonCaption(BTN_FOUR, mResources.getString(title));
             updateViews();
         });
         mLeaderboard = new LeaderboardView(dbHelper, getResources());
@@ -157,6 +162,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         });
         mSolvedOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_win));
         mPauseOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_pause));
+        mStatistics = new StatisticsView(mResources);
 
         Game.addCallback(() -> {
             mSolvedOverlay.show();
@@ -263,6 +269,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 } else if (mSettings.isShown()) {
                     mSettings.onClick(mStartX, mStartY, dx);
                     return true;
+                } else if (mStatistics.isShown()) {
+                    mStatistics.onClick(mStartX, mStartY);
+                    return true;
                 } else if (Game.isSolved() && mRectField.contains(x, y)) {
                     createNewGame(true);
                     return true;
@@ -312,15 +321,19 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
                 mLeaderboard.show();
                 break;
 
-            case BTN_PAUSE:
-                if (!Game.isSolved()) {
-                    Game.invertPaused();
-                }
-                mField.update();
-                if (mPauseOverlay.isShown()) {
-                    mPauseOverlay.hide();
+            case BTN_FOUR:
+                if (Settings.stats) {
+                    mStatistics.show();
                 } else {
-                    mPauseOverlay.show();
+                    if (!Game.isSolved()) {
+                        Game.invertPaused();
+                    }
+                    mField.update();
+                    if (mPauseOverlay.isShown()) {
+                        mPauseOverlay.hide();
+                    } else {
+                        mPauseOverlay.show();
+                    }
                 }
                 break;
         }
@@ -330,7 +343,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
      * Нажатие клавиши "Назад" на устройстве
      */
     public boolean onBackPressed() {
-        return mSettings.hide() || mLeaderboard.hide();
+        return mSettings.hide() || mLeaderboard.hide() || mStatistics.hide();
     }
 
     /**
@@ -369,6 +382,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             mLeaderboard.draw(canvas, elapsed);
         } else if (mSettings.isShown()) {
             mSettings.draw(canvas, elapsed);
+        } else if (mStatistics.isShown()) {
+            mStatistics.draw(canvas, elapsed);
         } else if (paused && !solved && mPauseOverlay.isShown()) {
             mPauseOverlay.draw(canvas, elapsed);
         }
@@ -386,6 +401,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
         mSettings.update();
         mPauseOverlay.update();
         mSolvedOverlay.update();
+        mStatistics.update();
     }
 
     /**
@@ -449,7 +465,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
             int number = Game.getAt(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
-                if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown()) {
+                if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() && !mStatistics.isShown()) {
                     switch (animationType) {
                         case ANIM_TYPE_INDEX_ASC:
                             delay = index / shift;
@@ -515,7 +531,12 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callbacks, 
     } // END createNewGame
 
     private boolean isFieldFullyVisible() {
-        return !(mLeaderboard.isShown() || mSettings.isShown() || mSolvedOverlay.isShown() || mPauseOverlay.isShown());
+        boolean overlayVisible = mLeaderboard.isShown()
+                || mSettings.isShown()
+                || mSolvedOverlay.isShown()
+                || mPauseOverlay.isShown()
+                || mStatistics.isShown();
+        return !overlayVisible;
     }
 
     private static int fromPoint(int x0, int y0, int index) {

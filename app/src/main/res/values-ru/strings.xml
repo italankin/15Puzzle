@@ -7,6 +7,7 @@
     <string name="action_new">НОВАЯ</string>
     <string name="action_leaderboard">РЕКОРДЫ</string>
     <string name="action_pause">ПАУЗА</string>
+    <string name="action_stats">СТАТ</string>
 
     <string name="info_moves">ХОДЫ</string>
     <string name="info_time">ВРЕМЯ</string>
@@ -27,6 +28,12 @@
     <string name="pref_ingame_info">Инфо</string>
     <string name="pref_new_game_delay">Задержка</string>
     <string name="pref_time_format">Время</string>
+    <string name="pref_stats">Статистика</string>
+
+    <string name="stats_session_avg">Сессия</string>
+    <string name="stats_na">н/д</string>
+    <string name="stats_time">Время</string>
+    <string name="stats_moves">Ходы</string>
 
     <string name="back">назад</string>
 
@@ -68,4 +75,10 @@
         <item>лучшее время</item>
     </string-array>
 
+    <plurals name="stats_total">
+        <item quantity="one">Всего %1$d запись</item>
+        <item quantity="many">Всего %1$d записей</item>
+        <item quantity="few">Всего %1$d записей</item>
+        <item quantity="other">Всего %1$d записей</item>
+    </plurals>
 </resources>

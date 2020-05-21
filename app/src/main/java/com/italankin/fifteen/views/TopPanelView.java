@@ -51,6 +51,14 @@ public class TopPanelView extends BaseView {
         updateWidths();
     }
 
+    public void setButtonCaption(int id, String caption) {
+        for (Button button : mButtons) {
+            if (button.id == id) {
+                button.caption = caption;
+            }
+        }
+    }
+
     private void updateWidths() {
         int size = mButtons.size();
         float width = Dimensions.surfaceWidth / size;
@@ -115,15 +123,16 @@ public class TopPanelView extends BaseView {
     /**
      * Класс кнопки верхней панели
      */
-    private class Button {
+    private static class Button {
+
         final RectF rect;
-        final String caption;
         final int id;
         long frame = 0;
+        String caption;
 
-        Button(int id, String s) {
-            rect = new RectF();
-            caption = s;
+        Button(int id, String caption) {
+            this.rect = new RectF();
+            this.caption = caption;
             this.id = id;
         }
 
@@ -140,6 +149,7 @@ public class TopPanelView extends BaseView {
      * Интерфейс для отслеживания нажатий
      */
     public interface Callbacks {
+
         void onTopPanelButtonClick(int id);
     }
 }

@@ -97,6 +97,9 @@ public class SettingsView extends BaseView {
     private String mTextTimeFormat;
     private String[] mTextTimeFormatValues;
 
+    private String mTextStats;
+    private String[] mTextStatsValues;
+
     /**
      * граница элемента настройки ширины
      */
@@ -137,6 +140,7 @@ public class SettingsView extends BaseView {
     private RectF mRectNewGameDelay;
     private RectF mRectIngameInfo;
     private RectF mRectTimeFormat;
+    private RectF mRectStats;
     private RectF mRectSettingsPage;
     /**
      * граница элемента "назад"
@@ -197,6 +201,8 @@ public class SettingsView extends BaseView {
         mTextIngameInfoValues = res.getStringArray(R.array.ingame_info);
         mTextTimeFormat = res.getString(R.string.pref_time_format);
         mTextTimeFormatValues = res.getStringArray(R.array.time_format);
+        mTextStats = res.getString(R.string.pref_stats);
+        mTextStatsValues = res.getStringArray(R.array.toggle);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextWidth, 0, mTextWidth.length(), r);
@@ -355,6 +361,10 @@ public class SettingsView extends BaseView {
         topMargin += lineSpacing;
         mRectTimeFormat = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectTimeFormat.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectStats = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectStats.inset(0, padding);
     }
 
     private void drawBasic(Canvas canvas, float valueRight, float textLeft, float textYOffset) {
@@ -415,6 +425,10 @@ public class SettingsView extends BaseView {
         canvas.drawText(mTextTimeFormat, textLeft, mRectTimeFormat.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextTimeFormatValues[Settings.timeFormat],
                 valueRight, mRectTimeFormat.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextStats, textLeft, mRectStats.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextStatsValues[Settings.stats ? 1 : 0],
+                valueRight, mRectStats.bottom - textYOffset, mPaintValue);
     }
 
     private void onClickBasic(int x, int y, int dx) {
@@ -536,6 +550,14 @@ public class SettingsView extends BaseView {
         if (mRectTimeFormat.contains(x, y)) {
             Settings.timeFormat = (++Settings.timeFormat % Settings.TIME_FORMATS);
             Settings.save();
+        }
+
+        if (mRectStats.contains(x, y)) {
+            Settings.stats = !Settings.stats;
+            Settings.save();
+            if (mCallbacks != null) {
+                mCallbacks.onChanged(false);
+            }
         }
     }
 

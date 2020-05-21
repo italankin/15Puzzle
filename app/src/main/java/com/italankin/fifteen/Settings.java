@@ -51,6 +51,7 @@ public class Settings {
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
     private static final String KEY_TIME_FORMAT = "time_format";
+    private static final String KEY_STATS = "stats";
 
     /**
      * ширина игры
@@ -107,6 +108,7 @@ public class Settings {
     public static boolean newGameDelay = true;
     public static int ingameInfo = INGAME_INFO_ALL;
     public static int timeFormat = TIME_FORMAT_MIN_SEC_MS;
+    public static boolean stats = false;
 
     /**
      * хранилище настроек приложения
@@ -138,6 +140,7 @@ public class Settings {
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         ingameInfo = prefs.getInt(KEY_INGAME_INFO, ingameInfo);
         timeFormat = prefs.getInt(KEY_TIME_FORMAT, timeFormat);
+        stats = prefs.getBoolean(KEY_STATS, stats);
     }
 
     public static void save() {
@@ -173,6 +176,7 @@ public class Settings {
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         editor.putInt(KEY_INGAME_INFO, ingameInfo);
         editor.putInt(KEY_TIME_FORMAT, timeFormat);
+        editor.putBoolean(KEY_STATS, stats);
         if (sync) {
             editor.commit();
         } else {
