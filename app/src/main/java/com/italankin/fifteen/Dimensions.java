@@ -16,6 +16,7 @@ public class Dimensions {
     public static float spacing;
     public static float topBarHeight;
     public static float infoBarHeight;
+    public static float infoBarMarginTop;
 
     public static void update(int width, int height) {
         update(width, height, 1f);
@@ -25,8 +26,14 @@ public class Dimensions {
         surfaceWidth = width * scale;
         surfaceHeight = height * scale;
 
+        topBarHeight = Dimensions.surfaceHeight * 0.07f;
+        float viewSpacing = Dimensions.surfaceHeight * 0.05f;
+
+        infoBarMarginTop = topBarHeight + viewSpacing;
+        infoBarHeight = Dimensions.surfaceHeight * 0.13f;
+
         spacing = Math.min(surfaceWidth, surfaceHeight) * 0.015f;
-        fieldMarginTop = 0.32f * surfaceHeight;
+        fieldMarginTop = infoBarMarginTop + infoBarHeight + viewSpacing + spacing;
 
         int sideMax = Math.max(Settings.gameWidth, Settings.gameHeight);
         float spriteSize = Math.min(surfaceWidth, surfaceHeight - fieldMarginTop)
@@ -36,13 +43,10 @@ public class Dimensions {
 
         fieldWidth = (tileSize + spacing) * Settings.gameWidth - spacing;
         fieldHeight = (tileSize + spacing) * Settings.gameHeight - spacing;
+        fieldMarginLeft = 0.5f * surfaceWidth - 0.5f * fieldWidth;
         tileFontSize = Math.max(tileSize / 2.4F, 4.25f);
         interfaceFontSize = Math.max(Math.round(surfaceWidth * 0.045), 10.0f);
         menuFontSize = interfaceFontSize * 1.5f;
-        fieldMarginLeft = 0.5f * surfaceWidth - 0.5f * fieldWidth;
         tileCornerRadius = 0.0f;
-        topBarHeight = Dimensions.surfaceHeight * 0.07f;
-        infoBarHeight = Dimensions.surfaceHeight * 0.13f;
     }
-
 }

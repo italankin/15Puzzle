@@ -46,8 +46,8 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.setTextSize(Dimensions.interfaceFontSize * 1.2f);
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
 
-        mRectInfo = new RectF(0.0f, Dimensions.topBarHeight + Dimensions.infoBarHeight / 2,
-                Dimensions.surfaceWidth, Dimensions.fieldMarginTop - Dimensions.infoBarHeight / 2);
+        mRectInfo = new RectF(0.0f, Dimensions.infoBarMarginTop,
+                Dimensions.surfaceWidth, Dimensions.infoBarMarginTop + Dimensions.infoBarHeight);
 
         Rect r = new Rect();
         mPaintTextValue.getTextBounds("A", 0, 1, r);
