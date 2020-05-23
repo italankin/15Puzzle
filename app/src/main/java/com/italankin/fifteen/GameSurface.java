@@ -279,6 +279,11 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
             case BTN_FOUR:
                 if (Settings.stats) {
+                    Game.setPaused(Game.getMoves() > 0);
+                    if (Game.isPaused()) {
+                        mPauseOverlay.show();
+                    }
+                    mField.update();
                     mStatistics.show();
                 } else {
                     if (!Game.isSolved()) {
