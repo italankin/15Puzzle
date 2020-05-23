@@ -17,6 +17,9 @@ public class Dimensions {
     public static float topBarHeight;
     public static float infoBarHeight;
     public static float infoBarMarginTop;
+    public static float hardModeViewHeight;
+    public static float hardModeViewMarginBottom;
+    public static float viewSpacing;
 
     public static void update(int width, int height) {
         update(width, height, 1f);
@@ -27,7 +30,7 @@ public class Dimensions {
         surfaceHeight = height * scale;
 
         topBarHeight = Dimensions.surfaceHeight * 0.07f;
-        float viewSpacing = Dimensions.surfaceHeight * 0.05f;
+        viewSpacing = Dimensions.surfaceHeight * 0.03f;
 
         infoBarMarginTop = topBarHeight + viewSpacing;
         infoBarHeight = Dimensions.surfaceHeight * 0.13f;
@@ -48,5 +51,8 @@ public class Dimensions {
         interfaceFontSize = Math.max(Math.round(surfaceWidth * 0.045), 10.0f);
         menuFontSize = interfaceFontSize * 1.5f;
         tileCornerRadius = 0.0f;
+
+        hardModeViewHeight = surfaceHeight * 0.07f;
+        hardModeViewMarginBottom = surfaceHeight * .5f + (fieldMarginTop + fieldHeight + spacing + hardModeViewHeight) / 2;
     }
 }

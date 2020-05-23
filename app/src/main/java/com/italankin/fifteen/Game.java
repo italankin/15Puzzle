@@ -18,6 +18,8 @@ public class Game {
     private boolean solved = false;
     private boolean paused = false;
 
+    private boolean peeking = false;
+
     private Callback mCallback = null;
 
     public static void create(int w, int h) {
@@ -50,6 +52,7 @@ public class Game {
         time = 0;
         solved = false;
         paused = false;
+        peeking = false;
 
         if (!isSolvable()) {
             // if puzzle is not solvable
@@ -179,7 +182,8 @@ public class Game {
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 
-        if (instance.mCallback != null) {
+        if (!Settings.hardmode && instance.mCallback != null) {
+            // on hard mode checkSolvedHm should be called to check if puzzle is solved
             if (instance.checkSolution()) {
                 instance.solved = true;
                 instance.mCallback.onGameSolve();
@@ -290,6 +294,26 @@ public class Game {
 
     public static boolean isSolved() {
         return instance.solved;
+    }
+
+    public static boolean checkSolvedHm() {
+        if (instance.checkSolution()) {
+            instance.solved = true;
+            if (instance.mCallback != null) {
+                instance.mCallback.onGameSolve();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isPeeking() {
+        return instance.peeking;
+    }
+
+    public static void setPeeking(boolean peeking) {
+        instance.peeking = peeking;
     }
 
     public static boolean isNotStarted() {

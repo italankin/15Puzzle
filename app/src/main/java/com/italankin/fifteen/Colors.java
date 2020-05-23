@@ -99,6 +99,7 @@ public class Colors {
             MUTED_BLUE,
             GREY
     };
+    public static final int ERROR = 0xffd24242;
 
     public static int getBackgroundColor() {
         return background[Settings.colorMode];
@@ -142,5 +143,9 @@ public class Colors {
 
     public static int getOverlayTextColor() {
         return overlayText[Settings.colorMode];
+    }
+
+    public static int getHardModeButtonsColor() {
+        return Settings.colorMode == Constants.COLOR_MODE_DAY ? 0xff373737 : 0xff787878;
     }
 }

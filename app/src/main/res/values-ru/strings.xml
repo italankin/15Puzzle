@@ -8,6 +8,8 @@
     <string name="action_leaderboard">РЕКОРДЫ</string>
     <string name="action_pause">ПАУЗА</string>
     <string name="action_stats">СТАТ</string>
+    <string name="action_hm_check">проверить</string>
+    <string name="action_hm_peek">открыть</string>
 
     <string name="info_moves">ХОДЫ</string>
     <string name="info_time">ВРЕМЯ</string>

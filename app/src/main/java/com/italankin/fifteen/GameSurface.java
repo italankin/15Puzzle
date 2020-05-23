@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import com.italankin.fifteen.statistics.StatisticsManager;
 import com.italankin.fifteen.views.FieldOverlay;
 import com.italankin.fifteen.views.FieldView;
+import com.italankin.fifteen.views.HardModeView;
 import com.italankin.fifteen.views.InfoPanelView;
 import com.italankin.fifteen.views.LeaderboardView;
 import com.italankin.fifteen.views.SettingsView;
@@ -66,6 +67,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private LeaderboardView mLeaderboard;
     private FieldOverlay mSolvedOverlay;
     private FieldOverlay mPauseOverlay;
+    private HardModeView mHardModeView;
 
     private RectF mRectField = new RectF();
 
@@ -105,6 +107,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         mField = new FieldView(mRectField);
 
+        mHardModeView = new HardModeView(mResources);
+        mHardModeView.setCallbacks(Game::checkSolvedHm);
         mSettings = new SettingsView(mResources);
         mSettings.addCallback(needUpdate -> {
             if (needUpdate) {
@@ -189,7 +193,11 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             case MotionEvent.ACTION_DOWN: {
                 mStartX = x;
                 mStartY = y;
-                mTrail = isFieldFullyVisible() && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
+                boolean fieldFullyVisible = isFieldFullyVisible();
+                mTrail = fieldFullyVisible && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
+                if (fieldFullyVisible && Settings.hardmode && !Game.isNotStarted() && !Game.isPaused()) {
+                    Game.setPeeking(mHardModeView.isPeekAt(x, y));
+                }
                 return true;
             }
 
@@ -233,6 +241,12 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     return true;
                 } else if (mTopPanel.onClick(x, y)) {
                     return true;
+                } else if (Settings.hardmode && mHardModeView.onClick(x, y)) {
+                    return true;
+                }
+
+                if (Game.isPeeking()) {
+                    Game.setPeeking(false);
                 }
 
                 if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !Game.isPaused()) {
@@ -325,6 +339,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mTopPanel.draw(canvas, elapsed);
         mInfoPanel.draw(canvas, elapsed);
         mField.draw(canvas, elapsed);
+
+        if (Settings.hardmode) {
+            mHardModeView.draw(canvas, elapsed);
+        }
 
         if (solved && mSolvedOverlay.isShown() && !mSettings.isShown()) {
             mSolvedOverlay.draw(canvas, elapsed);

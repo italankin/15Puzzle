@@ -8,6 +8,8 @@
     <string name="action_pause">PAUSE</string>
     <string name="action_leaderboard">RECORDS</string>
     <string name="action_stats">STATS</string>
+    <string name="action_hm_check">check</string>
+    <string name="action_hm_peek">peek</string>
 
     <string name="info_moves">MOVES</string>
     <string name="info_time">TIME</string>
