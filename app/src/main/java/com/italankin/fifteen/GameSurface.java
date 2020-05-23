@@ -224,6 +224,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     return true;
                 }
 
+                if (Game.isPeeking()) {
+                    Game.setPeeking(false);
+                }
+
                 int dx = x - mStartX;
                 int dy = y - mStartY;
 
@@ -243,10 +247,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     return true;
                 } else if (Settings.hardmode && mHardModeView.onClick(x, y)) {
                     return true;
-                }
-
-                if (Game.isPeeking()) {
-                    Game.setPeeking(false);
                 }
 
                 if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !Game.isPaused()) {
