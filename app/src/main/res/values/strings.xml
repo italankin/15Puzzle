@@ -30,6 +30,7 @@
     <string name="pref_time_format">Time format</string>
     <string name="pref_stats">Stats</string>
 
+    <string name="stats_single">Single</string>
     <string name="stats_ao5" translatable="false">Ao5</string>
     <string name="stats_ao12" translatable="false">Ao12</string>
     <string name="stats_ao50" translatable="false">Ao50</string>

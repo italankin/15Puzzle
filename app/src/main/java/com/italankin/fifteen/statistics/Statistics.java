@@ -2,17 +2,19 @@ package com.italankin.fifteen.statistics;
 
 public class Statistics {
 
-    public static final Statistics EMPTY = new Statistics(0, null, null, null, null, null);
+    public static final Statistics EMPTY = new Statistics(0, null, null, null, null, null, null);
 
     public final int totalCount;
+    public final Avg single;
     public final Avg ao5;
     public final Avg ao12;
     public final Avg ao50;
     public final Avg ao100;
     public final Avg session;
 
-    public Statistics(int totalCount, Avg ao5, Avg ao12, Avg ao50, Avg ao100, Avg session) {
+    public Statistics(int totalCount, Avg single, Avg ao5, Avg ao12, Avg ao50, Avg ao100, Avg session) {
         this.totalCount = totalCount;
+        this.single = single;
         this.ao5 = ao5;
         this.ao12 = ao12;
         this.ao50 = ao50;

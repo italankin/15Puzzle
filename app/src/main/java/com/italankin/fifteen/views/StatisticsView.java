@@ -28,6 +28,9 @@ public class StatisticsView extends BaseView {
 
     private RectF mRectTitle;
 
+    private String mTextSingle;
+    private RectF mRectSingle;
+
     private String mTextAo5;
     private RectF mRectAo5;
 
@@ -96,6 +99,7 @@ public class StatisticsView extends BaseView {
         mPaintControls.setTextAlign(Paint.Align.CENTER);
 
         mTextBack = res.getString(R.string.back);
+        mTextSingle = res.getString(R.string.stats_single);
         mTextAo5 = res.getString(R.string.stats_ao5);
         mTextAo12 = res.getString(R.string.stats_ao12);
         mTextAo50 = res.getString(R.string.stats_ao50);
@@ -161,6 +165,10 @@ public class StatisticsView extends BaseView {
         mRectTitle.inset(0, padding);
 
         topMargin += lineSpacing;
+        mRectSingle = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectSingle.inset(0, padding);
+
+        topMargin += lineSpacing;
         mRectAo5 = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectAo5.inset(0, padding);
 
@@ -189,6 +197,11 @@ public class StatisticsView extends BaseView {
         canvas.drawText(mTextTime, mTableGuides[1], mRectTitle.bottom - textYOffset, mPaintTitle);
         canvas.drawText(mTextMoves, mTableGuides[2], mRectTitle.bottom - textYOffset, mPaintTitle);
         canvas.drawText(mTextTps, mTableGuides[3], mRectTitle.bottom - textYOffset, mPaintTitle);
+
+        canvas.drawText(mTextSingle, mTableGuides[0], mRectSingle.bottom - textYOffset, mPaintText);
+        canvas.drawText(formatTime(statistics.single), mTableGuides[1], mRectSingle.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatMoves(statistics.single), mTableGuides[2], mRectSingle.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatTps(statistics.single), mTableGuides[3], mRectSingle.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextAo5, mTableGuides[0], mRectAo5.bottom - textYOffset, mPaintText);
         canvas.drawText(formatTime(statistics.ao5), mTableGuides[1], mRectAo5.bottom - textYOffset, mPaintValue);

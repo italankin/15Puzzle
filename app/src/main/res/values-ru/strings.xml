@@ -30,6 +30,7 @@
     <string name="pref_time_format">Время</string>
     <string name="pref_stats">Статистика</string>
 
+    <string name="stats_single">Послед.</string>
     <string name="stats_session_avg">Сессия</string>
     <string name="stats_na">н/д</string>
     <string name="stats_time">Время</string>
