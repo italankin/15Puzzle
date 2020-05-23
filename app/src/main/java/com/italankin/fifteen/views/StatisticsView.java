@@ -61,18 +61,18 @@ public class StatisticsView extends BaseView {
 
     private float[] mTableGuides = {
             Dimensions.surfaceWidth * 0.25f,
-            Dimensions.surfaceWidth * 0.3f,
-            Dimensions.surfaceWidth * 0.57f,
-            Dimensions.surfaceWidth * 0.81f
+            Dimensions.surfaceWidth * 0.29f,
+            Dimensions.surfaceWidth * 0.53f,
+            Dimensions.surfaceWidth * 0.77f
     };
 
     public StatisticsView(Resources res) {
         mResources = res;
 
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.08f);
-        int topMargin = (int) (Dimensions.surfaceHeight * 0.15f);
+        int topMargin = (int) (Dimensions.surfaceHeight * 0.12f);
         int padding = -lineSpacing / 4;
-        float textSize = Dimensions.menuFontSize * .8f;
+        float textSize = Dimensions.menuFontSize * .7f;
 
         mPaintText = new Paint();
         mPaintText.setAntiAlias(Settings.antiAlias);
