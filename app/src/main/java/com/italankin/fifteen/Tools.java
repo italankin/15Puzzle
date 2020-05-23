@@ -27,15 +27,18 @@ public class Tools {
     }
 
     public static String timeToString(int style, long duration) {
-        long ms = (duration % 1000);
-        long sec = (duration /= 1000) % 60;
-        long min = (duration % 3600) / 60;
+        long d = duration;
+        long ms = (d % 1000);
+        long sec = (d /= 1000) % 60;
+        long min = (d % 3600) / 60;
 
         switch (style) {
             case Constants.TIME_FORMAT_MIN_SEC_MS:
                 return String.format(Locale.ROOT, "%d:%02d.%d", min, sec, ms / 100);
             case Constants.TIME_FORMAT_MIN_SEC_MS_LONG:
                 return String.format(Locale.ROOT, "%d:%02d.%03d", min, sec, ms);
+            case Constants.TIME_FORMAT_SEC_MS_LONG:
+                return String.format(Locale.ROOT, "%d.%03d", duration / 1000, ms);
             case Constants.TIME_FORMAT_MIN_SEC:
             default:
                 return String.format(Locale.ROOT, "%d:%02d", min, sec);

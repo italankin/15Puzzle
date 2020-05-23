@@ -27,12 +27,13 @@ public class Constants {
     public static final int INGAME_INFO_TIME = 0x2;
     public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
 
-    public static final int TIME_FORMATS = 3;
+    public static final int TIME_FORMATS = 4;
     public static final int TIME_FORMAT_MIN_SEC = 0;
     public static final int TIME_FORMAT_MIN_SEC_MS = 1;
     public static final int TIME_FORMAT_MIN_SEC_MS_LONG = 2;
+    public static final int TIME_FORMAT_SEC_MS_LONG = 3;
 
     public static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
 
     public static final long NEW_GAME_DELAY = 500;
-    }
+}
