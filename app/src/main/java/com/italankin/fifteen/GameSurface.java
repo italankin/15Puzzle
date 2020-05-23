@@ -128,7 +128,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         Game.setCallback(() -> {
             mSolvedOverlay.show();
-            int moves = Game.getMoves() + 1;
+            int moves = Game.getMoves();
             long time = Game.getTime();
             dbHelper.insert(
                     Settings.gameMode,

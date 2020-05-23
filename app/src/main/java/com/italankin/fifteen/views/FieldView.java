@@ -54,18 +54,13 @@ public class FieldView extends BaseView {
             if (numbersToMove.isEmpty()) {
                 return;
             }
-            int moved = 0;
             for (int i = 0, s = numbersToMove.size(); i < s; i++) {
                 int num = numbersToMove.get(i);
                 for (Tile t : mData) {
                     if ((forced || !t.isAnimating()) && t.getIndex() == num) {
                         t.onClick();
-                        moved++;
                     }
                 }
-            }
-            if (moved > 0) {
-                Game.incMoves();
             }
         }
     }

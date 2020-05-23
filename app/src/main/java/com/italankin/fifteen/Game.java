@@ -182,6 +182,8 @@ public class Game {
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 
+        instance.moves++;
+
         if (!Settings.hardmode && instance.mCallback != null) {
             // on hard mode checkSolvedHm should be called to check if puzzle is solved
             if (instance.checkSolution()) {
@@ -272,10 +274,6 @@ public class Game {
         //noinspection IntegerDivisionInFloatingPointContext
         return Tools.direction(instance.zeroPos % instance.width - index % instance.width,
                 instance.zeroPos / instance.width - index / instance.width);
-    }
-
-    public static void incMoves() {
-        instance.moves++;
     }
 
     public static int getMoves() {
