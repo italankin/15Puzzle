@@ -2,6 +2,7 @@ package com.italankin.fifteen.statistics;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +36,13 @@ public class StatisticsManager {
         if (entries == null || entries.isEmpty()) {
             return Statistics.EMPTY;
         }
+        Statistics.Avg single = avgSingle(entries);
         Statistics.Avg ao5 = avg(entries, 5);
         Statistics.Avg ao12 = avg(entries, 12);
         Statistics.Avg ao50 = avg(entries, 50);
         Statistics.Avg ao100 = avg(entries, 100);
         Statistics.Avg session = avg(entries, entries.size());
-        return new Statistics(entries.size(), ao5, ao12, ao50, ao100, session);
+        return new Statistics(entries.size(), single, ao5, ao12, ao50, ao100, session);
     }
 
     public void clear(int width, int height, int mode, boolean hard) {
@@ -52,6 +54,15 @@ public class StatisticsManager {
         records.clear();
     }
 
+    private static Statistics.Avg avgSingle(List<Entry> entries) {
+        int size = entries.size();
+        if (size < 1) {
+            return null;
+        }
+        Entry last = entries.get(size - 1);
+        return new Statistics.Avg(last.time, last.moves, last.tps);
+    }
+
     private static Statistics.Avg avg(List<Entry> entries, int num) {
         int size = entries.size();
         if (size < num) {
@@ -59,35 +70,57 @@ public class StatisticsManager {
         }
         List<Entry> lastN;
         if (size == num) {
-            lastN = new ArrayList<>(entries);
+            lastN = entries;
         } else {
             // take last 'num' entries
-            lastN = new ArrayList<>(entries.subList(size - num, size));
+            lastN = entries.subList(size - num, size);
         }
-        Collections.sort(lastN);
-        if (size > 2) {
-            // remove best and worst solves
-            lastN.remove(lastN.size() - 1);
-            lastN.remove(0);
-        }
-        return avg(lastN);
+        long time = avgTime(new ArrayList<>(lastN));
+        float moves = avgMoves(new ArrayList<>(lastN));
+        float tps = avgTps(new ArrayList<>(lastN));
+        return new Statistics.Avg(time, moves, tps);
     }
 
-    private static Statistics.Avg avg(List<Entry> entries) {
-        if (entries.isEmpty()) {
-            return null;
-        }
+    private static long avgTime(List<Entry> entries) {
+        Collections.sort(entries, Entry.BY_TIME);
         int size = entries.size();
-        long totalTime = 0;
-        int totalMoves = 0;
-        for (Entry entry : entries) {
-            totalTime += entry.time;
-            totalMoves += entry.moves;
+        if (size > 2) {
+            entries.remove(size - 1);
+            entries.remove(0);
         }
-        long time = totalTime / size;
-        float moves = (float) totalMoves / size;
-        float tps = (float) totalMoves / (float) totalTime * 1000f;
-        return new Statistics.Avg(time, moves, tps);
+        long total = 0;
+        for (Entry entry : entries) {
+            total += entry.time;
+        }
+        return total / entries.size();
+    }
+
+    private static float avgMoves(List<Entry> entries) {
+        Collections.sort(entries, Entry.BY_MOVES);
+        int size = entries.size();
+        if (size > 2) {
+            entries.remove(size - 1);
+            entries.remove(0);
+        }
+        float total = 0;
+        for (Entry entry : entries) {
+            total += entry.moves;
+        }
+        return total / entries.size();
+    }
+
+    private static float avgTps(List<Entry> entries) {
+        Collections.sort(entries, Entry.BY_TPS);
+        int size = entries.size();
+        if (size > 2) {
+            entries.remove(size - 1);
+            entries.remove(0);
+        }
+        float total = 0;
+        for (Entry entry : entries) {
+            total += entry.tps;
+        }
+        return total / entries.size();
     }
 
     private static class Key {
@@ -135,19 +168,26 @@ public class StatisticsManager {
         }
     }
 
-    private static class Entry implements Comparable<Entry> {
+    private static class Entry {
+
+        static final Comparator<Entry> BY_TIME = (lhs, rhs) -> {
+            return Long.compare(lhs.time, rhs.time);
+        };
+        static final Comparator<Entry> BY_MOVES = (lhs, rhs) -> {
+            return Long.compare(lhs.moves, rhs.moves);
+        };
+        static final Comparator<Entry> BY_TPS = (lhs, rhs) -> {
+            return Float.compare(lhs.tps, rhs.tps);
+        };
 
         final long time;
         final int moves;
+        final float tps;
 
         private Entry(long time, int moves) {
             this.time = time;
             this.moves = moves;
-        }
-
-        @Override
-        public int compareTo(Entry other) {
-            return Long.compare(this.time, other.time);
+            this.tps = (float) moves / (float) time * 1000f;
         }
     }
 }
