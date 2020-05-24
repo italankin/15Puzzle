@@ -372,6 +372,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mPauseOverlay.update();
         mSolvedOverlay.update();
         mStatistics.update();
+        mHardModeView.update();
     }
 
     private void createNewGame(boolean isUser) {
