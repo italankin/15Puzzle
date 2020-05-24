@@ -1,5 +1,6 @@
 package com.italankin.fifteen;
 
+import android.graphics.Color;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -24,6 +25,16 @@ public class Tools {
      */
     public static double easeOut(float t, float a, float b, float d) {
         return 1.0f - b * Math.pow(2.0f, 10.0f * (t / d - 1.0f)) + a;
+    }
+
+    public static int interpolateColor(int startColor, int endColor, float fraction) {
+        float[] start = new float[3], end = new float[3];
+        Color.colorToHSV(startColor, start);
+        Color.colorToHSV(endColor, end);
+        for (int i = 0; i < 3; i++) {
+            end[i] = (start[i] + ((end[i] - start[i]) * fraction));
+        }
+        return Color.HSVToColor(end);
     }
 
     public static String timeToString(int style, long duration) {

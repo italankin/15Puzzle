@@ -1,16 +1,20 @@
 package com.italankin.fifteen.views;
 
+import android.animation.TimeInterpolator;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.animation.AccelerateInterpolator;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Game;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
+import com.italankin.fifteen.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class HardModeView extends BaseView {
     private final Paint mPaintTextValue;
     private final Resources mResources;
     private final List<Button> mButtons = new ArrayList<>(2);
+    private final TimeInterpolator interpolator = new AccelerateInterpolator();
     private final RectF mRect;
     private final int mTextOffsetY;
     private Callbacks mCallbacks;
@@ -57,7 +62,10 @@ public class HardModeView extends BaseView {
         for (Button button : mButtons) {
             int color;
             if ((button.frame -= elapsedTime) > 0) {
-                color = Colors.ERROR;
+                float fraction = interpolator.getInterpolation(1 - (float) button.frame / getAnimDuration());
+                color = Tools.interpolateColor(Color.RED, Colors.getHardModeButtonsColor(), fraction);
+            } else if (Game.isNotStarted()) {
+                color = Colors.getHardModeButtonsColor() & 0x40ffffff;
             } else {
                 color = Colors.getHardModeButtonsColor();
             }
@@ -87,7 +95,7 @@ public class HardModeView extends BaseView {
             Button check = findButtonById(ID_CHECK);
             if (check.contains(x, y)) {
                 if (!mCallbacks.onCheckButtonClick()) {
-                    check.frame = Settings.screenAnimDuration * 4;
+                    check.frame = getAnimDuration();
                 }
                 return true;
             }
@@ -119,6 +127,10 @@ public class HardModeView extends BaseView {
             b = mButtons.get(i);
             b.rect.set(mRect.left + width * i, mRect.top, mRect.left + width * (i + 1), mRect.bottom);
         }
+    }
+
+    private long getAnimDuration() {
+        return Settings.screenAnimDuration * 2;
     }
 
     private static class Button {
