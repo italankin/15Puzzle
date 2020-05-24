@@ -64,7 +64,7 @@ public class HardModeView extends BaseView {
             if ((button.frame -= elapsedTime) > 0) {
                 float fraction = interpolator.getInterpolation(1 - (float) button.frame / getAnimDuration());
                 color = Tools.interpolateColor(Color.RED, Colors.getHardModeButtonsColor(), fraction);
-            } else if (Game.isNotStarted()) {
+            } else if (Game.isNotStarted() || Game.isPaused() || Game.isSolved()) {
                 color = Colors.getHardModeButtonsColor() & 0x40ffffff;
             } else {
                 color = Colors.getHardModeButtonsColor();
