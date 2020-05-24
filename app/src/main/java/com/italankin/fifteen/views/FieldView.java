@@ -80,8 +80,7 @@ public class FieldView extends BaseView {
 
     @Override
     public void draw(Canvas canvas, long elapsedTime) {
-        canvas.drawRoundRect(mRectField, Dimensions.tileCornerRadius,
-                Dimensions.tileCornerRadius, mPaintField);
+        canvas.drawRect(mRectField, mPaintField);
         for (Tile tile : mData) {
             tile.draw(canvas, elapsedTime);
         }

@@ -71,8 +71,7 @@ public class InfoPanelView extends BaseView {
             return;
         }
 
-        canvas.drawRoundRect(mRectInfo, Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
-                mPaintBg);
+        canvas.drawRect(mRectInfo, mPaintBg);
 
         canvas.drawText(
                 mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
