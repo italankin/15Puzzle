@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Constants;
@@ -19,9 +20,10 @@ import java.util.Date;
 
 public class LeaderboardView extends BaseView {
 
-    private Paint mPaintText;
-    private Paint mPaintValue;
-    private Paint mPaintTable;
+    private final Paint mPaintText;
+    private final Paint mPaintValue;
+    private final Paint mPaintTable;
+    private final Paint mPaintControls;
 
     private String mTextWidth;
     private String mTextHeight;
@@ -39,7 +41,7 @@ public class LeaderboardView extends BaseView {
     private Rect mRectMode;
     private Rect mRectBf;
     private Rect mRectSort;
-    private Rect mRectBack;
+    private RectF mRectBack;
 
     private ArrayList<TableItem> mTableItems = new ArrayList<>();
     private DBHelper mDbHelper;
@@ -92,6 +94,11 @@ public class LeaderboardView extends BaseView {
         mPaintTable.setTypeface(Settings.typeface);
         mPaintTable.setTextAlign(Paint.Align.RIGHT);
 
+        mPaintControls = new Paint(mPaintText);
+        mPaintControls.setTextAlign(Paint.Align.CENTER);
+        mPaintControls.setTextSize(Dimensions.menuFontSize);
+        mPaintControls.setTypeface(Settings.typeface);
+
         mTextWidth = res.getString(R.string.pref_width);
         mTextHeight = res.getString(R.string.pref_height);
         mTextBf = res.getString(R.string.pref_bf);
@@ -125,8 +132,13 @@ public class LeaderboardView extends BaseView {
         mRectSort = new Rect(0, marginTop + 2 * mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
         mRectSort.inset(0, -lineHeight / 3);
-        mRectBack = new Rect(0, (int) Dimensions.surfaceHeight - 3 * lineHeight,
-                (int) Dimensions.surfaceWidth, (int) Dimensions.surfaceHeight);
+
+        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f);
+        int padding = -lineSpacing / 4;
+        mPaintControls.getTextBounds(mTextBack, 0, mTextBack.length(), r);
+        mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing - r.height(),
+                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing);
+        mRectBack.inset(0, padding);
     }
 
     public void onClick(int x, int y, int dx) {
@@ -227,10 +239,7 @@ public class LeaderboardView extends BaseView {
 
         canvas.drawColor(Colors.getOverlayColor());
 
-        mPaintText.setTextAlign(Paint.Align.LEFT);
-
         float s = Dimensions.menuFontSize * 0.29f;
-
         canvas.drawText(mTextMode, mSettingsGuides[0], mRectMode.bottom - s, mPaintText);
         canvas.drawText(mTextModeValue[mGameMode], mSettingsGuides[1],
                 mRectMode.bottom - s, mPaintValue);
@@ -248,8 +257,8 @@ public class LeaderboardView extends BaseView {
         canvas.drawText("" + mGameHeight, mSettingsGuides[3],
                 mRectHeight.bottom - s, mPaintValue);
 
-        mPaintText.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.centerY(), mPaintText);
+        float textYOffset = Dimensions.surfaceHeight * 0.02f;
+        canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.bottom - textYOffset, mPaintControls);
 
         if (mTableItems.size() == 0) {
             mPaintText.setAlpha(128);
@@ -280,7 +289,13 @@ public class LeaderboardView extends BaseView {
 
     @Override
     public void update() {
+        mPaintText.setAntiAlias(Settings.antiAlias);
+        mPaintValue.setAntiAlias(Settings.antiAlias);
+        mPaintTable.setAntiAlias(Settings.antiAlias);
+        mPaintControls.setAntiAlias(Settings.antiAlias);
+
         mPaintText.setColor(Colors.getOverlayTextColor());
+        mPaintControls.setColor(Colors.getOverlayTextColor());
     }
 
     private static class TableItem {
