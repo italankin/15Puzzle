@@ -1,14 +1,15 @@
 package com.italankin.fifteen.views;
 
+import android.animation.TimeInterpolator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.animation.AccelerateInterpolator;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Settings;
-import com.italankin.fifteen.Tools;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class TopPanelView extends BaseView {
     private Paint mPaintButton;
     private Paint mPaintOverlay;
     private Paint mPaintTextButton;
+    private final TimeInterpolator interpolator = new AccelerateInterpolator();
 
     public TopPanelView() {
         mButtons = new ArrayList<>();
@@ -91,10 +93,9 @@ public class TopPanelView extends BaseView {
         canvas.drawRect(0.0f, 0.0f, Dimensions.surfaceWidth, Dimensions.topBarHeight, mPaintButton);
 
         for (Button button : mButtons) {
-            if (button.frame > 0) {
-                button.frame -= elapsedTime;
-                float a = (float) Tools.easeOut(button.frame, 0.0f, 1.0f, Settings.screenAnimDuration);
-                mPaintOverlay.setAlpha((int) (255 * (1.0f - a)));
+            if ((button.frame -= elapsedTime) > 0) {
+                float a = interpolator.getInterpolation((float) button.frame / Settings.screenAnimDuration);
+                mPaintOverlay.setAlpha((int) (255 * a));
                 canvas.drawRect(button.rect, mPaintOverlay);
             }
             canvas.drawText(button.caption, button.rect.centerX(),

@@ -16,17 +16,6 @@ public class Tools {
     public static final int DIRECTION_DOWN = 2;
     public static final int DIRECTION_LEFT = 3;
 
-    /**
-     * @param t current frame
-     * @param a start value
-     * @param b value change
-     * @param d total frames
-     * @return [0.0 ... 1.0]
-     */
-    public static double easeOut(float t, float a, float b, float d) {
-        return 1.0f - b * Math.pow(2.0f, 10.0f * (t / d - 1.0f)) + a;
-    }
-
     public static int interpolateColor(int startColor, int endColor, float fraction) {
         float[] start = new float[3], end = new float[3];
         Color.colorToHSV(startColor, start);
