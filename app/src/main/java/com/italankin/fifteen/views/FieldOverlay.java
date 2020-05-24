@@ -26,7 +26,7 @@ public class FieldOverlay extends BaseView {
     private RectF mRectField;
 
     private ObjectAnimator mAlphaAnimator;
-    private float mAlpha = 1;
+    private float mAlpha = 0;
 
     public FieldOverlay(RectF field, String caption) {
         mRectField = field;
@@ -46,7 +46,7 @@ public class FieldOverlay extends BaseView {
         mPaintText.getTextBounds(mCaption, 0, mCaption.length(), mRectBounds);
 
         mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
-        mAlphaAnimator.setInterpolator(new DecelerateInterpolator(2));
+        mAlphaAnimator.setInterpolator(new DecelerateInterpolator());
     }
 
     @Override
@@ -61,6 +61,7 @@ public class FieldOverlay extends BaseView {
         return (mShow = true);
     }
 
+    /* used by ObjectAnimator */
     public void setAlpha(float alpha) {
         mAlpha = alpha;
     }
