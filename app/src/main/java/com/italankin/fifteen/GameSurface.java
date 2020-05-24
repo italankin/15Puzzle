@@ -319,8 +319,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     }
 
     public void onPause() {
-        if (mGameLoopThread != null) {
-            mGameLoopThread.setRunning(false);
+        if (Game.isPeeking()) {
+            Game.setPeeking(false);
         }
     }
 
