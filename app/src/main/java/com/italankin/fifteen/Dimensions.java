@@ -22,12 +22,12 @@ public class Dimensions {
     public static float viewSpacing;
 
     public static void update(int width, int height) {
-        update(width, height, 1f);
+        update(width, height, 1f, 1f);
     }
 
-    public static void update(int width, int height, float scale) {
-        surfaceWidth = width * scale;
-        surfaceHeight = height * scale;
+    public static void update(int width, int height, float scaleX, float scaleY) {
+        surfaceWidth = width * scaleX;
+        surfaceHeight = height * scaleY;
 
         topBarHeight = Dimensions.surfaceHeight * 0.07f;
         viewSpacing = Dimensions.surfaceHeight * 0.03f;
