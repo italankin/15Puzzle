@@ -65,7 +65,7 @@ public class StatisticsManager {
 
     private static Statistics.Avg avg(List<Entry> entries, int num) {
         int size = entries.size();
-        if (size < num) {
+        if (size < num || num < 3) {
             return null;
         }
         List<Entry> lastN;
