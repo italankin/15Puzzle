@@ -39,6 +39,7 @@ public class TopPanelView extends BaseView {
         mPaintButton.setColor(Colors.getTileColor());
 
         mPaintOverlay = new Paint();
+        mPaintOverlay.setAntiAlias(Settings.antiAlias);
         mPaintOverlay.setColor(Colors.getBackgroundColor());
 
         Rect r = new Rect();
@@ -104,10 +105,12 @@ public class TopPanelView extends BaseView {
     }
 
     public void update() {
-        mPaintTextButton.setColor(Colors.getTileTextColor());
         mPaintTextButton.setAntiAlias(Settings.antiAlias);
-        mPaintOverlay.setColor(Colors.getBackgroundColor());
         mPaintButton.setAntiAlias(Settings.antiAlias);
+        mPaintOverlay.setAntiAlias(Settings.antiAlias);
+
+        mPaintTextButton.setColor(Colors.getTileTextColor());
+        mPaintOverlay.setColor(Colors.getBackgroundColor());
         mPaintButton.setColor(Colors.getTileColor());
     }
 

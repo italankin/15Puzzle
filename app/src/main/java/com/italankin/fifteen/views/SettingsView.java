@@ -201,7 +201,6 @@ public class SettingsView extends BaseView {
     public void update() {
         mPaintText.setColor(Colors.getOverlayTextColor());
         mPaintControls.setColor(Colors.getOverlayTextColor());
-        mPaintValue.setColor(Colors.menuTextValue);
 
         mPaintText.setAntiAlias(Settings.antiAlias);
         mPaintControls.setAntiAlias(Settings.antiAlias);

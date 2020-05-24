@@ -112,10 +112,11 @@ public class InfoPanelView extends BaseView {
 
     @Override
     public void update() {
-        mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
-        mPaintBg.setColor(Colors.backgroundField);
         mPaintTextCaption.setAntiAlias(Settings.antiAlias);
         mPaintBg.setAntiAlias(Settings.antiAlias);
+
+        mPaintTextValue.setColor(Colors.getInfoTextColor());
+        mPaintTextCaption.setColor(Colors.getInfoTextColor());
     }
 }
