@@ -39,7 +39,6 @@ public class HardModeView extends BaseView {
         mPaintTextValue.setTypeface(Settings.typeface);
         mPaintTextValue.setTextAlign(Paint.Align.CENTER);
         mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.4f);
-        mPaintTextValue.setColor(Colors.getHardModeButtonsColor());
 
         float width = Dimensions.surfaceWidth * .75f;
         float margin = (Dimensions.surfaceWidth - width) / 2;
@@ -76,7 +75,6 @@ public class HardModeView extends BaseView {
 
     @Override
     public void update() {
-        mPaintTextValue.setColor(Colors.getOverlayTextColor());
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
         updateButtons();
     }
