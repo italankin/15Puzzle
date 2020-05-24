@@ -152,12 +152,12 @@ public class StatisticsView extends BaseView {
         mPaintText.setColor(Colors.getOverlayTextColor());
         mPaintControls.setColor(Colors.getOverlayTextColor());
         mPaintTitle.setColor(Colors.getOverlayTextColor());
-        mPaintValue.setColor(Colors.menuTextValue);
 
         mPaintText.setAntiAlias(Settings.antiAlias);
         mPaintControls.setAntiAlias(Settings.antiAlias);
         mPaintValue.setAntiAlias(Settings.antiAlias);
         mPaintTitle.setAntiAlias(Settings.antiAlias);
+        mPaintTotal.setAntiAlias(Settings.antiAlias);
     }
 
     private void initStats(int lineSpacing, int topMargin, int padding, int textHeight) {
