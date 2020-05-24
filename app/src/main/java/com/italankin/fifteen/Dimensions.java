@@ -19,7 +19,6 @@ public class Dimensions {
     public static float infoBarMarginTop;
     public static float hardModeViewHeight;
     public static float hardModeViewMarginBottom;
-    public static float viewSpacing;
 
     public static void update(int width, int height) {
         update(width, height, 1f, 1f);
@@ -30,7 +29,7 @@ public class Dimensions {
         surfaceHeight = height * scaleY;
 
         topBarHeight = Dimensions.surfaceHeight * 0.07f;
-        viewSpacing = Dimensions.surfaceHeight * 0.03f;
+        float viewSpacing = Dimensions.surfaceHeight * 0.05f;
 
         infoBarMarginTop = topBarHeight + viewSpacing;
         infoBarHeight = Dimensions.surfaceHeight * 0.13f;
@@ -53,6 +52,6 @@ public class Dimensions {
         tileCornerRadius = 0.0f;
 
         hardModeViewHeight = surfaceHeight * 0.07f;
-        hardModeViewMarginBottom = surfaceHeight * .5f + (fieldMarginTop + fieldHeight + spacing + hardModeViewHeight) / 2;
+        hardModeViewMarginBottom = fieldMarginTop + fieldHeight + spacing + hardModeViewHeight + viewSpacing / 4;
     }
 }
