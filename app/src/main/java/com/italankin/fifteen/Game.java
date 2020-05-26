@@ -11,6 +11,7 @@ public class Game {
     private int width;
     private int height;
     private List<Integer> grid = new ArrayList<>();
+    private List<Integer> solvedGrid;
 
     private int zeroPos;
     private int moves;
@@ -40,9 +41,8 @@ public class Game {
 
         grid.clear();
 
-        for (int i = 0; i < size; i++) {
-            grid.add(i);
-        }
+        solvedGrid = Generator.fill(w, h, Settings.gameMode);
+        grid.addAll(solvedGrid);
 
         Collections.shuffle(grid, new Random());
 
