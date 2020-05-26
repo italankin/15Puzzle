@@ -63,6 +63,8 @@ public class Game {
         // a rare case where we have solved puzzle, create another
         if (checkSolution()) {
             init(width, height);
+        } else {
+            Logger.d("init: grid=%s", grid);
         }
     }
 
@@ -87,6 +89,7 @@ public class Game {
         }
 
         Collections.swap(instance.grid, pos, instance.zeroPos);
+        Logger.d("move: grid=%s", instance.grid);
         int newPos = instance.zeroPos;
         instance.zeroPos = pos;
 
@@ -290,7 +293,7 @@ public class Game {
                 }
             }
         }
-        Tools.log("inversions=" + inversions);
+        Logger.d("inversions=%d", inversions);
         // we need to add row number (counting from down) where zero is located
         if (width % 2 == 0) {
             // if we got an even width
@@ -328,7 +331,7 @@ public class Game {
                 }
             }
         }
-        Tools.log("inversions=" + inversions);
+        Logger.d("inversions=%d", inversions);
         return inversions % 2 == 0;
     }
 
@@ -346,7 +349,7 @@ public class Game {
                 }
             }
         }
-        Tools.log("inversions=" + inversions);
+        Logger.d("inversions=%d", inversions);
         return inversions % 2 == 0;
     }
 

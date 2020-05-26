@@ -1,7 +1,6 @@
 package com.italankin.fifteen;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +50,7 @@ public class Tools {
             try {
                 result.add(Integer.parseInt(s));
             } catch (NumberFormatException e) {
-                Log.e("getIntegerArray", "Error: " + s + " - invalid number");
+                Logger.e(e, "getIntegerArray: %s is not a number", s);
                 return Collections.emptyList();
             }
         }
@@ -74,11 +73,5 @@ public class Tools {
      */
     public static int manhattan(int x1, int y1, int x2, int y2) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
-    }
-
-    public static void log(String message) {
-        if (BuildConfig.DEBUG) {
-            Log.d("15puzzle", message);
-        }
     }
 }

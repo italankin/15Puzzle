@@ -151,7 +151,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             mGameLoopThread.start();
             mGameLoopThread.setRunning(true);
         } catch (Exception e) {
-            Tools.log("surfaceCreated: " + e.toString());
+            Logger.e(e, "surfaceCreated: %s", e);
         }
 
         mDebugPaint = new Paint();
@@ -177,7 +177,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 mGameLoopThread.join();
                 break;
             } catch (InterruptedException e) {
-                Tools.log("surfaceDestroyed: " + e.toString());
+                Logger.e(e, "surfaceDestroyed: %s", e);
             }
         }
         mGameLoopThread = null;

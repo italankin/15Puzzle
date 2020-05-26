@@ -52,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long rowid = db.insert(KEY_TABLE, null, cv);
 
-        Tools.log("Inserted values: rowid=" + rowid + " " + cv.toString());
+        Logger.d("inserted values: rowid=%s, values=%s", rowid, cv);
 
         db.close();
     }
@@ -73,7 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "DELETE FROM " + KEY_TABLE + " WHERE " +
                 KEY_ID + " IN (" + lastByTime + " INTERSECT " + lastByMoves + ")";
 
-        Tools.log("Executed query: " + sql);
+        Logger.d("execute query=%s", sql);
 
         db.execSQL(sql);
     }
@@ -108,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + KEY_TABLE);
             onCreate(db);
 
-            Tools.log("Upgraded from " + oldVersion + " to " + newVersion);
+            Logger.d("upgraded from version %d to %d", oldVersion, newVersion);
         }
     }
 }
