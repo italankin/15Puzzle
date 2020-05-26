@@ -3,7 +3,6 @@ package com.italankin.fifteen.views;
 import android.animation.TimeInterpolator;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -55,7 +54,7 @@ public class HardModeView extends BaseView {
             int color;
             if ((button.frame -= elapsedTime) > 0) {
                 float fraction = interpolator.getInterpolation(1 - (float) button.frame / getAnimDuration());
-                color = Tools.interpolateColor(Color.RED, Colors.getHardModeButtonsColor(), fraction);
+                color = Tools.interpolateColor(Colors.ERROR, Colors.getHardModeButtonsColor(), fraction);
             } else if (Game.isNotStarted() || Game.isPaused() || Game.isSolved()) {
                 color = Colors.getHardModeButtonsColor() & 0x40ffffff;
             } else {
