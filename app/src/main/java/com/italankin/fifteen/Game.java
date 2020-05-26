@@ -41,7 +41,7 @@ public class Game {
 
         grid.clear();
 
-        solvedGrid = Generator.fill(w, h, Settings.gameMode);
+        solvedGrid = Generator.generate(w, h, Settings.gameMode);
         grid.addAll(solvedGrid);
 
         Collections.shuffle(grid, new Random());

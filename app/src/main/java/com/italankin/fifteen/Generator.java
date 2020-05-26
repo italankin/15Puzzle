@@ -5,20 +5,20 @@ import java.util.List;
 
 public class Generator {
 
-    public static List<Integer> fill(int width, int height, int mode) {
+    public static List<Integer> generate(int width, int height, int mode) {
         switch (mode) {
             case Constants.MODE_CLASSIC:
-                return fillClassic(width, height);
+                return classic(width, height);
             case Constants.MODE_SNAKE:
-                return fillSnake(width, height);
+                return snake(width, height);
             case Constants.MODE_SPIRAL:
-                return fillSpiral(width, height);
+                return spiral(width, height);
             default:
                 throw new IllegalStateException("Unknown mode=" + mode);
         }
     }
 
-    private static List<Integer> fillClassic(int width, int height) {
+    private static List<Integer> classic(int width, int height) {
         int size = width * height;
         List<Integer> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -27,7 +27,7 @@ public class Generator {
         return result;
     }
 
-    private static List<Integer> fillSnake(int width, int height) {
+    private static List<Integer> snake(int width, int height) {
         int size = width * height;
         List<Integer> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -38,12 +38,12 @@ public class Generator {
             } else {
                 n = (width * (1 + i / width) - i % width);
             }
-            result.add((n) % size);
+            result.add(n % size);
         }
         return result;
     }
 
-    private static List<Integer> fillSpiral(int width, int height) {
+    private static List<Integer> spiral(int width, int height) {
         int h = height, w = width, size = width * height;
         int number = 1;
         int r = 0, c = 0; // start row and column
