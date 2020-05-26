@@ -76,7 +76,7 @@ public class HardModeView extends BaseView {
     @Override
     public void update() {
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
-        updateButtons();
+        updateButtonDimensions();
     }
 
     public void setCallbacks(Callbacks callbacks) {
