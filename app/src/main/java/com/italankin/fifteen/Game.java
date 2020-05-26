@@ -265,6 +265,10 @@ public class Game {
         return instance.grid.get(index);
     }
 
+    public static int indexOfSolved(int number) {
+        return instance.solvedGrid.indexOf(number);
+    }
+
     /**
      * Find direction in which we should move a tile at {@code index}
      *

@@ -261,21 +261,7 @@ public class Tile {
         int tileColor = Colors.getTileColor();
         if (useMultiColor && !Game.isPaused()) {
             if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
-                int targetIndex;
-                if (Settings.gameMode == Constants.MODE_CLASSIC) {
-                    targetIndex = mNumber - 1;
-                } else {
-                    int n = mNumber - 1;
-                    int gameWidth = Settings.gameWidth;
-                    int row = n / gameWidth;
-                    if (row % 2 == 0) {
-                        targetIndex = n;
-                    } else {
-                        int column = gameWidth - n % gameWidth - 1;
-                        targetIndex = row * gameWidth + column;
-                    }
-                }
-                return mIndex == targetIndex ? tileColor : Colors.getUnsolvedTileColor();
+                return mIndex == Game.indexOfSolved(mNumber) ? tileColor : Colors.getUnsolvedTileColor();
             } else {
                 int colorIndex = mMultiColorIndex;
                 if (colorIndex >= 0 && colorIndex < Colors.multiColorTiles.length) {
@@ -286,38 +272,8 @@ public class Tile {
         return tileColor;
     }
 
-    private int getMultiColorIndex(int number) {
-        switch (Settings.gameMode) {
-            case Constants.MODE_SNAKE:
-                return getSnakeMultiColorIndex(number);
-            case Constants.MODE_CLASSIC:
-                return getClassicMultiColorIndex(number);
-            default:
-                return -1;
-        }
-    }
-
-    private int getSnakeMultiColorIndex(int number) {
-        int index = number - 1;
-        int gameWidth = Settings.gameWidth;
-        int row = index / gameWidth;
-        int column = ((row % 2) == 0) ? (index % gameWidth) : (gameWidth - (index % gameWidth) - 1);
-        switch (Settings.multiColor) {
-            case Constants.MULTI_COLOR_ROWS:
-                return row;
-            case Constants.MULTI_COLOR_COLUMNS:
-                return column;
-            case Constants.MULTI_COLOR_FRINGE:
-                return Math.min(row, column);
-            case Constants.MULTI_COLOR_OFF:
-            case Constants.MULTI_COLOR_SOLVED:
-            default:
-                return -1;
-        }
-    }
-
-    private int getClassicMultiColorIndex(int number) {
-        int index = number - 1;
+    private static int getMultiColorIndex(int number) {
+        int index = Game.indexOfSolved(number);
         int gameWidth = Settings.gameWidth;
         switch (Settings.multiColor) {
             case Constants.MULTI_COLOR_ROWS:
