@@ -361,34 +361,27 @@ public class Game {
      * then resulting list will be {@code [1, 2, 3, 4, 5, 6, 7, 8, 0]}
      */
     private List<Integer> traverseSpiral() {
-        // convert grid to array
-        int[][] array = new int[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                array[i][j] = grid.get(width * i + j);
-            }
-        }
         int h = height, w = width;
         int r = 0, c = 0;
         List<Integer> result = new ArrayList<>(width * height);
         while (r < h && c < w) {
             for (int i = c; i < w; i++) {
-                result.add(array[r][i]);
+                result.add(grid.get(r * width + i));
             }
             r++;
             for (int i = r; i < h; i++) {
-                result.add(array[i][w - 1]);
+                result.add(grid.get(i * width + w - 1));
             }
             w--;
             if (r < h) {
                 for (int i = w - 1; i >= c; i--) {
-                    result.add(array[h - 1][i]);
+                    result.add(grid.get((h - 1) * width + i));
                 }
                 h--;
             }
             if (c < w) {
                 for (int i = h - 1; i >= r; i--) {
-                    result.add(array[i][c]);
+                    result.add(grid.get(i * width + c));
                 }
                 c++;
             }
