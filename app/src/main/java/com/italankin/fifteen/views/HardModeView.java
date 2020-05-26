@@ -28,7 +28,7 @@ public class HardModeView extends BaseView {
     private final Resources mResources;
     private final List<Button> mButtons = new ArrayList<>(2);
     private final TimeInterpolator interpolator = new AccelerateInterpolator();
-    private final RectF mRect;
+    private final RectF mRect = new RectF();
     private final int mTextOffsetY;
     private Callbacks mCallbacks;
 
@@ -40,14 +40,7 @@ public class HardModeView extends BaseView {
         mPaintTextValue.setTextAlign(Paint.Align.CENTER);
         mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.4f);
 
-        float width = Dimensions.surfaceWidth * .75f;
-        float margin = (Dimensions.surfaceWidth - width) / 2;
-        mRect = new RectF(
-                margin,
-                Dimensions.hardModeViewMarginBottom - Dimensions.hardModeViewHeight,
-                margin + width,
-                Dimensions.hardModeViewMarginBottom
-        );
+        updateRect();
 
         Rect r = new Rect();
         mPaintTextValue.getTextBounds("A", 0, 1, r);
@@ -76,6 +69,7 @@ public class HardModeView extends BaseView {
     @Override
     public void update() {
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
+        updateRect();
         updateButtonDimensions();
     }
 
@@ -125,6 +119,17 @@ public class HardModeView extends BaseView {
             b = mButtons.get(i);
             b.rect.set(mRect.left + width * i, mRect.top, mRect.left + width * (i + 1), mRect.bottom);
         }
+    }
+
+    private void updateRect() {
+        float width = Dimensions.surfaceWidth * .75f;
+        float margin = (Dimensions.surfaceWidth - width) / 2;
+        mRect.set(
+                margin,
+                Dimensions.hardModeViewMarginBottom - Dimensions.hardModeViewHeight,
+                margin + width,
+                Dimensions.hardModeViewMarginBottom
+        );
     }
 
     private long getAnimDuration() {
