@@ -74,9 +74,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private Paint mDebugPaint;
     private StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
 
-    private int mStartX;
-    private int mStartY;
-    private boolean mTrail = false;
+    private int mGestureStartX;
+    private int mGestureStartY;
+    private boolean mGestureTrail = false;
     private int animCurrentIndex = ANIM_TYPE_ALL;
     private long lastSolvedTimestamp = 0;
 
@@ -191,10 +191,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                mStartX = x;
-                mStartY = y;
+                mGestureStartX = x;
+                mGestureStartY = y;
                 boolean fieldFullyVisible = isFieldFullyVisible();
-                mTrail = fieldFullyVisible && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
+                mGestureTrail = fieldFullyVisible && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
                 if (fieldFullyVisible && Settings.hardmode && !Game.isNotStarted() && !Game.isPaused()) {
                     Game.setPeeking(mHardModeView.isPeekAt(x, y));
                 }
@@ -205,22 +205,22 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 if (Game.isPaused() || Game.isSolved() || !isFieldFullyVisible()) {
                     return true;
                 }
-                if (mTrail) {
+                if (mGestureTrail) {
                     mField.moveTiles(x, y, Tools.DIRECTION_DEFAULT, false);
                     return true;
                 }
-                int dx = x - mStartX;
-                int dy = y - mStartY;
+                int dx = x - mGestureStartX;
+                int dy = y - mGestureStartY;
                 float minSwipeDistance = Dimensions.tileSize / 6.0f;
                 if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
-                    mField.moveTiles(mStartX, mStartY, Tools.direction(dx, dy));
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.direction(dx, dy));
                     event.setAction(MotionEvent.ACTION_CANCEL);
                 }
                 return true;
             }
 
             case MotionEvent.ACTION_UP: {
-                if (mTrail) {
+                if (mGestureTrail) {
                     return true;
                 }
 
@@ -228,17 +228,17 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     Game.setPeeking(false);
                 }
 
-                int dx = x - mStartX;
-                int dy = y - mStartY;
+                int dx = x - mGestureStartX;
+                int dy = y - mGestureStartY;
 
                 if (mLeaderboard.isShown()) {
-                    mLeaderboard.onClick(mStartX, mStartY, dx);
+                    mLeaderboard.onClick(mGestureStartX, mGestureStartY, dx);
                     return true;
                 } else if (mSettings.isShown()) {
-                    mSettings.onClick(mStartX, mStartY, dx);
+                    mSettings.onClick(mGestureStartX, mGestureStartY, dx);
                     return true;
                 } else if (mStatistics.isShown()) {
-                    mStatistics.onClick(mStartX, mStartY);
+                    mStatistics.onClick(mGestureStartX, mGestureStartY);
                     return true;
                 } else if (Game.isSolved() && mRectField.contains(x, y)) {
                     createNewGame(true);
@@ -250,13 +250,13 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 }
 
                 if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !Game.isPaused()) {
-                    mField.moveTiles(mStartX, mStartY, Tools.direction(dx, dy));
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.direction(dx, dy));
                 } else if (Game.isPaused() && mRectField.contains(x, y)) {
                     Game.setPaused(false);
                     mPauseOverlay.hide();
                     mField.update();
                 } else if (!Game.isSolved()) {
-                    mField.moveTiles(mStartX, mStartY, Tools.DIRECTION_DEFAULT);
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.DIRECTION_DEFAULT);
                 }
                 return true;
             }
@@ -274,30 +274,18 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 break;
 
             case BTN_SETTINGS:
-                Game.setPaused(Game.getMoves() > 0);
-                if (Game.isPaused()) {
-                    mPauseOverlay.show();
-                }
-                mField.update();
+                pauseGame();
                 mSettings.show();
                 break;
 
             case BTN_LEADERBOARD:
-                Game.setPaused(Game.getMoves() > 0);
-                if (Game.isPaused()) {
-                    mPauseOverlay.show();
-                }
-                mField.update();
+                pauseGame();
                 mLeaderboard.show();
                 break;
 
             case BTN_FOUR:
                 if (Settings.stats) {
-                    Game.setPaused(Game.getMoves() > 0);
-                    if (Game.isPaused()) {
-                        mPauseOverlay.show();
-                    }
-                    mField.update();
+                    pauseGame();
                     mStatistics.show();
                 } else {
                     if (!Game.isSolved()) {
@@ -376,8 +364,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     }
 
     private void createNewGame(boolean isUser) {
-        if (Settings.newGameDelay &&
-                ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
+        if (Settings.newGameDelay && ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
             return;
         }
 
@@ -490,6 +477,14 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 mField.addTile(t);
             }
         }
+    }
+
+    private void pauseGame() {
+        Game.setPaused(Game.getMoves() > 0);
+        if (Game.isPaused()) {
+            mPauseOverlay.show();
+        }
+        mField.update();
     }
 
     private boolean isFieldFullyVisible() {
