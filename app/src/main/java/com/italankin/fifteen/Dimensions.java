@@ -29,7 +29,8 @@ public class Dimensions {
         surfaceHeight = height * scaleY;
 
         topBarHeight = Dimensions.surfaceHeight * 0.07f;
-        float viewSpacing = Dimensions.surfaceHeight * 0.05f;
+        float hwf = surfaceHeight / surfaceWidth;
+        float viewSpacing = Dimensions.surfaceHeight * (hwf > 1.63 ? 0.05f : 0.03f);
 
         infoBarMarginTop = topBarHeight + viewSpacing;
         infoBarHeight = Dimensions.surfaceHeight * 0.13f;
