@@ -1,6 +1,8 @@
 # 15 Puzzle
 Simple Android sliding puzzle game.
 
+![15 Puzzle](/art/15puzzle.jpg)
+
 # Features
 * 3 game types: classic, snake, spiral
 * 2 game modes: normal, hard
@@ -9,11 +11,9 @@ Simple Android sliding puzzle game.
 * fringe color scheme support
 * session statistics: Ao5, Ao12, etc.
 
-![15 Puzzle](/art/15puzzle.jpg)
-
 # Download
-
-[Google Play](https://play.google.com/store/apps/details?id=com.italankin.fifteen)
+On [Google Play](https://play.google.com/store/apps/details?id=com.italankin.fifteen) or APK at
+[releases](https://github.com/italankin/15Puzzle/releases).
 
 # License
 
