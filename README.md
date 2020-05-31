@@ -1,5 +1,12 @@
 # 15 Puzzle
-Simple Android sliding puzzle game. Supports 2 game modes and custom puzzle sizes.
+Simple Android sliding puzzle game.
+
+# Features
+* 3 game types: classic, snake, spiral
+* 2 game modes: normal, hard
+* hover control support
+* fringe color scheme support
+* session statistics: Ao5, Ao12, etc.
 
 ![15 Puzzle](/art/15puzzle.jpg)
 
