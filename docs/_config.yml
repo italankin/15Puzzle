@@ -1,0 +1,14 @@
+title: 15 puzzle
+description: A simple, lightweight sliding puzzle game for Android
+google_play: https://play.google.com/store/apps/details?id=com.italankin.fifteen
+github: https://github.com/italankin/15Puzzle
+baseurl: ""
+url: "https://15puzzle.app"
+google_analytics: UA-174999394-2
+
+theme: "minima"
+
+header_pages:
+  - how-to-play.markdown
+  - downloads.markdown
+  - privacy-policy.markdown
