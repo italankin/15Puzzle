@@ -19,7 +19,9 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         Settings.load(this);
-        mGameView = new GameSurface(this);
+        if (mGameView == null) {
+            mGameView = new GameSurface(this);
+        }
         setContentView(mGameView);
     }
 

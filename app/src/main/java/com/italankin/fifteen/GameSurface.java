@@ -1,7 +1,6 @@
 package com.italankin.fifteen;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,7 +20,6 @@ import com.italankin.fifteen.views.SettingsView;
 import com.italankin.fifteen.views.StatisticsView;
 import com.italankin.fifteen.views.TopPanelView;
 
-import java.util.List;
 import java.util.Random;
 
 public class GameSurface extends SurfaceView implements TopPanelView.Callback, SurfaceHolder.Callback {
@@ -145,6 +143,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     time,
                     moves);
             lastSolvedTimestamp = System.currentTimeMillis();
+            SaveGameManager.removeSavedGame();
         });
 
         try {
@@ -373,27 +372,15 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
-        SharedPreferences prefs = Settings.getPreferences(getContext());
-        if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser) {
-            String strings = prefs.getString(Settings.KEY_GAME_ARRAY, null);
-            if (strings != null) {
-                List<Integer> list = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
-                if (list.size() == Game.getSize()) {
-                    Game.load(list,
-                            prefs.getInt(Settings.KEY_GAME_MOVES, 0),
-                            prefs.getLong(Settings.KEY_GAME_TIME, 0));
+        if (SaveGameManager.hasSavedGame()) {
+            SaveGameManager.SavedGame savedGame = SaveGameManager.getSavedGame();
+            if (isUser || !savedGame.isValid()) {
+                SaveGameManager.removeSavedGame();
+            } else {
+                Game.load(savedGame.grid, savedGame.moves, savedGame.time);
+                if (Game.isPaused()) {
+                    mPauseOverlay.show();
                 }
-            }
-
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.remove(Settings.KEY_GAME_ARRAY);
-            editor.remove(Settings.KEY_GAME_MOVES);
-            editor.remove(Settings.KEY_GAME_TIME);
-            editor.apply();
-
-            if (Game.getMoves() > 0) {
-                Game.setPaused(true);
-                mPauseOverlay.show();
             }
         }
 

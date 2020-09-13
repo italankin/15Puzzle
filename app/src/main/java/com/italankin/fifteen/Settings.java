@@ -11,9 +11,6 @@ public class Settings {
 
     private static final String KEY_GAME_WIDTH = "puzzle_width";
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
-    static final String KEY_GAME_ARRAY = "puzzle_prev";
-    static final String KEY_GAME_MOVES = "puzzle_prev_moves";
-    static final String KEY_GAME_TIME = "puzzle_prev_time";
     private static final String KEY_GAME_TILE_COLOR = "tile_color";
     private static final String KEY_GAME_BG_COLOR = "bg_color";
     private static final String KEY_GAME_MODE = "mode";
@@ -25,6 +22,10 @@ public class Settings {
     private static final String KEY_INGAME_INFO = "ingame_info";
     private static final String KEY_TIME_FORMAT = "time_format";
     private static final String KEY_STATS = "stats";
+
+    static final String KEY_SAVED_GAME_ARRAY = "puzzle_prev";
+    static final String KEY_SAVED_GAME_MOVES = "puzzle_prev_moves";
+    static final String KEY_SAVED_GAME_TIME = "puzzle_prev_time";
 
     public static int gameWidth = Defaults.GAME_WIDTH;
     public static int gameHeight = Defaults.GAME_HEIGHT;
@@ -83,16 +84,6 @@ public class Settings {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);
-        if (!Game.isSolved()) {
-            String string_array = Game.getGridStr();
-            editor.putString(KEY_GAME_ARRAY, string_array);
-            editor.putInt(KEY_GAME_MOVES, Game.getMoves());
-            editor.putLong(KEY_GAME_TIME, Game.getTime());
-        } else {
-            editor.remove(KEY_GAME_ARRAY);
-            editor.remove(KEY_GAME_MOVES);
-            editor.remove(KEY_GAME_TIME);
-        }
         editor.putInt(KEY_GAME_TILE_COLOR, tileColor);
         editor.putInt(KEY_GAME_BG_COLOR, colorMode);
         editor.putInt(KEY_GAME_MODE, gameMode);
@@ -104,6 +95,7 @@ public class Settings {
         editor.putInt(KEY_INGAME_INFO, ingameInfo);
         editor.putInt(KEY_TIME_FORMAT, timeFormat);
         editor.putBoolean(KEY_STATS, stats);
+        SaveGameManager.saveGame(editor);
         if (sync) {
             editor.commit();
         } else {

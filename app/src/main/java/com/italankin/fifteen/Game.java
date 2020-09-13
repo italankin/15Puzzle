@@ -32,6 +32,7 @@ public class Game {
         instance.moves = savedMoves;
         instance.time = savedTime;
         instance.zeroPos = savedGrid.indexOf(0);
+        instance.paused = savedMoves > 0;
     }
 
     public void init(int w, int h) {
