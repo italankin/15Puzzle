@@ -402,7 +402,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             int number = Game.getAt(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
-                if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() && !mStatistics.isShown()) {
+                if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() && !mStatistics.isShown() &&
+                        !mPauseOverlay.isShown()) {
                     switch (animationType) {
                         case ANIM_TYPE_INDEX_ASC:
                             delay = index / shift;
