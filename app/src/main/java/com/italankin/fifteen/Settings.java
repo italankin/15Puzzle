@@ -14,7 +14,6 @@ public class Settings {
     static final String KEY_GAME_ARRAY = "puzzle_prev";
     static final String KEY_GAME_MOVES = "puzzle_prev_moves";
     static final String KEY_GAME_TIME = "puzzle_prev_time";
-    private static final String KEY_GAME_SAVE = "savegame";
     private static final String KEY_GAME_TILE_COLOR = "tile_color";
     private static final String KEY_GAME_BG_COLOR = "bg_color";
     private static final String KEY_GAME_MODE = "mode";
