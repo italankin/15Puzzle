@@ -38,12 +38,11 @@
     <string name="stats_time">Время</string>
     <string name="stats_moves">Ходы</string>
 
+    <string name="settings_page_basic">базовые</string>
+    <string name="settings_page_advanced">дополнительные</string>
+
     <string name="back">назад</string>
 
-    <string-array name="settings_pages">
-        <item>дополнительные</item>
-        <item>базовые</item>
-    </string-array>
     <string-array name="toggle">
         <item>выкл.</item>
         <item>вкл.</item>

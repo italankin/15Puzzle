@@ -43,15 +43,14 @@
     <string name="stats_time">Time</string>
     <string name="stats_moves">Moves</string>
 
+    <string name="settings_page_basic">basic</string>
+    <string name="settings_page_advanced">advanced</string>
+
     <string name="back">back</string>
 
     <string-array name="toggle">
         <item>off</item>
         <item>on</item>
-    </string-array>
-    <string-array name="settings_pages">
-        <item>advanced</item>
-        <item>basic</item>
     </string-array>
     <string-array name="difficulty_modes">
         <item>easy</item>
