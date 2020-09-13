@@ -68,6 +68,10 @@ public class Tools {
         }
     }
 
+    public static String formatFloat(float f) {
+        return String.format(Locale.ROOT, "%.3f", f);
+    }
+
     /**
      * @see <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Taxicab geometry</a>
      */

@@ -20,6 +20,9 @@ public class Settings {
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
+    private static final String KEY_INGAME_INFO_MOVES = "ingame_info_moves";
+    private static final String KEY_INGAME_INFO_TIME = "ingame_info_time";
+    private static final String KEY_INGAME_INFO_TPS = "ingame_info_tps";
     private static final String KEY_TIME_FORMAT = "time_format";
     private static final String KEY_STATS = "stats";
 
@@ -40,7 +43,9 @@ public class Settings {
     public static int gameMode = Defaults.GAME_MODE;
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDelay = Defaults.NEW_GAME_DELAY;
-    public static int ingameInfo = Defaults.INGAME_INFO;
+    public static int ingameInfoMoves = Defaults.INGAME_INFO_MOVES;
+    public static int ingameInfoTime = Defaults.INGAME_INFO_TIME;
+    public static int ingameInfoTps = Defaults.INGAME_INFO_TPS;
     public static int timeFormat = Defaults.TIME_FORMAT;
     public static boolean stats = Defaults.STATS;
 
@@ -70,9 +75,26 @@ public class Settings {
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, Defaults.MULTI_COLOR);
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, Defaults.NEW_GAME_DELAY);
-        ingameInfo = prefs.getInt(KEY_INGAME_INFO, Defaults.INGAME_INFO);
         timeFormat = prefs.getInt(KEY_TIME_FORMAT, Defaults.TIME_FORMAT);
         stats = prefs.getBoolean(KEY_STATS, Defaults.STATS);
+
+        if (prefs.contains("ingame_info")) {
+            // old logic for backward compatibility
+            int ingameInfo = prefs.getInt(KEY_INGAME_INFO, 0x1 | 0x2);
+            ingameInfoMoves = (ingameInfo & 0x1) == 0
+                    ? Constants.INGAME_INFO_AFTER_SOLVE
+                    : Constants.INGAME_INFO_ON;
+            ingameInfoTime = (ingameInfo & 0x2) == 0
+                    ? Constants.INGAME_INFO_AFTER_SOLVE
+                    : Constants.INGAME_INFO_ON;
+            prefs.edit().remove("ingame_info").apply();
+            Logger.d("old ingameInfo=%d, ingameInfoMoves=%d, ingameInfoTime=%d",
+                    ingameInfo, ingameInfoMoves, ingameInfoTime);
+        } else {
+            ingameInfoMoves = prefs.getInt(KEY_INGAME_INFO_MOVES, Defaults.INGAME_INFO_MOVES);
+            ingameInfoTime = prefs.getInt(KEY_INGAME_INFO_TIME, Defaults.INGAME_INFO_TIME);
+            ingameInfoTps = prefs.getInt(KEY_INGAME_INFO_TPS, Defaults.INGAME_INFO_TPS);
+        }
     }
 
     public static void save() {
@@ -92,7 +114,9 @@ public class Settings {
         editor.putBoolean(KEY_GAME_BF, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
-        editor.putInt(KEY_INGAME_INFO, ingameInfo);
+        editor.putInt(KEY_INGAME_INFO_MOVES, ingameInfoMoves);
+        editor.putInt(KEY_INGAME_INFO_TIME, ingameInfoTime);
+        editor.putInt(KEY_INGAME_INFO_TPS, ingameInfoTps);
         editor.putInt(KEY_TIME_FORMAT, timeFormat);
         editor.putBoolean(KEY_STATS, stats);
         SaveGameManager.saveGame(editor);

@@ -23,12 +23,15 @@ public class InfoPanelView extends BaseView {
     private String[] mTextMode;
     private String mTextMoves;
     private String mTextTime;
+    private String mTextTps;
 
     private RectF mRectInfo;
 
     private int mValueTextOffset;
-    private final float firstRowY;
-    private final float secondRowY;
+    private float firstRowY;
+    private float secondRowY;
+    private float thirdRowY;
+    private final int mCaptionTextOffset;
 
     public InfoPanelView(Resources res) {
         mPaintBg = new Paint();
@@ -53,14 +56,14 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.getTextBounds("A", 0, 1, r);
         mValueTextOffset = r.centerY();
         mPaintTextCaption.getTextBounds("A", 0, 1, r);
-        int mCaptionTextOffset = r.centerY();
+        mCaptionTextOffset = r.centerY();
 
-        firstRowY = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
-        secondRowY = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
+        updateRows();
 
         mTextMode = res.getStringArray(R.array.game_modes);
         mTextMoves = res.getString(R.string.info_moves);
         mTextTime = res.getString(R.string.info_time);
+        mTextTps = res.getString(R.string.info_tps);
 
         mShow = true;
     }
@@ -78,7 +81,7 @@ public class InfoPanelView extends BaseView {
                 Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,
                 mPaintTextValue);
 
-        if (shouldShowInfo(Constants.INGAME_INFO_MOVES)) {
+        if (shouldShowInfo(Settings.ingameInfoMoves)) {
             prepareTitlePaint();
             canvas.drawText(mTextMoves, Dimensions.surfaceWidth / 2.0f, firstRowY, mPaintTextCaption);
 
@@ -86,13 +89,28 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(Integer.toString(Game.getMoves()),
                     Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, firstRowY, mPaintTextCaption);
         }
-        if (shouldShowInfo(Constants.INGAME_INFO_TIME)) {
+        if (shouldShowInfo(Settings.ingameInfoTime)) {
             prepareTitlePaint();
             canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
 
             prepareValuePaint();
             String time = Tools.timeToString(Settings.timeFormat, Game.getTime());
             canvas.drawText(time, Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
+        }
+        if (shouldShowInfo(Settings.ingameInfoTps)) {
+            prepareTitlePaint();
+            canvas.drawText(mTextTps, Dimensions.surfaceWidth / 2.0f, thirdRowY, mPaintTextCaption);
+
+            prepareValuePaint();
+            long time = Game.getTime();
+            int moves = Game.getMoves();
+            String tps;
+            if (time == 0 || moves == 0) {
+                tps = "0.000";
+            } else {
+                tps = Tools.formatFloat((float) moves / (float) time * 1000);
+            }
+            canvas.drawText(tps, Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, thirdRowY, mPaintTextCaption);
         }
     }
 
@@ -106,10 +124,6 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.setTextAlign(Paint.Align.RIGHT);
     }
 
-    private static boolean shouldShowInfo(int infoMoves) {
-        return Game.isNotStarted() || Game.isSolved() || (Settings.ingameInfo & infoMoves) == infoMoves;
-    }
-
     @Override
     public void update() {
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
@@ -118,5 +132,22 @@ public class InfoPanelView extends BaseView {
 
         mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintTextCaption.setColor(Colors.getInfoTextColor());
+
+        updateRows();
+    }
+
+    private void updateRows() {
+        if (Settings.ingameInfoTps == Constants.INGAME_INFO_OFF) {
+            firstRowY = mRectInfo.top + mRectInfo.height() * 0.3f - mCaptionTextOffset;
+            secondRowY = mRectInfo.top + mRectInfo.height() * 0.7f - mCaptionTextOffset;
+        } else {
+            firstRowY = mRectInfo.top + mRectInfo.height() * 0.2f - mCaptionTextOffset;
+            secondRowY = mRectInfo.top + mRectInfo.height() * 0.5f - mCaptionTextOffset;
+            thirdRowY = mRectInfo.top + mRectInfo.height() * 0.8f - mCaptionTextOffset;
+        }
+    }
+
+    private boolean shouldShowInfo(int info) {
+        return info == Constants.INGAME_INFO_ON || info == Constants.INGAME_INFO_AFTER_SOLVE && Game.isSolved();
     }
 }

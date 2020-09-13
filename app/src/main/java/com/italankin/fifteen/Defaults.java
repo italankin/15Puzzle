@@ -12,7 +12,9 @@ class Defaults {
     static final int MULTI_COLOR = Constants.MULTI_COLOR_OFF;
     static final int COLOR_MODE = Constants.COLOR_MODE_DAY;
     static final int GAME_MODE = Constants.MODE_CLASSIC;
-    static final int INGAME_INFO = Constants.INGAME_INFO_ALL;
+    static final int INGAME_INFO_MOVES = Constants.INGAME_INFO_ON;
+    static final int INGAME_INFO_TIME = Constants.INGAME_INFO_ON;
+    static final int INGAME_INFO_TPS = Constants.INGAME_INFO_OFF;
     static final int TIME_FORMAT = Constants.TIME_FORMAT_MIN_SEC_MS;
     static final boolean STATS = false;
     static final boolean NEW_GAME_DELAY = true;

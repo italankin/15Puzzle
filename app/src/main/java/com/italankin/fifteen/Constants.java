@@ -23,10 +23,10 @@ public class Constants {
     public static final int MULTI_COLOR_FRINGE = 3;
     public static final int MULTI_COLOR_SOLVED = 4;
 
-    public static final int INGAME_INFO_MODES = 4;
-    public static final int INGAME_INFO_MOVES = 0x1;
-    public static final int INGAME_INFO_TIME = 0x2;
-    public static final int INGAME_INFO_ALL = INGAME_INFO_MOVES | INGAME_INFO_TIME;
+    public static final int INGAME_INFO_VALUES = 3;
+    public static final int INGAME_INFO_ON = 0;
+    public static final int INGAME_INFO_AFTER_SOLVE = 1;
+    public static final int INGAME_INFO_OFF = 2;
 
     public static final int TIME_FORMATS = 4;
     public static final int TIME_FORMAT_MIN_SEC = 0;

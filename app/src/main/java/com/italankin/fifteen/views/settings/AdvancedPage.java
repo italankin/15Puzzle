@@ -13,6 +13,7 @@ import com.italankin.fifteen.views.SettingsView;
 
 public class AdvancedPage implements SettingsPage {
 
+    private final SettingsView mParent;
     private final Paint mPaintText;
     private final Paint mPaintValue;
 
@@ -25,9 +26,7 @@ public class AdvancedPage implements SettingsPage {
     private String mTextNewGameDelay;
     private String[] mTextNewGameDelayValues;
     private String mTextIngameInfo;
-    private String[] mTextIngameInfoValues;
-    private String mTextTimeFormat;
-    private String[] mTextTimeFormatValues;
+    private String mTextIngameInfoValue;
     private String mTextStats;
     private String[] mTextStatsValues;
 
@@ -36,12 +35,12 @@ public class AdvancedPage implements SettingsPage {
     private RectF mRectNewGameDelay;
     private RectF mRectIngameInfo;
     private RectF mRectBf;
-    private RectF mRectTimeFormat;
     private RectF mRectStats;
 
     private SettingsView.Callbacks mCallbacks;
 
-    public AdvancedPage(Paint paintText, Paint paintValue, Resources res) {
+    public AdvancedPage(SettingsView parent, Paint paintText, Paint paintValue, Resources res) {
+        this.mParent = parent;
         this.mPaintText = paintText;
         this.mPaintValue = paintValue;
 
@@ -50,11 +49,9 @@ public class AdvancedPage implements SettingsPage {
         mTextNewGameDelay = res.getString(R.string.pref_new_game_delay);
         mTextNewGameDelayValues = res.getStringArray(R.array.toggle);
         mTextIngameInfo = res.getString(R.string.pref_ingame_info);
-        mTextIngameInfoValues = res.getStringArray(R.array.ingame_info);
+        mTextIngameInfoValue = res.getString(R.string.pref_ingame_info_customize);
         mTextMultiColor = res.getString(R.string.pref_fringe);
         mTextMultiColorValues = res.getStringArray(R.array.multi_color_modes);
-        mTextTimeFormat = res.getString(R.string.pref_time_format);
-        mTextTimeFormatValues = res.getStringArray(R.array.time_format);
         mTextStats = res.getString(R.string.pref_stats);
         mTextHardMode = res.getString(R.string.pref_bf);
         mTextHardModeValues = res.getStringArray(R.array.difficulty_modes);
@@ -84,10 +81,6 @@ public class AdvancedPage implements SettingsPage {
         mRectIngameInfo.inset(0, padding);
 
         topMargin += lineSpacing;
-        mRectTimeFormat = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectTimeFormat.inset(0, padding);
-
-        topMargin += lineSpacing;
         mRectStats = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectStats.inset(0, padding);
     }
@@ -111,12 +104,7 @@ public class AdvancedPage implements SettingsPage {
                 valueRight, mRectNewGameDelay.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextIngameInfo, textLeft, mRectIngameInfo.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextIngameInfoValues[Settings.ingameInfo],
-                valueRight, mRectIngameInfo.bottom - textYOffset, mPaintValue);
-
-        canvas.drawText(mTextTimeFormat, textLeft, mRectTimeFormat.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextTimeFormatValues[Settings.timeFormat],
-                valueRight, mRectTimeFormat.bottom - textYOffset, mPaintValue);
+        canvas.drawText(mTextIngameInfoValue, valueRight, mRectIngameInfo.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextStats, textLeft, mRectStats.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextStatsValues[Settings.stats ? 1 : 0],
@@ -161,16 +149,7 @@ public class AdvancedPage implements SettingsPage {
         }
 
         if (mRectIngameInfo.contains(x, y)) {
-            Settings.ingameInfo = (++Settings.ingameInfo % Constants.INGAME_INFO_MODES);
-            Settings.save();
-            if (mCallbacks != null) {
-                mCallbacks.onSettingsChanged(false);
-            }
-        }
-
-        if (mRectTimeFormat.contains(x, y)) {
-            Settings.timeFormat = (++Settings.timeFormat % Constants.TIME_FORMATS);
-            Settings.save();
+            mParent.setCurrentPage(SettingsView.PAGE_INGAME_INFO);
         }
 
         if (mRectStats.contains(x, y)) {

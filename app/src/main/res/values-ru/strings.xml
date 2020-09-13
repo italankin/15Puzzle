@@ -13,6 +13,7 @@
 
     <string name="info_moves">ХОДЫ</string>
     <string name="info_time">ВРЕМЯ</string>
+    <string name="info_tps">TPS</string>
     <string name="info_win">СОБРАНО!</string>
     <string name="info_pause">ПАУЗА</string>
     <string name="info_no_data">нет данных</string>
@@ -27,10 +28,14 @@
     <string name="pref_bf">Режим</string>
     <string name="pref_sort">Сорт.</string>
     <string name="pref_anti_alias">Сглаживание</string>
-    <string name="pref_ingame_info">Инфо</string>
     <string name="pref_new_game_delay">Задержка</string>
-    <string name="pref_time_format">Время</string>
+    <string name="pref_time_format">Формат врем.</string>
     <string name="pref_stats">Статистика</string>
+    <string name="pref_ingame_info">Инфо</string>
+    <string name="pref_ingame_info_customize">настроить &gt;</string>
+    <string name="pref_ingame_info_moves">Время</string>
+    <string name="pref_ingame_info_time">Ходы</string>
+    <string name="pref_ingame_info_tps">TPS</string>
 
     <string name="stats_single">Послед.</string>
     <string name="stats_session_avg">Сессия</string>
@@ -68,10 +73,9 @@
         <item>решенные</item>
     </string-array>
     <string-array name="ingame_info">
+        <item>вкл.</item>
+        <item>после решения</item>
         <item>выкл.</item>
-        <item>ходы</item>
-        <item>время</item>
-        <item>ходы и время</item>
     </string-array>
     <string-array name="sort_types">
         <item>меньше ходов</item>

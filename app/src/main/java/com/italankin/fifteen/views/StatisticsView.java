@@ -14,8 +14,6 @@ import com.italankin.fifteen.Tools;
 import com.italankin.fifteen.statistics.Statistics;
 import com.italankin.fifteen.statistics.StatisticsManager;
 
-import java.util.Locale;
-
 public class StatisticsView extends BaseView {
 
     private final Resources mResources;
@@ -238,10 +236,10 @@ public class StatisticsView extends BaseView {
     }
 
     private String formatMoves(Statistics.Avg avg) {
-        return avg == null ? mTextNa : String.format(Locale.ROOT, "%.3f", avg.moves);
+        return avg == null ? mTextNa : Tools.formatFloat(avg.moves);
     }
 
     private String formatTps(Statistics.Avg avg) {
-        return avg == null ? mTextNa : String.format(Locale.ROOT, "%.3f", avg.tps);
+        return avg == null ? mTextNa : Tools.formatFloat(avg.tps);
     }
 }

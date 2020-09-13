@@ -8,10 +8,12 @@ import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Dimensions;
+import com.italankin.fifteen.Logger;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.views.settings.AdvancedPage;
 import com.italankin.fifteen.views.settings.BasicPage;
+import com.italankin.fifteen.views.settings.IngameInfoPage;
 import com.italankin.fifteen.views.settings.SettingsPage;
 
 import java.util.HashMap;
@@ -19,8 +21,9 @@ import java.util.Map;
 
 public class SettingsView extends BaseView {
 
-    private static final int PAGE_BASIC = 0;
-    private static final int PAGE_ADVANCED = 1;
+    public static final int PAGE_BASIC = 0;
+    public static final int PAGE_ADVANCED = 1;
+    public static final int PAGE_INGAME_INFO = 2;
 
     private final Paint mPaintText;
     private final Paint mPaintValue;
@@ -67,7 +70,11 @@ public class SettingsView extends BaseView {
         mPaintText.getTextBounds("A", 0, 1, r);
         int textHeight = r.height();
 
-        initPages(res, lineSpacing, topMargin, padding, textHeight);
+        initPages(res);
+
+        for (SettingsPage page : pages.values()) {
+            page.init(lineSpacing, topMargin, padding, textHeight);
+        }
 
         mRectSettingsPage = new RectF(0, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight * 2,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight);
@@ -89,7 +96,12 @@ public class SettingsView extends BaseView {
             dx = 0;
         }
 
-        pages.get(mCurrentPage).onClick(x, y, dx);
+        SettingsPage page = pages.get(mCurrentPage);
+        if (page != null) {
+            page.onClick(x, y, dx);
+        } else {
+            Logger.d("Page not found: " + mCurrentPage);
+        }
 
         if (mRectSettingsPage.contains(x, y)) {
             switch (mCurrentPage) {
@@ -122,7 +134,12 @@ public class SettingsView extends BaseView {
 
         canvas.drawColor(Colors.getOverlayColor());
 
-        pages.get(mCurrentPage).draw(canvas, valueRight, textLeft, textYOffset);
+        SettingsPage page = pages.get(mCurrentPage);
+        if (page != null) {
+            page.draw(canvas, valueRight, textLeft, textYOffset);
+        } else {
+            Logger.d("Page not found: " + mCurrentPage);
+        }
 
         String nextPageName = null;
         switch (mCurrentPage) {
@@ -161,13 +178,24 @@ public class SettingsView extends BaseView {
         }
     }
 
-    private void initPages(Resources res, int lineSpacing, int topMargin, int padding, int textHeight) {
-        pages.put(PAGE_BASIC, new BasicPage(mPaintText, mPaintValue, res));
-        pages.put(PAGE_ADVANCED, new AdvancedPage(mPaintText, mPaintValue, res));
+    public void setCurrentPage(int page) {
+        mCurrentPage = page;
+    }
 
-        for (SettingsPage page : pages.values()) {
-            page.init(lineSpacing, topMargin, padding, textHeight);
+    @Override
+    public boolean hide() {
+        if (mCurrentPage == PAGE_INGAME_INFO) {
+            mCurrentPage = PAGE_ADVANCED;
+            return true;
+        } else {
+            return super.hide();
         }
+    }
+
+    private void initPages(Resources res) {
+        pages.put(PAGE_BASIC, new BasicPage(mPaintText, mPaintValue, res));
+        pages.put(PAGE_ADVANCED, new AdvancedPage(this, mPaintText, mPaintValue, res));
+        pages.put(PAGE_INGAME_INFO, new IngameInfoPage(mPaintText, mPaintValue, res));
     }
 
     public interface Callbacks {
