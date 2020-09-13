@@ -3,6 +3,7 @@ package com.italankin.fifteen;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 
 import java.text.DateFormat;
@@ -52,6 +53,8 @@ public class Settings {
     static SharedPreferences prefs;
     public static DateFormat dateFormat;
 
+    private static int uiMode;
+
     static SharedPreferences getPreferences(Context context) {
         String preferencesName = context.getPackageName() + "_preferences";
         return context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE);
@@ -97,6 +100,10 @@ public class Settings {
         }
     }
 
+    static void updateUiMode(Context context) {
+        uiMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+    }
+
     public static void save() {
         save(false);
     }
@@ -124,6 +131,17 @@ public class Settings {
             editor.commit();
         } else {
             editor.apply();
+        }
+    }
+
+    static int getColorMode() {
+        if (colorMode != Constants.COLOR_MODE_SYSTEM) {
+            return colorMode;
+        }
+        if (uiMode == Configuration.UI_MODE_NIGHT_YES) {
+            return Constants.COLOR_MODE_NIGHT;
+        } else {
+            return Constants.COLOR_MODE_DAY;
         }
     }
 

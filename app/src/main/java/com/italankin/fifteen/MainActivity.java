@@ -1,6 +1,7 @@
 package com.italankin.fifteen;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
 
@@ -19,6 +20,7 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         Settings.load(this);
+        Settings.updateUiMode(this);
         if (mGameView == null) {
             mGameView = new GameSurface(this);
         }
@@ -30,6 +32,15 @@ public class MainActivity extends Activity {
         super.onPause();
         Settings.save(true);
         mGameView.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Settings.updateUiMode(this);
+        if (mGameView != null) {
+            mGameView.updateViews();
+        }
     }
 
     @Override

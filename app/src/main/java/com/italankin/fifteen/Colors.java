@@ -102,11 +102,11 @@ public class Colors {
     public static final int ERROR = 0xffd24242;
 
     public static int getBackgroundColor() {
-        return background[Settings.colorMode];
+        return background[Settings.getColorMode()];
     }
 
     public static int getTileColor() {
-        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
+        if (Settings.getColorMode() == Constants.COLOR_MODE_DAY) {
             return tilesDay[Settings.tileColor];
         } else {
             return tilesNight[Settings.tileColor];
@@ -114,7 +114,7 @@ public class Colors {
     }
 
     public static int[] getTileColors() {
-        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
+        if (Settings.getColorMode() == Constants.COLOR_MODE_DAY) {
             return tilesDay;
         } else {
             return tilesNight;
@@ -122,7 +122,7 @@ public class Colors {
     }
 
     public static int getUnsolvedTileColor() {
-        if (Settings.colorMode == Constants.COLOR_MODE_DAY) {
+        if (Settings.getColorMode() == Constants.COLOR_MODE_DAY) {
             return tilesDayUnsolved[Settings.tileColor];
         } else {
             return tilesNightUnsolved[Settings.tileColor];
@@ -130,22 +130,22 @@ public class Colors {
     }
 
     public static int getTileTextColor() {
-        return spriteText[Settings.colorMode];
+        return spriteText[Settings.getColorMode()];
     }
 
     public static int getInfoTextColor() {
-        return textInfo[Settings.colorMode];
+        return textInfo[Settings.getColorMode()];
     }
 
     public static int getOverlayColor() {
-        return overlay[Settings.colorMode];
+        return overlay[Settings.getColorMode()];
     }
 
     public static int getOverlayTextColor() {
-        return overlayText[Settings.colorMode];
+        return overlayText[Settings.getColorMode()];
     }
 
     public static int getHardModeButtonsColor() {
-        return Settings.colorMode == Constants.COLOR_MODE_DAY ? 0xff373737 : 0xff787878;
+        return Settings.getColorMode() == Constants.COLOR_MODE_DAY ? 0xff373737 : 0xff787878;
     }
 }

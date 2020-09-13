@@ -7,9 +7,10 @@ public class Constants {
     public static final int MAX_GAME_WIDTH = 8;
     public static final int MAX_GAME_HEIGHT = 8;
 
-    public static final int COLOR_MODES = 2;
+    public static final int COLOR_MODES = 3;
     public static final int COLOR_MODE_DAY = 0;
     public static final int COLOR_MODE_NIGHT = 1;
+    public static final int COLOR_MODE_SYSTEM = 2;
 
     public static final int GAME_MODES = 3;
     public static final int MODE_CLASSIC = 0;

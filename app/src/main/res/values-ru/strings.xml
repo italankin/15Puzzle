@@ -59,6 +59,7 @@
     <string-array name="color_mode">
         <item>день</item>
         <item>ночь</item>
+        <item>система</item>
     </string-array>
     <string-array name="game_modes">
         <item>классика</item>

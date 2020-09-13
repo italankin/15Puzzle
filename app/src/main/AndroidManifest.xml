@@ -9,6 +9,7 @@
         android:label="@string/app_name">
         <activity
             android:name="com.italankin.fifteen.MainActivity"
+            android:configChanges="colorMode"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
