@@ -30,7 +30,6 @@ public class Settings {
     public static int gameWidth = Defaults.GAME_WIDTH;
     public static int gameHeight = Defaults.GAME_HEIGHT;
     public static boolean hardmode = Defaults.HARD_MODE;
-    static boolean saveGame = Defaults.HARD_MODE;
     public static boolean animations = Defaults.ANIMATIONS;
     public static boolean antiAlias = Defaults.ANTI_ALIAS;
     static long tileAnimDuration = Defaults.ANIMATION_DURATION;
@@ -62,7 +61,6 @@ public class Settings {
         if (h >= Constants.MIN_GAME_HEIGHT && h < Constants.MAX_GAME_HEIGHT) {
             gameHeight = h;
         }
-        saveGame = prefs.getBoolean(KEY_GAME_SAVE, Defaults.SAVE_GAME);
         tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, Defaults.TILE_COLOR);
         colorMode = prefs.getInt(KEY_GAME_BG_COLOR, Defaults.COLOR_MODE);
         gameMode = prefs.getInt(KEY_GAME_MODE, Defaults.GAME_MODE);
@@ -86,7 +84,7 @@ public class Settings {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_GAME_WIDTH, gameWidth);
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);
-        if (!Game.isSolved() && saveGame) {
+        if (!Game.isSolved()) {
             String string_array = Game.getGridStr();
             editor.putString(KEY_GAME_ARRAY, string_array);
             editor.putInt(KEY_GAME_MOVES, Game.getMoves());
@@ -96,7 +94,6 @@ public class Settings {
             editor.remove(KEY_GAME_MOVES);
             editor.remove(KEY_GAME_TIME);
         }
-        editor.putBoolean(KEY_GAME_SAVE, saveGame);
         editor.putInt(KEY_GAME_TILE_COLOR, tileColor);
         editor.putInt(KEY_GAME_BG_COLOR, colorMode);
         editor.putInt(KEY_GAME_MODE, gameMode);

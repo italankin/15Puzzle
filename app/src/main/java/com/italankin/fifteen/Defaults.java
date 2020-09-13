@@ -5,7 +5,6 @@ class Defaults {
     static final int GAME_WIDTH = 4;
     static final int GAME_HEIGHT = 4;
     static final boolean HARD_MODE = false;
-    static final boolean SAVE_GAME = true;
     static final int TILE_COLOR = 0;
     static final boolean ANIMATIONS = true;
     static final boolean ANTI_ALIAS = true;

@@ -374,7 +374,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         Game.create(Settings.gameWidth, Settings.gameHeight);
 
         SharedPreferences prefs = Settings.getPreferences(getContext());
-        if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser && Settings.saveGame) {
+        if (prefs.contains(Settings.KEY_GAME_ARRAY) && !isUser) {
             String strings = prefs.getString(Settings.KEY_GAME_ARRAY, null);
             if (strings != null) {
                 List<Integer> list = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
