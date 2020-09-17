@@ -20,34 +20,12 @@ import com.italankin.fifteen.views.SettingsView;
 import com.italankin.fifteen.views.StatisticsView;
 import com.italankin.fifteen.views.TopPanelView;
 
-import java.util.Random;
-
 public class GameSurface extends SurfaceView implements TopPanelView.Callback, SurfaceHolder.Callback {
 
     private static final int BTN_NEW = 0;
     private static final int BTN_SETTINGS = 1;
     private static final int BTN_LEADERBOARD = 2;
     private static final int BTN_FOUR = 3;
-
-    private static final int ANIM_WINDOW_FRAMES = 5;
-    private static final int ANIM_TYPE_COUNT = 16;
-
-    private static final int ANIM_TYPE_ALL = 0;
-    private static final int ANIM_TYPE_INDEX_ASC = 1;
-    private static final int ANIM_TYPE_INDEX_DESC = 2;
-    private static final int ANIM_TYPE_RANDOM = 3;
-    private static final int ANIM_TYPE_NUMBER_ASC = 4;
-    private static final int ANIM_TYPE_NUMBER_DESC = 5;
-    private static final int ANIM_TYPE_ROW = 6;
-    private static final int ANIM_TYPE_COLUMN = 7;
-    private static final int ANIM_TYPE_ROW_REVERSE = 8;
-    private static final int ANIM_TYPE_COLUMN_REVERSE = 9;
-    private static final int ANIM_TYPE_TOP_LEFT_CORNER = 10;
-    private static final int ANIM_TYPE_TOP_RIGHT_CORNER = 11;
-    private static final int ANIM_TYPE_BOTTOM_LEFT_CORNER = 12;
-    private static final int ANIM_TYPE_BOTTOM_RIGHT_CORNER = 13;
-    private static final int ANIM_TYPE_FROM_CENTER = 14;
-    private static final int ANIM_TYPE_TO_CENTER = 15;
 
     /**
      * Main render thread looper
@@ -75,8 +53,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private int mGestureStartX;
     private int mGestureStartY;
     private boolean mGestureTrail = false;
-    private int animCurrentIndex = ANIM_TYPE_ALL;
     private long lastSolvedTimestamp = 0;
+
+    private final TileAppearAnimator tileAppearAnimator = new TileAppearAnimator();
 
     public GameSurface(Context context) {
         super(context);
@@ -393,77 +372,20 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         mField.clear();
 
-        Random rnd = new Random();
-        int size = Game.getSize();
-        int animationType = animCurrentIndex++ % ANIM_TYPE_COUNT;
-        int shift = size / 26 + 1; // group tiles by 'shift' count
-        int delay;
-        for (int index = 0; index < size; index++) {
+        boolean animate = Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() &&
+                !mStatistics.isShown() && !mPauseOverlay.isShown();
+        for (int index = 0, size = Game.getSize(); index < size; index++) {
             int number = Game.getAt(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
-                if (Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() && !mStatistics.isShown() &&
-                        !mPauseOverlay.isShown()) {
-                    switch (animationType) {
-                        case ANIM_TYPE_INDEX_ASC:
-                            delay = index / shift;
-                            break;
-                        case ANIM_TYPE_INDEX_DESC:
-                            delay = (size - index) / shift;
-                            break;
-                        case ANIM_TYPE_RANDOM:
-                            delay = rnd.nextInt(10 + 10 * (shift - 1));
-                            break;
-                        case ANIM_TYPE_NUMBER_ASC:
-                            delay = number / shift;
-                            break;
-                        case ANIM_TYPE_NUMBER_DESC:
-                            delay = (size - number) / shift;
-                            break;
-                        case ANIM_TYPE_ROW:
-                            delay = index / Settings.gameWidth * ANIM_WINDOW_FRAMES;
-                            break;
-                        case ANIM_TYPE_COLUMN:
-                            delay = index % Settings.gameWidth * ANIM_WINDOW_FRAMES;
-                            break;
-                        case ANIM_TYPE_ROW_REVERSE:
-                            delay = (Settings.gameHeight - index / Settings.gameWidth) * ANIM_WINDOW_FRAMES;
-                            break;
-                        case ANIM_TYPE_COLUMN_REVERSE:
-                            delay = (Settings.gameWidth - index % Settings.gameWidth) * ANIM_WINDOW_FRAMES;
-                            break;
-                        case ANIM_TYPE_TOP_LEFT_CORNER:
-                            delay = fromPoint(0, 0, index);
-                            break;
-                        case ANIM_TYPE_TOP_RIGHT_CORNER:
-                            delay = fromPoint(Settings.gameWidth - 1, 0, index);
-                            break;
-                        case ANIM_TYPE_BOTTOM_LEFT_CORNER:
-                            delay = fromPoint(0, Settings.gameHeight - 1, index);
-                            break;
-                        case ANIM_TYPE_BOTTOM_RIGHT_CORNER:
-                            delay = fromPoint(Settings.gameWidth - 1, Settings.gameHeight - 1, index);
-                            break;
-                        case ANIM_TYPE_FROM_CENTER: {
-                            float x0 = Settings.gameWidth / 2f - .5f;
-                            float y0 = Settings.gameHeight / 2f - .5f;
-                            delay = fromPointF(x0, y0, index);
-                            break;
-                        }
-                        case ANIM_TYPE_TO_CENTER: {
-                            float x0 = Settings.gameWidth / 2f - .5f;
-                            float y0 = Settings.gameHeight / 2f - .5f;
-                            delay = (size - fromPointF(x0, y0, index)) / 2;
-                            break;
-                        }
-                        case ANIM_TYPE_ALL:
-                        default:
-                            delay = 0;
-                    }
-                    t.animateAppearance(delay * Constants.TILE_ANIM_FRAME_MULTIPLIER);
+                if (animate) {
+                    tileAppearAnimator.animateTile(t);
                 }
                 mField.addTile(t);
             }
+        }
+        if (animate) {
+            tileAppearAnimator.nextAnim();
         }
     }
 
@@ -482,19 +404,5 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 || mPauseOverlay.isShown()
                 || mStatistics.isShown();
         return !overlayVisible;
-    }
-
-    private static int fromPoint(int x0, int y0, int index) {
-        int x1 = index % Settings.gameWidth;
-        int y1 = index / Settings.gameWidth;
-        int distance = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
-        return (distance + 1) * ANIM_WINDOW_FRAMES;
-    }
-
-    private static int fromPointF(float x0, float y0, int index) {
-        int x1 = index % Settings.gameWidth;
-        int y1 = index / Settings.gameWidth;
-        int distance = (int) Math.floor(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)));
-        return (distance + 1) * ANIM_WINDOW_FRAMES;
     }
 }

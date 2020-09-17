@@ -132,6 +132,10 @@ public class Tile {
         }
     }
 
+    public int getNumber() {
+        return mNumber;
+    }
+
     public int getIndex() {
         return mIndex;
     }
