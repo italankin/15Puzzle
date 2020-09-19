@@ -1,16 +1,15 @@
-package com.italankin.fifteen.views;
+package com.italankin.fifteen.views.overlay;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.animation.DecelerateInterpolator;
 
 import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Settings;
+import com.italankin.fifteen.views.BaseView;
 
 /**
  * Вспомогательный класс для отображения оверлеев
@@ -18,32 +17,16 @@ import com.italankin.fifteen.Settings;
 public class FieldOverlay extends BaseView {
 
     private Paint mPaintBg;
-    private Paint mPaintText;
-
-    private Rect mRectBounds;
-
-    private String mCaption;
     private RectF mRectField;
 
     private ObjectAnimator mAlphaAnimator;
-    private float mAlpha = 0;
+    protected float mAlpha = 0;
 
-    public FieldOverlay(RectF field, String caption) {
+    public FieldOverlay(RectF field) {
         mRectField = field;
-        mCaption = caption;
         mPaintBg = new Paint();
         mPaintBg.setAntiAlias(Settings.antiAlias);
         mPaintBg.setColor(Colors.getOverlayColor());
-
-        mPaintText = new Paint();
-        mPaintText.setAntiAlias(Settings.antiAlias);
-        mPaintText.setColor(Colors.getOverlayTextColor());
-        mPaintText.setTypeface(Settings.typeface);
-        mPaintText.setTextAlign(Paint.Align.CENTER);
-        mPaintText.setTextSize(2.3f * Dimensions.interfaceFontSize);
-
-        mRectBounds = new Rect();
-        mPaintText.getTextBounds(mCaption, 0, mCaption.length(), mRectBounds);
 
         mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
         mAlphaAnimator.setInterpolator(new DecelerateInterpolator());
@@ -78,21 +61,13 @@ public class FieldOverlay extends BaseView {
             return;
         }
         mPaintBg.setAlpha((int) (Color.alpha(Colors.getOverlayColor()) * mAlpha));
-        mPaintText.setAlpha((int) (255 * mAlpha));
 
         canvas.drawRect(mRectField, mPaintBg);
-        canvas.drawText(mCaption,
-                Dimensions.fieldMarginLeft + Dimensions.fieldWidth / 2.0f,
-                Dimensions.fieldMarginTop + Dimensions.fieldHeight / 2.0f - mRectBounds.centerY(),
-                mPaintText);
     }
 
     @Override
     public void update() {
         mPaintBg.setColor(Colors.getOverlayColor());
-        mPaintText.setColor(Colors.getOverlayTextColor());
-
         mPaintBg.setAntiAlias(Settings.antiAlias);
-        mPaintText.setAntiAlias(Settings.antiAlias);
     }
 }

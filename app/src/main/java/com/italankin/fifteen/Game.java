@@ -20,6 +20,7 @@ public class Game {
     private boolean paused = false;
 
     private boolean peeking = false;
+    private boolean help = false;
 
     private Callback mCallback = null;
 
@@ -228,6 +229,14 @@ public class Game {
 
     public static void setPeeking(boolean peeking) {
         instance.peeking = peeking;
+    }
+
+    public static boolean isHelp() {
+        return instance.help;
+    }
+
+    public static void setHelp(boolean help) {
+        instance.help = help;
     }
 
     public static boolean isNotStarted() {

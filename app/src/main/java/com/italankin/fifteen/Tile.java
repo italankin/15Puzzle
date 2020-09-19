@@ -122,10 +122,10 @@ public class Tile {
 
         canvas.drawPath(mDrawPath, sPaintPath);
 
-        if (!Game.isPaused() && mTextScale > 0) {
+        if ((!Game.isPaused() || Game.isHelp()) && mTextScale > 0) {
             sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
             sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
-            if (Game.isNotStarted() || Game.isSolved() || !Settings.hardmode || Game.isPeeking()) {
+            if (Game.isNotStarted() || Game.isSolved() || !Settings.hardmode || Game.isPeeking() || Game.isHelp()) {
                 canvas.drawText(mDataText, mRectShape.centerX(),
                         mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
