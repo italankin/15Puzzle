@@ -24,6 +24,10 @@ See [downloads](/downloads/)
 
 If you have any questions, visit [how to play](/how-to-play/) section.
 
+## Report a bug, request a feature
+
+[Create issue](https://github.com/italankin/15Puzzle/issues/new) or send me an [email](mailto:devitalankin@gmail.com).
+
 ## License
 
 The source code of the app is licensed under MIT License.
