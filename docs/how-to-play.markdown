@@ -123,7 +123,7 @@ The table shows place, moves count, time spent and date of the solve.
 |Width|`3 - 8`|Width of the puzzle|
 |Height|`3 - 8`|Height of the puzzle|
 |Animation|`on`, `off`|Play animations on tiles moves, etc.|
-|Color theme|`day`, `night`|The overall color theme of the app|
+|Color theme|`day`, `night`, `system`|The overall color theme of the app. `system` will follow system dark mode settings|
 |Color|various colors|The color of tiles and interface|
 
 ### 6.2. Advanced
