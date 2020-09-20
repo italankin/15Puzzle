@@ -141,7 +141,7 @@ The table shows place, moves count, time spent and date of the solve.
 
 |Setting|Values|Description|
 |-|-|-|
-|Time&nbsp;format|`0:12.3`, `0.12.345`, `12.345`, `0:12`|Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)|
+|Time&nbsp;format|`0:12.3`, `0:12.345`, `12.345`, `0:12`|Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)|
 |Moves|`on`,<br>`after solve`, `off`|Show number of moves on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
 |Time|`on`,<br>`after solve`, `off`|Show elapsed time on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
 |TPS|`on`,<br>`after solve`, `off`|Show current [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
