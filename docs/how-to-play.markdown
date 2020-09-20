@@ -130,9 +130,17 @@ The table shows place, moves count, time spent and date of the solve.
 |Anti-alias|`on`, `off`|Smoother appearance of lines. Disabling can improve performance|
 |Multi-color|`off`, `rows`, `columns`, `fringe`, `solved`|See [multi-color](#7-multi-color)|
 |Delay|`on`, `off`|After solving a puzzle, there is a small delay before you can start a new game by clicking on a game field|
-|Ingame&nbsp;info|`off`, `moves`, `time`, `moves & time`|Show only selected types of info when the game starts|
-|Time&nbsp;format|`0:12.3`, `0.12.345`, `12.345`, `0:12`|Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)|
+|Ingame&nbsp;info||See [ingame-info](#621-ingame-info)|
 |Stats|`on`, `off`|See [statistics](#8-statistics)|
+
+### 6.2.1. Ingame info
+
+|Setting|Values|Description|
+|-|-|-|
+|Time&nbsp;format|`0:12.3`, `0.12.345`, `12.345`, `0:12`|Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)|
+|Moves|`on`,<br>`after solve`, `off`|Show number of moves on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
+|Time|`on`,<br>`after solve`, `off`|Show elapsed time on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
+|TPS|`on`,<br>`after solve`, `off`|Show current [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
 
 ## 7. Multi-color
 
