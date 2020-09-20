@@ -160,7 +160,7 @@ permalink: /ru/how-to-play/
 
 ## 8. Статистика
 
-Экран Статистики показывает различную информацию о текущей сессии, например [среднее](https://www.speedsolving.com/wiki/index.php/Average) время, ходы и [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second).
+Экран Статистики показывает различную информацию о текущей сессии, такую как [среднее](https://www.speedsolving.com/wiki/index.php/Average) время, ходы и [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second).
 
 <p align="center"><img src="/assets/stats.jpg" alt="Statistics" /></p>
 
