@@ -82,7 +82,7 @@ public class HardModeView extends BaseView {
     }
 
     public boolean onClick(int x, int y) {
-        if (mCallbacks != null && !Game.isNotStarted()) {
+        if (mCallbacks != null && !Game.isNotStarted() && !Game.isPaused()) {
             Button check = findButtonById(ID_CHECK);
             if (check.contains(x, y)) {
                 if (!mCallbacks.onCheckButtonClick()) {

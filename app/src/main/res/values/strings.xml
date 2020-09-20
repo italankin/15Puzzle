@@ -18,6 +18,9 @@
     <string name="info_pause">PAUSED</string>
     <string name="info_no_data">no data</string>
 
+    <string name="help_how_to_play">how to play</string>
+    <string name="help_how_to_play_url">https://15puzzle.app/how-to-play/</string>
+
     <string name="pref_width">Width</string>
     <string name="pref_height">Height</string>
     <string name="pref_color">Color</string>

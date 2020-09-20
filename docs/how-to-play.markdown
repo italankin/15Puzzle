@@ -61,6 +61,10 @@ Hover is more advanced (and faster) way to solve the puzzle. Start by pressing a
 
 There are 3 game types: `classic`, `snake` and `spiral`. The game mode can be changed in [Settings](#6-settings).
 
+You can always show the final position of the game by pressing name of game mode on the main screen:
+
+<p align="center"><img src="/assets/how-to-play.jpg" alt="How to play" /></p>
+
 ### 3.1. Classic
 
 Numbers arranged from left to right, top to bottom.

@@ -1,17 +1,18 @@
 package com.italankin.fifteen;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.italankin.fifteen.statistics.StatisticsManager;
-import com.italankin.fifteen.views.FieldOverlay;
 import com.italankin.fifteen.views.FieldView;
 import com.italankin.fifteen.views.HardModeView;
 import com.italankin.fifteen.views.InfoPanelView;
@@ -19,6 +20,8 @@ import com.italankin.fifteen.views.LeaderboardView;
 import com.italankin.fifteen.views.SettingsView;
 import com.italankin.fifteen.views.StatisticsView;
 import com.italankin.fifteen.views.TopPanelView;
+import com.italankin.fifteen.views.help.HelpOverlay;
+import com.italankin.fifteen.views.overlay.FieldTextOverlay;
 
 public class GameSurface extends SurfaceView implements TopPanelView.Callback, SurfaceHolder.Callback {
 
@@ -41,9 +44,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private SettingsView mSettings;
     private StatisticsView mStatistics;
     private LeaderboardView mLeaderboard;
-    private FieldOverlay mSolvedOverlay;
-    private FieldOverlay mPauseOverlay;
+    private FieldTextOverlay mSolvedOverlay;
+    private FieldTextOverlay mPauseOverlay;
     private HardModeView mHardModeView;
+    private HelpOverlay mHelpOverlay;
 
     private RectF mRectField = new RectF();
 
@@ -81,6 +85,20 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mTopPanel.setCallback(this);
 
         mInfoPanel = new InfoPanelView(mResources);
+        mInfoPanel.addCallback(() -> {
+            pauseGame();
+            Game.setHelp(true);
+            RectF window = new RectF(0, 0, Dimensions.surfaceWidth, Dimensions.surfaceHeight);
+            mHelpOverlay = new HelpOverlay(getResources(), tileAppearAnimator, window, mRectField);
+            mHelpOverlay.addCallback(() -> {
+                Resources res = getResources();
+                Intent intent = new Intent(Intent.ACTION_VIEW)
+                        .setData(Uri.parse(res.getString(R.string.help_how_to_play_url)));
+                Intent chooser = Intent.createChooser(intent, res.getString(R.string.help_how_to_play));
+                getContext().startActivity(chooser);
+            });
+            mHelpOverlay.show();
+        });
 
         mField = new FieldView(mRectField);
 
@@ -99,8 +117,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mLeaderboard.addCallback(() -> {
             updateViews();
         });
-        mSolvedOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_win));
-        mPauseOverlay = new FieldOverlay(mRectField, mResources.getString(R.string.info_pause));
+        mSolvedOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_win));
+        mPauseOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_pause));
         mStatistics = new StatisticsView(mResources);
 
         Game.setCallback(() -> {
@@ -202,6 +220,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     return true;
                 }
 
+                if (mHelpOverlay != null && mHelpOverlay.onClick(x, y) || hideHelpOverlay()) {
+                    return true;
+                }
+
                 if (Game.isPeeking()) {
                     Game.setPeeking(false);
                 }
@@ -224,6 +246,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 } else if (mTopPanel.onClick(x, y)) {
                     return true;
                 } else if (Settings.hardmode && mHardModeView.onClick(x, y)) {
+                    return true;
+                }
+
+                if (mInfoPanel.onClick(x, y)) {
                     return true;
                 }
 
@@ -281,6 +307,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     }
 
     public boolean onBackPressed() {
+        if (hideHelpOverlay()) {
+            return true;
+        }
         return mSettings.hide() || mLeaderboard.hide() || mStatistics.hide();
     }
 
@@ -304,7 +333,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
         mTopPanel.draw(canvas, elapsed);
         mInfoPanel.draw(canvas, elapsed);
-        mField.draw(canvas, elapsed);
+        boolean helpShown = mHelpOverlay != null && mHelpOverlay.isShown();
+        if (!helpShown) {
+            mField.draw(canvas, elapsed);
+        }
 
         if (Settings.hardmode) {
             mHardModeView.draw(canvas, elapsed);
@@ -320,7 +352,9 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             mSettings.draw(canvas, elapsed);
         } else if (mStatistics.isShown()) {
             mStatistics.draw(canvas, elapsed);
-        } else if (paused && !solved && mPauseOverlay.isShown()) {
+        } else if (mHelpOverlay != null && mHelpOverlay.isShown()) {
+            mHelpOverlay.draw(canvas, elapsed);
+        } else if (!helpShown && paused && !solved && mPauseOverlay.isShown()) {
             mPauseOverlay.draw(canvas, elapsed);
         }
 
@@ -350,6 +384,8 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         mSolvedOverlay.hide();
 
         Game.create(Settings.gameWidth, Settings.gameHeight);
+        Game.setPeeking(false);
+        Game.setHelp(mHelpOverlay != null && mHelpOverlay.isShown());
 
         if (SaveGameManager.hasSavedGame()) {
             SaveGameManager.SavedGame savedGame = SaveGameManager.getSavedGame();
@@ -402,7 +438,18 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                 || mSettings.isShown()
                 || mSolvedOverlay.isShown()
                 || mPauseOverlay.isShown()
-                || mStatistics.isShown();
+                || mStatistics.isShown()
+                || mHelpOverlay != null && mHelpOverlay.isShown();
         return !overlayVisible;
+    }
+
+    private boolean hideHelpOverlay() {
+        if (mHelpOverlay != null) {
+            Game.setHelp(false);
+            mHelpOverlay.hide();
+            mHelpOverlay = null;
+            return true;
+        }
+        return false;
     }
 }

@@ -14,26 +14,42 @@ import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tools;
 
+import java.util.Locale;
+
 public class InfoPanelView extends BaseView {
 
-    private Paint mPaintBg;
-    private Paint mPaintTextValue;
-    private Paint mPaintTextCaption;
+    private final Paint mPaintBg;
+    private final Paint mPaintTextValue;
+    private final Paint mPaintTextCaption;
+    private final Paint mPaintTextHelp;
 
-    private String[] mTextMode;
-    private String mTextMoves;
-    private String mTextTime;
-    private String mTextTps;
+    private final String[] mTextMode;
+    private final String mTextMoves;
+    private final String mTextTime;
+    private final String mTextTps;
 
-    private RectF mRectInfo;
+    private final RectF mRectInfo;
+    private final RectF mRectMode;
+    private final RectF mRectHelp;
+    private final Rect mRectModeTextBounds = new Rect();
 
-    private int mValueTextOffset;
+    private final int mCaptionTextOffset;
+    private final int mHelpTextOffset;
+
     private float firstRowY;
     private float secondRowY;
     private float thirdRowY;
-    private final int mCaptionTextOffset;
+    private float mModeTextX;
+    private float mModeTextY;
+    private Callbacks mCallbacks;
+    private String mGameMode;
 
     public InfoPanelView(Resources res) {
+        mTextMode = res.getStringArray(R.array.game_modes);
+        mTextMoves = res.getString(R.string.info_moves);
+        mTextTime = res.getString(R.string.info_time);
+        mTextTps = res.getString(R.string.info_tps);
+
         mPaintBg = new Paint();
         mPaintBg.setAntiAlias(Settings.antiAlias);
         mPaintBg.setColor(Colors.backgroundField);
@@ -41,7 +57,7 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue = new Paint();
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
         mPaintTextValue.setTypeface(Settings.typeface);
-        mPaintTextValue.setTextAlign(Paint.Align.CENTER);
+        mPaintTextValue.setTextAlign(Paint.Align.LEFT);
         mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.4f);
         mPaintTextValue.setColor(Colors.getInfoTextColor());
 
@@ -49,21 +65,28 @@ public class InfoPanelView extends BaseView {
         mPaintTextCaption.setTextSize(Dimensions.interfaceFontSize * 1.2f);
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
 
+        mPaintTextHelp = new Paint(mPaintTextCaption);
+        mPaintTextHelp.setColor(Colors.backgroundField);
+        mPaintTextHelp.setTextAlign(Paint.Align.CENTER);
+        mPaintTextHelp.setTextSize(Dimensions.interfaceFontSize);
+
         mRectInfo = new RectF(0.0f, Dimensions.infoBarMarginTop,
                 Dimensions.surfaceWidth, Dimensions.infoBarMarginTop + Dimensions.infoBarHeight);
+        mRectMode = new RectF(mRectInfo);
+        mRectMode.right = Dimensions.surfaceWidth * 0.5f;
+        float inset = mRectInfo.height() / 4.5f;
+        mRectMode.inset(inset, inset);
 
-        Rect r = new Rect();
-        mPaintTextValue.getTextBounds("A", 0, 1, r);
-        mValueTextOffset = r.centerY();
-        mPaintTextCaption.getTextBounds("A", 0, 1, r);
-        mCaptionTextOffset = r.centerY();
+        Rect tmp = new Rect();
+        mPaintTextCaption.getTextBounds("A", 0, 1, tmp);
+        mCaptionTextOffset = tmp.centerY();
+        mPaintTextHelp.getTextBounds("?", 0, 1, tmp);
+        mHelpTextOffset = tmp.centerY();
 
+        mRectHelp = new RectF(0f, 0f, Dimensions.interfaceFontSize * 1.1f, Dimensions.interfaceFontSize * 1.1f);
+
+        updateMode();
         updateRows();
-
-        mTextMode = res.getStringArray(R.array.game_modes);
-        mTextMoves = res.getString(R.string.info_moves);
-        mTextTime = res.getString(R.string.info_time);
-        mTextTps = res.getString(R.string.info_tps);
 
         mShow = true;
     }
@@ -76,10 +99,13 @@ public class InfoPanelView extends BaseView {
 
         canvas.drawRect(mRectInfo, mPaintBg);
 
-        canvas.drawText(
-                mTextMode[Settings.gameMode].toUpperCase() + (Settings.hardmode ? "*" : ""),
-                Dimensions.surfaceWidth * 0.25f, mRectInfo.centerY() - mValueTextOffset,
-                mPaintTextValue);
+        canvas.drawText(mGameMode, mModeTextX, mModeTextY, mPaintTextValue);
+
+        int alpha = mPaintTextValue.getAlpha();
+        mPaintTextValue.setAlpha(128);
+        canvas.drawCircle(mRectHelp.centerX(), mRectHelp.centerY(), mRectHelp.width() / 2, mPaintTextValue);
+        mPaintTextValue.setAlpha(alpha);
+        canvas.drawText("?", mRectHelp.centerX(), mRectHelp.centerY() - mHelpTextOffset, mPaintTextHelp);
 
         if (shouldShowInfo(Settings.ingameInfoMoves)) {
             prepareTitlePaint();
@@ -114,6 +140,10 @@ public class InfoPanelView extends BaseView {
         }
     }
 
+    private String getGameMode() {
+        return mTextMode[Settings.gameMode].toUpperCase(Locale.getDefault()) + (Settings.hardmode ? "*" : "");
+    }
+
     private void prepareTitlePaint() {
         mPaintTextCaption.setColor(Colors.getTileTextColor());
         mPaintTextCaption.setTextAlign(Paint.Align.LEFT);
@@ -129,11 +159,27 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
         mPaintTextCaption.setAntiAlias(Settings.antiAlias);
         mPaintBg.setAntiAlias(Settings.antiAlias);
+        mPaintTextHelp.setAntiAlias(Settings.antiAlias);
 
         mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintTextCaption.setColor(Colors.getInfoTextColor());
 
+        updateMode();
         updateRows();
+    }
+
+    public boolean onClick(float x, float y) {
+        if (mRectMode.contains(x, y)) {
+            if (mCallbacks != null) {
+                mCallbacks.onModeClick();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void addCallback(Callbacks callbacks) {
+        mCallbacks = callbacks;
     }
 
     private void updateRows() {
@@ -147,7 +193,27 @@ public class InfoPanelView extends BaseView {
         }
     }
 
+    private void updateMode() {
+        mGameMode = getGameMode();
+        mPaintTextValue.getTextBounds(mGameMode, 0, mGameMode.length(), mRectModeTextBounds);
+
+        float contentWidth = mRectModeTextBounds.width() + mRectHelp.width() + Dimensions.spacing * 1.5f;
+        float margin = (mRectMode.width() - contentWidth) / 2;
+
+        mModeTextX = mRectMode.left + margin;
+        mModeTextY = mRectMode.centerY() - mRectModeTextBounds.centerY();
+
+        mRectHelp.offsetTo(
+                mRectMode.right - mRectHelp.width() - margin,
+                mRectInfo.centerY() - mRectHelp.height() / 2);
+    }
+
     private boolean shouldShowInfo(int info) {
         return info == Constants.INGAME_INFO_ON || info == Constants.INGAME_INFO_AFTER_SOLVE && Game.isSolved();
+    }
+
+    public interface Callbacks {
+
+        void onModeClick();
     }
 }

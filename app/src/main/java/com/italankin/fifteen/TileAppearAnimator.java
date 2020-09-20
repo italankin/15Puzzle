@@ -5,7 +5,6 @@ import java.util.Random;
 public class TileAppearAnimator {
 
     private static final int ANIM_WINDOW_FRAMES = 5;
-    private static final int ANIM_TYPE_COUNT = 16;
 
     public static final int ANIM_TYPE_ALL = 0;
     public static final int ANIM_TYPE_INDEX_ASC = 1;
@@ -23,10 +22,30 @@ public class TileAppearAnimator {
     public static final int ANIM_TYPE_BOTTOM_RIGHT_CORNER = 13;
     public static final int ANIM_TYPE_FROM_CENTER = 14;
     public static final int ANIM_TYPE_TO_CENTER = 15;
+    public static final int ANIM_TYPE_NUMBER_ASC_NO_GROUP = 16;
+
+    private static final int[] ANIM_TYPES = {
+            ANIM_TYPE_ALL,
+            ANIM_TYPE_INDEX_ASC,
+            ANIM_TYPE_INDEX_DESC,
+            ANIM_TYPE_RANDOM,
+            ANIM_TYPE_NUMBER_ASC,
+            ANIM_TYPE_NUMBER_DESC,
+            ANIM_TYPE_ROW,
+            ANIM_TYPE_COLUMN,
+            ANIM_TYPE_ROW_REVERSE,
+            ANIM_TYPE_COLUMN_REVERSE,
+            ANIM_TYPE_TOP_LEFT_CORNER,
+            ANIM_TYPE_TOP_RIGHT_CORNER,
+            ANIM_TYPE_BOTTOM_LEFT_CORNER,
+            ANIM_TYPE_BOTTOM_RIGHT_CORNER,
+            ANIM_TYPE_FROM_CENTER,
+            ANIM_TYPE_TO_CENTER
+    };
 
     private final Random rnd = new Random();
-    private int animCurrentIndex = ANIM_TYPE_ALL;
-    private int animationType = ANIM_TYPE_ALL;
+    private int animCurrentIndex = 0;
+    private int animationType = ANIM_TYPES[0];
 
     public void animateTile(Tile t) {
         animateTile(t, animationType);
@@ -50,6 +69,9 @@ public class TileAppearAnimator {
                 break;
             case ANIM_TYPE_NUMBER_ASC:
                 delay = number / shift;
+                break;
+            case ANIM_TYPE_NUMBER_ASC_NO_GROUP:
+                delay = number * ANIM_WINDOW_FRAMES;
                 break;
             case ANIM_TYPE_NUMBER_DESC:
                 delay = (size - number) / shift;
@@ -98,7 +120,7 @@ public class TileAppearAnimator {
     }
 
     public void nextAnim() {
-        animationType = animCurrentIndex++ % ANIM_TYPE_COUNT;
+        animationType = ANIM_TYPES[++animCurrentIndex % ANIM_TYPES.length];
     }
 
     private static int fromPoint(int x0, int y0, int index) {
