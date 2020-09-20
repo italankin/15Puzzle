@@ -1,11 +1,13 @@
 package com.italankin.fifteen;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -87,7 +89,14 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             pauseGame();
             Game.setHelp(true);
             RectF window = new RectF(0, 0, Dimensions.surfaceWidth, Dimensions.surfaceHeight);
-            mHelpOverlay = new HelpOverlay(tileAppearAnimator, window, mRectField);
+            mHelpOverlay = new HelpOverlay(getResources(), tileAppearAnimator, window, mRectField);
+            mHelpOverlay.addCallback(() -> {
+                Resources res = getResources();
+                Intent intent = new Intent(Intent.ACTION_VIEW)
+                        .setData(Uri.parse(res.getString(R.string.help_how_to_play_url)));
+                Intent chooser = Intent.createChooser(intent, res.getString(R.string.help_how_to_play));
+                getContext().startActivity(chooser);
+            });
             mHelpOverlay.show();
         });
 
@@ -211,7 +220,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
                     return true;
                 }
 
-                if (hideHelpOverlay()) {
+                if (mHelpOverlay != null && mHelpOverlay.onClick(x, y) || hideHelpOverlay()) {
                     return true;
                 }
 
