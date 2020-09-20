@@ -24,6 +24,7 @@ public class HelpOverlay extends FieldOverlay {
     private final FieldView fieldView;
     private final String mTextHelp;
     private final RectF mRectHelp;
+    private float mHelpTextOffset;
 
     private Callback callback;
 
@@ -46,6 +47,9 @@ public class HelpOverlay extends FieldOverlay {
         float whitespaceHeight = Dimensions.surfaceHeight - bottom;
         float top = whitespaceHeight / 2 - mRectHelp.height() / 2 + bottom;
         mRectHelp.offsetTo(Dimensions.surfaceWidth / 2 - mRectHelp.width() / 2, top);
+        mHelpTextOffset = mRectHelp.bottom;
+        float inset = -Dimensions.spacing * 2;
+        mRectHelp.inset(inset, inset);
 
         List<Integer> numbers = Generator.generate(Settings.gameWidth, Settings.gameHeight, Settings.gameMode);
         for (int i = 0, size = numbers.size(); i < size; i++) {
@@ -77,7 +81,7 @@ public class HelpOverlay extends FieldOverlay {
         }
         super.draw(canvas, elapsedTime);
         fieldView.draw(canvas, elapsedTime);
-        canvas.drawText(mTextHelp, mRectHelp.centerX(), mRectHelp.bottom, mPaintText);
+        canvas.drawText(mTextHelp, mRectHelp.centerX(), mHelpTextOffset, mPaintText);
     }
 
     @Override
