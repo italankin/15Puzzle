@@ -19,7 +19,7 @@
     <string name="info_no_data">нет данных</string>
 
     <string name="help_how_to_play">помощь</string>
-    <string name="help_how_to_play_url">https://15puzzle.app/how-to-play/</string>
+    <string name="help_how_to_play_url">https://15puzzle.app/ru/how-to-play/</string>
 
     <string name="pref_width">Ширина</string>
     <string name="pref_height">Высота</string>
