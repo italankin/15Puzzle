@@ -31,14 +31,18 @@ public class InfoPanelView extends BaseView {
     private final RectF mRectInfo;
     private final RectF mRectMode;
     private final RectF mRectHelp;
+    private final Rect mRectModeTextBounds = new Rect();
 
-    private int mValueTextOffset;
+    private final int mCaptionTextOffset;
+    private final int mHelpTextOffset;
+
     private float firstRowY;
     private float secondRowY;
     private float thirdRowY;
-    private final int mCaptionTextOffset;
-    private final int mHelpTextOffset;
+    private float mModeTextX;
+    private float mModeTextY;
     private Callbacks mCallbacks;
+    private String mGameMode;
 
     public InfoPanelView(Resources res) {
         mTextMode = res.getStringArray(R.array.game_modes);
@@ -53,7 +57,7 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue = new Paint();
         mPaintTextValue.setAntiAlias(Settings.antiAlias);
         mPaintTextValue.setTypeface(Settings.typeface);
-        mPaintTextValue.setTextAlign(Paint.Align.RIGHT);
+        mPaintTextValue.setTextAlign(Paint.Align.LEFT);
         mPaintTextValue.setTextSize(Dimensions.interfaceFontSize * 1.4f);
         mPaintTextValue.setColor(Colors.getInfoTextColor());
 
@@ -70,21 +74,18 @@ public class InfoPanelView extends BaseView {
                 Dimensions.surfaceWidth, Dimensions.infoBarMarginTop + Dimensions.infoBarHeight);
         mRectMode = new RectF(mRectInfo);
         mRectMode.right = Dimensions.surfaceWidth * 0.5f;
-
-        mRectHelp = new RectF(0f, 0f,
-                Dimensions.interfaceFontSize * 1.1f, Dimensions.interfaceFontSize * 1.1f);
-        mRectHelp.offsetTo(Dimensions.surfaceWidth * 0.45f - mRectHelp.width(), mRectInfo.centerY() - mRectHelp.height() / 2);
+        float inset = mRectInfo.height() / 4.5f;
+        mRectMode.inset(inset, inset);
 
         Rect tmp = new Rect();
-        mPaintTextValue.getTextBounds(getGameMode(), 0, 1, tmp);
-        mValueTextOffset = tmp.centerY();
-        float inset = (float) tmp.width() / 2 - mValueTextOffset;
-        mRectMode.inset(inset, inset);
         mPaintTextCaption.getTextBounds("A", 0, 1, tmp);
         mCaptionTextOffset = tmp.centerY();
         mPaintTextHelp.getTextBounds("?", 0, 1, tmp);
         mHelpTextOffset = tmp.centerY();
 
+        mRectHelp = new RectF(0f, 0f, Dimensions.interfaceFontSize * 1.1f, Dimensions.interfaceFontSize * 1.1f);
+
+        updateMode();
         updateRows();
 
         mShow = true;
@@ -98,8 +99,7 @@ public class InfoPanelView extends BaseView {
 
         canvas.drawRect(mRectInfo, mPaintBg);
 
-        canvas.drawText(getGameMode(), mRectHelp.left - Dimensions.spacing, mRectInfo.centerY() - mValueTextOffset,
-                mPaintTextValue);
+        canvas.drawText(mGameMode, mModeTextX, mModeTextY, mPaintTextValue);
 
         int alpha = mPaintTextValue.getAlpha();
         mPaintTextValue.setAlpha(128);
@@ -164,6 +164,7 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintTextCaption.setColor(Colors.getInfoTextColor());
 
+        updateMode();
         updateRows();
     }
 
@@ -190,6 +191,21 @@ public class InfoPanelView extends BaseView {
             secondRowY = mRectInfo.top + mRectInfo.height() * 0.5f - mCaptionTextOffset;
             thirdRowY = mRectInfo.top + mRectInfo.height() * 0.8f - mCaptionTextOffset;
         }
+    }
+
+    private void updateMode() {
+        mGameMode = getGameMode();
+        mPaintTextValue.getTextBounds(mGameMode, 0, mGameMode.length(), mRectModeTextBounds);
+
+        float contentWidth = mRectModeTextBounds.width() + mRectHelp.width() + Dimensions.spacing * 1.5f;
+        float margin = (mRectMode.width() - contentWidth) / 2;
+
+        mModeTextX = mRectMode.left + margin;
+        mModeTextY = mRectMode.centerY() - mRectModeTextBounds.centerY();
+
+        mRectHelp.offsetTo(
+                mRectMode.right - mRectHelp.width() - margin,
+                mRectInfo.centerY() - mRectHelp.height() / 2);
     }
 
     private boolean shouldShowInfo(int info) {
