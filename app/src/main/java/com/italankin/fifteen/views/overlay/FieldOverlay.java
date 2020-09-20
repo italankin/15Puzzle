@@ -40,6 +40,8 @@ public class FieldOverlay extends BaseView {
         if (Settings.animations) {
             mAlphaAnimator.setDuration(Settings.screenAnimDuration);
             mAlphaAnimator.start();
+        } else {
+            mAlpha = 1;
         }
         return (mShow = true);
     }
