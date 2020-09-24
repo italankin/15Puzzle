@@ -426,7 +426,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     }
 
     private void pauseGame() {
-        Game.setPaused(Game.getMoves() > 0);
+        Game.setPaused(!Game.isSolved() && Game.getMoves() > 0);
         if (Game.isPaused()) {
             mPauseOverlay.show();
         }
