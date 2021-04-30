@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.italankin.fifteen.export.ExportCallback;
 import com.italankin.fifteen.statistics.StatisticsManager;
 import com.italankin.fifteen.views.FieldView;
 import com.italankin.fifteen.views.HardModeView;
@@ -35,6 +36,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
      */
     private GameManager mGameLoopThread;
     private DBHelper dbHelper;
+    private ExportCallback exportCallback;
 
     private Resources mResources;
 
@@ -61,10 +63,12 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
     private final TileAppearAnimator tileAppearAnimator = new TileAppearAnimator();
 
-    public GameSurface(Context context) {
+    public GameSurface(Context context, ExportCallback exportCallback, DBHelper dbHelper) {
         super(context);
 
-        dbHelper = new DBHelper(context);
+        this.dbHelper = dbHelper;
+        this.exportCallback = exportCallback;
+
         mResources = getResources();
 
         getHolder().addCallback(this);
@@ -114,8 +118,16 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             updateViews();
         });
         mLeaderboard = new LeaderboardView(dbHelper, getResources());
-        mLeaderboard.addCallback(() -> {
-            updateViews();
+        mLeaderboard.addCallback(new LeaderboardView.Callbacks() {
+            @Override
+            public void onChanged() {
+                updateViews();
+            }
+
+            @Override
+            public void onExportClicked() {
+                exportCallback.export();
+            }
         });
         mSolvedOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_win));
         mPauseOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_pause));

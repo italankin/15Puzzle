@@ -54,6 +54,17 @@
     <string name="settings_page_basic">basic</string>
     <string name="settings_page_advanced">advanced</string>
 
+    <string name="export">export</string>
+    <string name="export_width">width</string>
+    <string name="export_height">height</string>
+    <string name="export_type">type</string>
+    <string name="export_moves">moves</string>
+    <string name="export_time">time</string>
+    <string name="export_hard">hard mode</string>
+    <string name="export_date">date</string>
+    <string name="export_success">Exported</string>
+    <string name="export_failure">Error</string>
+
     <string name="back">back</string>
 
     <string-array name="toggle">

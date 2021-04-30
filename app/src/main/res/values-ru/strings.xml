@@ -49,6 +49,17 @@
     <string name="settings_page_basic">базовые</string>
     <string name="settings_page_advanced">дополнительные</string>
 
+    <string name="export">экспорт</string>
+    <string name="export_width">ширина</string>
+    <string name="export_height">высота</string>
+    <string name="export_type">тип</string>
+    <string name="export_moves">ходы</string>
+    <string name="export_time">время</string>
+    <string name="export_hard">сложный режим</string>
+    <string name="export_date">дата</string>
+    <string name="export_success">Сохранено</string>
+    <string name="export_failure">Ошибка</string>
+
     <string name="back">назад</string>
 
     <string-array name="toggle">

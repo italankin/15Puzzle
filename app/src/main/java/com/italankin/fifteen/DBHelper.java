@@ -57,27 +57,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void delete(SQLiteDatabase db, int mode, int width, int height, int hardmode) {
-        String selection = KEY_MODE + "=" + mode + " AND " +
-                KEY_WIDTH + "=" + width + " AND " +
-                KEY_HEIGHT + "=" + height + " AND " +
-                KEY_BLINDMODE + "=" + hardmode;
-        String limit = "LIMIT -1 OFFSET 10";
-
-        String lastByTime = "SELECT id FROM (SELECT id FROM " + KEY_TABLE + " WHERE " + selection +
-                " ORDER BY " + KEY_TIME + " ASC " + limit + ")";
-        String lastByMoves = "SELECT id FROM (SELECT id FROM " + KEY_TABLE + " WHERE " + selection +
-                " ORDER BY " + KEY_MOVES + " ASC " + limit + ")";
-
-        // delete only those records, which are not part of any top 10
-        String sql = "DELETE FROM " + KEY_TABLE + " WHERE " +
-                KEY_ID + " IN (" + lastByTime + " INTERSECT " + lastByMoves + ")";
-
-        Logger.d("execute query=%s", sql);
-
-        db.execSQL(sql);
-    }
-
     public Cursor query(int mode, int width, int height, int hardmode, int sort) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -98,9 +77,23 @@ public class DBHelper extends SQLiteOpenHelper {
         String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " +
                 ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
 
-        delete(db, mode, width, height, hardmode);
-
         return db.query(KEY_TABLE, columns, selection, null, null, null, orderBy, limit);
+    }
+
+    public Cursor queryAll() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String[] columns = {
+                KEY_MODE,
+                KEY_WIDTH,
+                KEY_HEIGHT,
+                KEY_MOVES,
+                KEY_TIME,
+                KEY_BLINDMODE,
+                KEY_TIMESTAMP
+        };
+
+        return db.query(KEY_TABLE, columns, null, null, null, null, null);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
