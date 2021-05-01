@@ -16,12 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class FieldView extends BaseView {
 
     private final Paint mPaintField;
-
-    /**
-     * Массив элементов {@link Tile}
-     */
     private final CopyOnWriteArrayList<Tile> mData;
-
     private final RectF mRectField;
 
     public FieldView(RectF rect) {
