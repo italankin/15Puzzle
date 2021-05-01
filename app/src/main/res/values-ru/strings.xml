@@ -57,6 +57,7 @@
     <string name="export_time">время</string>
     <string name="export_hard">сложный режим</string>
     <string name="export_date">дата</string>
+    <string name="export_tps">tps</string>
     <string name="export_success">Сохранено</string>
     <string name="export_failure">Ошибка</string>
 
