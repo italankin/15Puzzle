@@ -207,17 +207,13 @@ public class LeaderboardView extends BaseView {
             int indexTimestamp = cursor.getColumnIndex(DBHelper.KEY_TIMESTAMP);
 
             do {
-                TableItem item = new TableItem();
-
-                item.id = Integer.toString(cursor.getPosition() + 1);
-                item.moves = Integer.toString(cursor.getInt(indexMoves));
+                String id = Integer.toString(cursor.getPosition() + 1);
+                String moves = Integer.toString(cursor.getInt(indexMoves));
                 int timeValue = cursor.getInt(indexTime);
-                item.time = Tools.timeToString(Settings.timeFormat, timeValue);
-
+                String time = Tools.timeToString(Settings.timeFormat, timeValue);
                 Date d = new Date(cursor.getLong(indexTimestamp));
-                item.timestamp = Settings.dateFormat.format(d);
-
-                mTableItems.add(item);
+                String timestamp = Settings.dateFormat.format(d);
+                mTableItems.add(new TableItem(id, moves, time, timestamp));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -310,10 +306,17 @@ public class LeaderboardView extends BaseView {
 
     private static class TableItem {
 
-        String id;
-        String moves;
-        String time;
-        String timestamp;
+        final String id;
+        final String moves;
+        final String time;
+        final String timestamp;
+
+        TableItem(String id, String moves, String time, String timestamp) {
+            this.id = id;
+            this.moves = moves;
+            this.time = time;
+            this.timestamp = timestamp;
+        }
     }
 
     public void addCallback(Callbacks callbacks) {
