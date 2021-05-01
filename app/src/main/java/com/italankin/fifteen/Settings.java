@@ -15,7 +15,7 @@ public class Settings {
     private static final String KEY_GAME_TILE_COLOR = "tile_color";
     private static final String KEY_GAME_BG_COLOR = "bg_color";
     private static final String KEY_GAME_TYPE = "mode";
-    private static final String KEY_GAME_MODE = "blind";
+    private static final String KEY_GAME_MODE = "hardmode";
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
     private static final String KEY_MULTI_COLOR = "multi_color";
