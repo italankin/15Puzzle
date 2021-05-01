@@ -113,6 +113,24 @@ The table shows place, moves count, time spent and date of the solve.
 
 <p align="center"><img src="/assets/records.jpg" alt="Records" /></p>
 
+### 5.1. Export
+
+Records can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format by pressing `export` button.
+
+The exported file contains the following information:
+
+|type|hard mode|width|height|time|moves|date|
+|-|-|-|-|-|-|-|
+|[game type](#3-game-types)|`0` for easy mode, `1` for [hard mode](#42-hard)|width of the puzzle|height of the puzzle|time in seconds (with milliseconds)|count of moves|date of the record|
+
+For example:
+
+```
+type;hard mode;width;height;time;moves;date
+classic;0;4;4;40.619;127;5/1/21
+classic;0;4;4;29.906;128;5/1/21
+```
+
 ## 6. Settings
 
 ### 6.1. Basic
