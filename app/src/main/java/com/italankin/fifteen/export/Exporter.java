@@ -4,6 +4,8 @@ import android.net.Uri;
 
 public interface Exporter {
 
+    char DELIMITER = ';';
+
     void export(Uri uri, Callback callback);
 
     interface Callback {

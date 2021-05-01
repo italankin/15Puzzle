@@ -2,5 +2,7 @@ package com.italankin.fifteen.export;
 
 public interface ExportCallback {
 
-    void export();
+    void exportRecords();
+
+    void exportSession();
 }

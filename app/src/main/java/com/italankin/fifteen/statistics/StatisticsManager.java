@@ -45,6 +45,10 @@ public class StatisticsManager {
         return new Statistics(entries.size(), single, ao5, ao12, ao50, ao100, session);
     }
 
+    public Map<Key, List<Entry>> getAll() {
+        return Collections.unmodifiableMap(records);
+    }
+
     public void clear(int width, int height, int type, boolean hard) {
         Key key = new Key(width, height, type, hard);
         records.remove(key);
@@ -123,12 +127,12 @@ public class StatisticsManager {
         return total / entries.size();
     }
 
-    private static class Key {
+    public static class Key {
 
-        final int width;
-        final int height;
-        final int type;
-        final boolean hard;
+        public final int width;
+        public final int height;
+        public final int type;
+        public final boolean hard;
 
         private Key(int width, int height, int type, boolean hard) {
             this.width = width;
@@ -168,7 +172,7 @@ public class StatisticsManager {
         }
     }
 
-    private static class Entry {
+    public static class Entry {
 
         static final Comparator<Entry> BY_TIME = (lhs, rhs) -> {
             return Long.compare(lhs.time, rhs.time);
@@ -180,9 +184,9 @@ public class StatisticsManager {
             return Float.compare(lhs.tps, rhs.tps);
         };
 
-        final long time;
-        final int moves;
-        final float tps;
+        public final long time;
+        public final int moves;
+        public final float tps;
 
         private Entry(long time, int moves) {
             this.time = time;

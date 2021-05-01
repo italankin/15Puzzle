@@ -62,6 +62,7 @@
     <string name="export_time">time</string>
     <string name="export_hard">hard mode</string>
     <string name="export_date">date</string>
+    <string name="export_tps">tps</string>
     <string name="export_success">Exported</string>
     <string name="export_failure">Error</string>
 

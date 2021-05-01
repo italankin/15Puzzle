@@ -115,7 +115,7 @@ public class RecordsExporter implements Exporter {
                     handler.post(callback::onExportSuccess);
                 }
             } catch (Exception e) {
-                Logger.e(e, "ExportTask error:");
+                Logger.e(e, "RecordsExporter error:");
                 handler.post(callback::onExportError);
             }
         }

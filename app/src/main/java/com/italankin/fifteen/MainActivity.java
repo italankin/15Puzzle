@@ -9,13 +9,17 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.italankin.fifteen.export.ExportCallback;
+import com.italankin.fifteen.export.Exporter;
 import com.italankin.fifteen.export.RecordsExporter;
+import com.italankin.fifteen.export.SessionExporter;
 
-public class MainActivity extends Activity implements ExportCallback {
+public class MainActivity extends Activity implements ExportCallback, Exporter.Callback {
 
-    private static final int REQUEST_CODE_CREATE_DOCUMENT = 1;
+    private static final int REQUEST_CODE_CREATE_DOC_RECORDS = 1;
+    private static final int REQUEST_CODE_CREATE_DOC_SESSION = 2;
 
-    private RecordsExporter mExporter;
+    private RecordsExporter mRecordsExporter;
+    private SessionExporter mSessionExporter;
     private DBHelper mDbHelper;
     private GameSurface mGameView;
 
@@ -25,7 +29,8 @@ public class MainActivity extends Activity implements ExportCallback {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Settings.prefs = Settings.getPreferences(this);
         mDbHelper = new DBHelper(this);
-        mExporter = new RecordsExporter(this, mDbHelper);
+        mRecordsExporter = new RecordsExporter(this, mDbHelper);
+        mSessionExporter = new SessionExporter(this);
     }
 
     @Override
@@ -57,10 +62,17 @@ public class MainActivity extends Activity implements ExportCallback {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_CREATE_DOCUMENT && resultCode == RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
             if (uri != null) {
-                export(uri);
+                switch (requestCode) {
+                    case REQUEST_CODE_CREATE_DOC_RECORDS:
+                        mRecordsExporter.export(uri, this);
+                        break;
+                    case REQUEST_CODE_CREATE_DOC_SESSION:
+                        mSessionExporter.export(uri, this);
+                        break;
+                }
             }
         }
     }
@@ -73,25 +85,30 @@ public class MainActivity extends Activity implements ExportCallback {
     }
 
     @Override
-    public void export() {
+    public void exportRecords() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/csv");
         intent.putExtra(Intent.EXTRA_TITLE, RecordsExporter.DEFAULT_FILENAME);
-        startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
+        startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_RECORDS);
     }
 
-    private void export(Uri uri) {
-        mExporter.export(uri, new RecordsExporter.Callback() {
-            @Override
-            public void onExportSuccess() {
-                Toast.makeText(MainActivity.this, R.string.export_success, Toast.LENGTH_SHORT).show();
-            }
+    @Override
+    public void exportSession() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        intent.putExtra(Intent.EXTRA_TITLE, SessionExporter.defaultFilename());
+        startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_SESSION);
+    }
 
-            @Override
-            public void onExportError() {
-                Toast.makeText(MainActivity.this, R.string.export_failure, Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    public void onExportSuccess() {
+        Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onExportError() {
+        Toast.makeText(this, R.string.export_failure, Toast.LENGTH_SHORT).show();
     }
 }

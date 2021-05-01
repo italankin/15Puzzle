@@ -44,6 +44,9 @@ public class StatisticsView extends BaseView {
     private final String mTextSessionAvg;
     private RectF mRectSessionAvg;
 
+    private final String mTextExport;
+    private final RectF mRectExport;
+
     private final String mTextBack;
     private final RectF mRectBack;
 
@@ -64,11 +67,13 @@ public class StatisticsView extends BaseView {
             Dimensions.surfaceWidth * 0.77f
     };
 
+    private Callbacks callbacks;
+
     public StatisticsView(Resources res) {
         mResources = res;
 
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.08f);
-        int topMargin = (int) (Dimensions.surfaceHeight * 0.12f);
+        int topMargin = (int) (Dimensions.surfaceHeight * 0.08f);
         int padding = -lineSpacing / 4;
         float textSize = Dimensions.menuFontSize * .7f;
 
@@ -97,6 +102,7 @@ public class StatisticsView extends BaseView {
         mPaintControls.setTextAlign(Paint.Align.CENTER);
 
         mTextBack = res.getString(R.string.back);
+        mTextExport = res.getString(R.string.export);
         mTextSingle = res.getString(R.string.stats_single);
         mTextAo5 = res.getString(R.string.stats_ao5);
         mTextAo12 = res.getString(R.string.stats_ao12);
@@ -117,11 +123,22 @@ public class StatisticsView extends BaseView {
         mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing - textHeight,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing);
         mRectBack.inset(0, padding);
+
+        mRectExport = new RectF(0, mRectBack.top - textHeight - lineSpacing / 2f,
+                Dimensions.surfaceWidth, mRectBack.top - lineSpacing / 2f);
+        mRectExport.inset(0, padding);
+    }
+
+    public void addCallbacks(Callbacks callbacks) {
+        this.callbacks = callbacks;
     }
 
     public void onClick(int x, int y) {
         if (mRectBack.contains(x, y)) {
             hide();
+        }
+        if (mRectExport.contains(x, y) && callbacks != null) {
+            callbacks.onExportClicked();
         }
     }
 
@@ -143,6 +160,8 @@ public class StatisticsView extends BaseView {
         drawStats(canvas, textYOffset);
         canvas.drawText(mTextBack, mRectBack.centerX(),
                 mRectBack.bottom - textYOffset, mPaintControls);
+        canvas.drawText(mTextExport, mRectExport.centerX(),
+                mRectExport.bottom - textYOffset, mPaintControls);
     }
 
     @Override
@@ -241,5 +260,9 @@ public class StatisticsView extends BaseView {
 
     private String formatTps(Statistics.Avg avg) {
         return avg == null ? mTextNa : Tools.formatFloat(avg.tps);
+    }
+
+    public interface Callbacks {
+        void onExportClicked();
     }
 }
