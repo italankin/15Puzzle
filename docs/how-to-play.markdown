@@ -15,7 +15,7 @@ permalink: /how-to-play/
 
 ## 1. Basic rules
 
-A classic 15 puzzle uses tiles with 15 numbers written on each and one empty slot. Tiles can be moved either vertically or horizontally if they stand next to empty space.
+A classic 15 puzzle uses tiles with 15 numbers written on each and one empty slot. Tiles can be moved either vertically or horizontally, if they stand next to empty space.
 
 The goal of the game is to rearrange numbers on field into order.
 
@@ -29,7 +29,7 @@ So, to solve the puzzle we must arrange them in order:
 
 There are many ways to reach the final position, one of them is solve puzzle row by row.
 
-To start, we place number `1` on its place, then number `2`, then `3` and so on. For example, first row can be done by these moves:
+To start, we place number `1` on its place, then number `2`, then `3` and so on. For example, first row can be done this way:
 
 <p align="center"><img src="/assets/first-row.gif" alt="First row solve" /></p>
 
@@ -59,9 +59,9 @@ Hover is more advanced (and faster) way to solve the puzzle. Start by pressing a
 
 ## 3. Game types
 
-There are 3 game types: `classic`, `snake` and `spiral`. The game mode can be changed in [Settings](#6-settings).
+There are 3 game types: `classic`, `snake` and `spiral`. The game type can be changed in [Settings](#6-settings).
 
-You can always show the final position of the game by pressing name of game mode on the main screen:
+You can always view the final position of the game by pressing ❓ on the main screen:
 
 <p align="center"><img src="/assets/how-to-play.jpg" alt="How to play" /></p>
 
@@ -85,7 +85,7 @@ Start at top left corner, move right to the edge, then move from top to bottom, 
 
 ## 4. Game modes
 
-There are 2 types of modes: `easy` and `hard`. It can be changed in [advanced settings](#62-advanced).
+There are 2 modes: `easy` and `hard`. It can be changed in [advanced settings](#62-advanced).
 
 ### 4.1. Easy
 
@@ -93,13 +93,13 @@ The default mode you start with.
 
 ### 4.2. Hard
 
-In a hard mode the puzzle must be solved blindly - the player can see the numbers only on first move. After the first move is done, numbers disappear from field.
+In a hard mode the puzzle must be solved blindly - the player can see the numbers only the on first move. If any move is done, numbers disappear from field.
 
 To solve the puzzle, player must arrange numbers in their order, and then hit `check` button to check if they solved puzzle correctly.
 
 <p align="center"><img src="/assets/hard-check.gif" alt="Hard mode check" /></p>
 
-If you find intimidating playing the hard mode, `peek` button to the rescue. Press and hold the button to show numbers on tiles.
+If you find intimidating playing the hard mode, `peek` button comes to the rescue. Press and hold the button to show numbers on tiles.
 
 <p align="center"><img src="/assets/hard-peek.gif" alt="Hard mode peek" /></p>
 
