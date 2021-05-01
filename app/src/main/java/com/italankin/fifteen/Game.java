@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class Game {
 
-    private static Game instance = new Game();
+    private static final Game instance = new Game();
     private int width;
     private int height;
     private List<Integer> grid = new ArrayList<>();

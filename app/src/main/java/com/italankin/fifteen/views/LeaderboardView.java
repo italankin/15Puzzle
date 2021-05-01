@@ -25,43 +25,43 @@ public class LeaderboardView extends BaseView {
     private final Paint mPaintTable;
     private final Paint mPaintControls;
 
-    private String mTextWidth;
-    private String mTextHeight;
-    private String mTextMode;
-    private String[] mTextModeValue;
-    private String mTextType;
-    private String[] mTextTypeValue;
-    private String mTextSort;
-    private String[] mTextSortValue;
-    private String mTextExport;
-    private String mTextBack;
-    private String mTextNoData;
+    private final String mTextWidth;
+    private final String mTextHeight;
+    private final String mTextMode;
+    private final String[] mTextModeValue;
+    private final String mTextType;
+    private final String[] mTextTypeValue;
+    private final String mTextSort;
+    private final String[] mTextSortValue;
+    private final String mTextExport;
+    private final String mTextBack;
+    private final String mTextNoData;
 
-    private Rect mRectWidth;
-    private Rect mRectHeight;
-    private Rect mRectType;
-    private Rect mRectMode;
-    private Rect mRectSort;
-    private RectF mRectExport;
-    private RectF mRectBack;
+    private final Rect mRectWidth;
+    private final Rect mRectHeight;
+    private final Rect mRectType;
+    private final Rect mRectMode;
+    private final Rect mRectSort;
+    private final RectF mRectExport;
+    private final RectF mRectBack;
 
-    private ArrayList<TableItem> mTableItems = new ArrayList<>();
-    private DBHelper mDbHelper;
+    private final ArrayList<TableItem> mTableItems = new ArrayList<>();
+    private final DBHelper mDbHelper;
 
-    private float[] mTableGuides = {
+    private final float[] mTableGuides = {
             Dimensions.surfaceWidth * 0.11f,
             Dimensions.surfaceWidth * 0.28f,
             Dimensions.surfaceWidth * 0.62f,
             Dimensions.surfaceWidth * 0.95f
     };
-    private int[] mSettingsGuides = {
+    private final int[] mSettingsGuides = {
             (int) (Dimensions.surfaceWidth * 0.07f),
             (int) (Dimensions.surfaceWidth * 0.28f),
             (int) (Dimensions.surfaceWidth * 0.58f),
             (int) (Dimensions.surfaceWidth * 0.84f)
     };
 
-    private float mTableMarginTop;
+    private final float mTableMarginTop;
 
     private int mSortMode = 0;
     private int mGameWidth = Settings.gameWidth;

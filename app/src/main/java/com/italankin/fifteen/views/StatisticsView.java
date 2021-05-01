@@ -18,46 +18,46 @@ public class StatisticsView extends BaseView {
 
     private final Resources mResources;
 
-    private Paint mPaintText;
-    private Paint mPaintTitle;
-    private Paint mPaintValue;
-    private Paint mPaintControls;
-    private Paint mPaintTotal;
+    private final Paint mPaintText;
+    private final Paint mPaintTitle;
+    private final Paint mPaintValue;
+    private final Paint mPaintControls;
+    private final Paint mPaintTotal;
 
     private RectF mRectTitle;
 
-    private String mTextSingle;
+    private final String mTextSingle;
     private RectF mRectSingle;
 
-    private String mTextAo5;
+    private final String mTextAo5;
     private RectF mRectAo5;
 
-    private String mTextAo12;
+    private final String mTextAo12;
     private RectF mRectAo12;
 
-    private String mTextAo50;
+    private final String mTextAo50;
     private RectF mRectAo50;
 
-    private String mTextAo100;
+    private final String mTextAo100;
     private RectF mRectAo100;
 
-    private String mTextSessionAvg;
+    private final String mTextSessionAvg;
     private RectF mRectSessionAvg;
 
-    private String mTextBack;
-    private RectF mRectBack;
+    private final String mTextBack;
+    private final RectF mRectBack;
 
     private RectF mRectTotal;
 
-    private String mTextNa;
-    private String mTextTime;
-    private String mTextMoves;
-    private String mTextTps;
+    private final String mTextNa;
+    private final String mTextTime;
+    private final String mTextMoves;
+    private final String mTextTps;
 
-    private StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
+    private final StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
     private Statistics statistics = Statistics.EMPTY;
 
-    private float[] mTableGuides = {
+    private final float[] mTableGuides = {
             Dimensions.surfaceWidth * 0.25f,
             Dimensions.surfaceWidth * 0.29f,
             Dimensions.surfaceWidth * 0.53f,

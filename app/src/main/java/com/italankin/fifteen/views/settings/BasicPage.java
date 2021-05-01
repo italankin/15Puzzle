@@ -18,17 +18,17 @@ public class BasicPage implements SettingsPage {
     private final Paint mPaintValue;
     private final Paint mPaintIcon;
 
-    private String mTextWidth;
+    private final String mTextWidth;
     private String mTextWidthValue;
-    private String mTextHeight;
+    private final String mTextHeight;
     private String mTextHeightValue;
-    private String mTextAnimations;
-    private String[] mTextAnimationsValues;
-    private String mTextColor;
-    private String mTextColorMode;
-    private String[] mTextColorModeValues;
-    private String mTextType;
-    private String[] mTextTypeValue;
+    private final String mTextAnimations;
+    private final String[] mTextAnimationsValues;
+    private final String mTextColor;
+    private final String mTextColorMode;
+    private final String[] mTextColorModeValues;
+    private final String mTextType;
+    private final String[] mTextTypeValue;
 
     private RectF mRectWidth;
     private RectF mRectAnimations;

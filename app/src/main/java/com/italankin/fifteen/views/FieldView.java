@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Game;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
@@ -16,14 +15,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FieldView extends BaseView {
 
-    private Paint mPaintField;
+    private final Paint mPaintField;
 
     /**
      * Массив элементов {@link Tile}
      */
-    private CopyOnWriteArrayList<Tile> mData;
+    private final CopyOnWriteArrayList<Tile> mData;
 
-    private RectF mRectField;
+    private final RectF mRectField;
 
     public FieldView(RectF rect) {
         mData = new CopyOnWriteArrayList<>();

@@ -30,14 +30,14 @@ public class Tile {
     private volatile float mCanvasX;
     private volatile float mCanvasY;
 
-    private TileXAnimator mTileXAnimator;
-    private TileYAnimator mTileYAnimator;
-    private TileScaleAnimator mTileScaleAnimator;
+    private final TileXAnimator mTileXAnimator;
+    private final TileYAnimator mTileYAnimator;
+    private final TileScaleAnimator mTileScaleAnimator;
     private float mTextScale = 1.0f;
-    private Path mDrawPath = new Path();
+    private final Path mDrawPath = new Path();
 
-    private Matrix mMatrix = new Matrix();
-    private String mDataText;
+    private final Matrix mMatrix = new Matrix();
+    private final String mDataText;
 
     private boolean useMultiColor = Settings.useMultiColor();
     private int tileColor;

@@ -24,7 +24,7 @@ public class HelpOverlay extends FieldOverlay {
     private final FieldView fieldView;
     private final String mTextHelp;
     private final RectF mRectHelp;
-    private float mHelpTextOffset;
+    private final float mHelpTextOffset;
 
     private Callback callback;
 

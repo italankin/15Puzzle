@@ -14,9 +14,9 @@ import com.italankin.fifteen.Settings;
  */
 public class FieldTextOverlay extends FieldOverlay {
 
-    private Paint mPaintText;
-    private Rect mRectBounds;
-    private String mCaption;
+    private final Paint mPaintText;
+    private final Rect mRectBounds;
+    private final String mCaption;
 
     public FieldTextOverlay(RectF field, String caption) {
         super(field);

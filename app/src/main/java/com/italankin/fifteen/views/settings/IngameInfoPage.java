@@ -16,14 +16,14 @@ public class IngameInfoPage implements SettingsPage {
     private final Paint mPaintText;
     private final Paint mPaintValue;
 
-    private String[] mTextValues;
+    private final String[] mTextValues;
 
-    private String mTextMoves;
-    private String mTextTime;
-    private String mTextTps;
+    private final String mTextMoves;
+    private final String mTextTime;
+    private final String mTextTps;
 
-    private String mTextTimeFormat;
-    private String[] mTextTimeFormatValues;
+    private final String mTextTimeFormat;
+    private final String[] mTextTimeFormatValues;
 
     private RectF mRectMoves;
     private RectF mRectTime;

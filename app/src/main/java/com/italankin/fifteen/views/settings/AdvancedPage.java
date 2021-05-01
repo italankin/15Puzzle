@@ -17,18 +17,18 @@ public class AdvancedPage implements SettingsPage {
     private final Paint mPaintText;
     private final Paint mPaintValue;
 
-    private String mTextHardMode;
-    private String[] mTextHardModeValues;
-    private String mTextMultiColor;
-    private String[] mTextMultiColorValues;
-    private String mTextAntiAlias;
-    private String[] mTextAntiAliasValues;
-    private String mTextNewGameDelay;
-    private String[] mTextNewGameDelayValues;
-    private String mTextIngameInfo;
-    private String mTextIngameInfoValue;
-    private String mTextStats;
-    private String[] mTextStatsValues;
+    private final String mTextHardMode;
+    private final String[] mTextHardModeValues;
+    private final String mTextMultiColor;
+    private final String[] mTextMultiColorValues;
+    private final String mTextAntiAlias;
+    private final String[] mTextAntiAliasValues;
+    private final String mTextNewGameDelay;
+    private final String[] mTextNewGameDelayValues;
+    private final String mTextIngameInfo;
+    private final String mTextIngameInfoValue;
+    private final String mTextStats;
+    private final String[] mTextStatsValues;
 
     private RectF mRectMultiColor;
     private RectF mRectAntiAlias;

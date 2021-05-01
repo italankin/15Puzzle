@@ -16,10 +16,10 @@ import com.italankin.fifteen.views.BaseView;
  */
 public class FieldOverlay extends BaseView {
 
-    private Paint mPaintBg;
-    private RectF mRectField;
+    private final Paint mPaintBg;
+    private final RectF mRectField;
 
-    private ObjectAnimator mAlphaAnimator;
+    private final ObjectAnimator mAlphaAnimator;
     protected float mAlpha = 0;
 
     public FieldOverlay(RectF field) {

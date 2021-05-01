@@ -31,12 +31,12 @@ public class SettingsView extends BaseView {
 
     private final Map<Integer, SettingsPage> pages = new HashMap<>();
 
-    private String mTextBack;
-    private String mTextSettingsPageBasic;
-    private String mTextSettingsPageAdvanced;
+    private final String mTextBack;
+    private final String mTextSettingsPageBasic;
+    private final String mTextSettingsPageAdvanced;
 
-    private RectF mRectSettingsPage;
-    private RectF mRectBack;
+    private final RectF mRectSettingsPage;
+    private final RectF mRectBack;
 
     private int mCurrentPage = PAGE_BASIC;
 

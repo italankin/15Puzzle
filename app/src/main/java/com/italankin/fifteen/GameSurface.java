@@ -35,10 +35,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
      * Main render thread looper
      */
     private GameManager mGameLoopThread;
-    private DBHelper dbHelper;
-    private ExportCallback exportCallback;
+    private final DBHelper dbHelper;
+    private final ExportCallback exportCallback;
 
-    private Resources mResources;
+    private final Resources mResources;
 
     private TopPanelView mTopPanel;
     private InfoPanelView mInfoPanel;
@@ -51,10 +51,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private HardModeView mHardModeView;
     private HelpOverlay mHelpOverlay;
 
-    private RectF mRectField = new RectF();
+    private final RectF mRectField = new RectF();
 
     private Paint mDebugPaint;
-    private StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
+    private final StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
 
     private int mGestureStartX;
     private int mGestureStartY;

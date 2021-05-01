@@ -15,13 +15,13 @@ import java.util.ArrayList;
 
 public class TopPanelView extends BaseView {
 
-    private ArrayList<Button> mButtons;
+    private final ArrayList<Button> mButtons;
     private Callback mCallback;
 
-    private int mButtonTextOffset;
-    private Paint mPaintButton;
-    private Paint mPaintOverlay;
-    private Paint mPaintTextButton;
+    private final int mButtonTextOffset;
+    private final Paint mPaintButton;
+    private final Paint mPaintOverlay;
+    private final Paint mPaintTextButton;
     private final TimeInterpolator interpolator = new AccelerateInterpolator();
 
     public TopPanelView() {
