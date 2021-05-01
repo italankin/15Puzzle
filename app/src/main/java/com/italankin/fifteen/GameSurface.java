@@ -376,6 +376,10 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     }
 
     public void updateViews() {
+        if (mField == null) {
+            // not initialized yet
+            return;
+        }
         mTopPanel.update();
         mInfoPanel.update();
         mField.update();
