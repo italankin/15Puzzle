@@ -24,11 +24,11 @@
     <string name="pref_width">Ширина</string>
     <string name="pref_height">Высота</string>
     <string name="pref_animation">Анимация</string>
-    <string name="pref_mode">Тип</string>
+    <string name="pref_type">Тип</string>
     <string name="pref_color_mode">Тема</string>
     <string name="pref_color">Цвета</string>
     <string name="pref_fringe">Мульти-цвет</string>
-    <string name="pref_bf">Режим</string>
+    <string name="pref_mode">Режим</string>
     <string name="pref_sort">Сорт.</string>
     <string name="pref_anti_alias">Сглаживание</string>
     <string name="pref_new_game_delay">Задержка</string>
@@ -75,7 +75,7 @@
         <item>ночь</item>
         <item>система</item>
     </string-array>
-    <string-array name="game_modes">
+    <string-array name="game_types">
         <item>классика</item>
         <item>змейка</item>
         <item>спираль</item>

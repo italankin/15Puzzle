@@ -16,8 +16,8 @@ public class StatisticsManager {
     private StatisticsManager() {
     }
 
-    public void add(int width, int height, int mode, boolean hard, long time, int moves) {
-        Key key = new Key(width, height, mode, hard);
+    public void add(int width, int height, int type, boolean hard, long time, int moves) {
+        Key key = new Key(width, height, type, hard);
         Entry entry = new Entry(time, moves);
         List<Entry> entries = records.get(key);
         if (entries == null) {
@@ -27,11 +27,11 @@ public class StatisticsManager {
         entries.add(entry);
     }
 
-    public Statistics get(int width, int height, int mode, boolean hard) {
+    public Statistics get(int width, int height, int type, boolean hard) {
         if (records.isEmpty()) {
             return Statistics.EMPTY;
         }
-        Key key = new Key(width, height, mode, hard);
+        Key key = new Key(width, height, type, hard);
         List<Entry> entries = records.get(key);
         if (entries == null || entries.isEmpty()) {
             return Statistics.EMPTY;
@@ -45,8 +45,8 @@ public class StatisticsManager {
         return new Statistics(entries.size(), single, ao5, ao12, ao50, ao100, session);
     }
 
-    public void clear(int width, int height, int mode, boolean hard) {
-        Key key = new Key(width, height, mode, hard);
+    public void clear(int width, int height, int type, boolean hard) {
+        Key key = new Key(width, height, type, hard);
         records.remove(key);
     }
 
@@ -127,13 +127,13 @@ public class StatisticsManager {
 
         final int width;
         final int height;
-        final int mode;
+        final int type;
         final boolean hard;
 
-        private Key(int width, int height, int mode, boolean hard) {
+        private Key(int width, int height, int type, boolean hard) {
             this.width = width;
             this.height = height;
-            this.mode = mode;
+            this.type = type;
             this.hard = hard;
         }
 
@@ -152,7 +152,7 @@ public class StatisticsManager {
             if (height != key.height) {
                 return false;
             }
-            if (mode != key.mode) {
+            if (type != key.type) {
                 return false;
             }
             return hard == key.hard;
@@ -162,7 +162,7 @@ public class StatisticsManager {
         public int hashCode() {
             int result = width;
             result = 31 * result + height;
-            result = 31 * result + mode;
+            result = 31 * result + type;
             result = 31 * result + (hard ? 1 : 0);
             return result;
         }

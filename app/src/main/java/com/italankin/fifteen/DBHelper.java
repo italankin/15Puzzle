@@ -17,8 +17,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_HEIGHT = "puzzle_height";
     public static final String KEY_TIME = "time";
     public static final String KEY_MOVES = "moves";
-    public static final String KEY_MODE = "mode";
-    public static final String KEY_BLINDMODE = "hardmode";
+    public static final String KEY_TYPE = "mode";
+    public static final String KEY_HARDMODE = "hardmode";
     public static final String KEY_TIMESTAMP = "timestamp";
 
     public DBHelper(Context context) {
@@ -28,12 +28,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + KEY_TABLE + " (" +
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                KEY_MODE + " INTEGER," +
+                KEY_TYPE + " INTEGER," +
                 KEY_WIDTH + " INTEGER," +
                 KEY_HEIGHT + " INTEGER," +
                 KEY_MOVES + " INTEGER," +
                 KEY_TIME + " INTEGER," +
-                KEY_BLINDMODE + " INTEGER," +
+                KEY_HARDMODE + " INTEGER," +
                 KEY_TIMESTAMP + " INTEGER" +
                 ");");
     }
@@ -42,12 +42,12 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(KEY_MODE, mode);
+        cv.put(KEY_TYPE, mode);
         cv.put(KEY_WIDTH, width);
         cv.put(KEY_HEIGHT, height);
         cv.put(KEY_MOVES, moves);
         cv.put(KEY_TIME, time);
-        cv.put(KEY_BLINDMODE, hardmode);
+        cv.put(KEY_HARDMODE, hardmode);
         cv.put(KEY_TIMESTAMP, System.currentTimeMillis());
 
         long rowid = db.insert(KEY_TABLE, null, cv);
@@ -61,18 +61,18 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         String[] columns = {
-                KEY_MODE,
+                KEY_TYPE,
                 KEY_WIDTH,
                 KEY_HEIGHT,
                 KEY_MOVES,
                 KEY_TIME,
-                KEY_BLINDMODE,
+                KEY_HARDMODE,
                 KEY_TIMESTAMP
         };
-        String selection = KEY_MODE + "=" + mode + " AND " +
+        String selection = KEY_TYPE + "=" + mode + " AND " +
                 KEY_WIDTH + "=" + width + " AND " +
                 KEY_HEIGHT + "=" + height + " AND " +
-                KEY_BLINDMODE + "=" + hardmode;
+                KEY_HARDMODE + "=" + hardmode;
         String limit = "10";
         String orderBy = ((sort == 1) ? KEY_TIME : KEY_MOVES) + ", " +
                 ((sort != 1) ? KEY_TIME : KEY_MOVES) + " ASC";
@@ -84,12 +84,12 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         String[] columns = {
-                KEY_MODE,
+                KEY_TYPE,
                 KEY_WIDTH,
                 KEY_HEIGHT,
                 KEY_MOVES,
                 KEY_TIME,
-                KEY_BLINDMODE,
+                KEY_HARDMODE,
                 KEY_TIMESTAMP
         };
 

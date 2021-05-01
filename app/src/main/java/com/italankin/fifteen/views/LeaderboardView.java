@@ -27,10 +27,10 @@ public class LeaderboardView extends BaseView {
 
     private String mTextWidth;
     private String mTextHeight;
-    private String mTextBf;
-    private String[] mTextBfValue;
     private String mTextMode;
     private String[] mTextModeValue;
+    private String mTextType;
+    private String[] mTextTypeValue;
     private String mTextSort;
     private String[] mTextSortValue;
     private String mTextExport;
@@ -39,8 +39,8 @@ public class LeaderboardView extends BaseView {
 
     private Rect mRectWidth;
     private Rect mRectHeight;
+    private Rect mRectType;
     private Rect mRectMode;
-    private Rect mRectBf;
     private Rect mRectSort;
     private RectF mRectExport;
     private RectF mRectBack;
@@ -66,8 +66,8 @@ public class LeaderboardView extends BaseView {
     private int mSortMode = 0;
     private int mGameWidth = Settings.gameWidth;
     private int mGameHeight = Settings.gameHeight;
-    private int mGameMode = Settings.gameMode;
-    private int mHardMode = Settings.hardmode ? 1 : 0;
+    private int mGameType = Settings.gameType;
+    private int mMode = Settings.hardmode ? 1 : 0;
 
     private Callbacks mCallbacks;
 
@@ -103,10 +103,10 @@ public class LeaderboardView extends BaseView {
 
         mTextWidth = res.getString(R.string.pref_width);
         mTextHeight = res.getString(R.string.pref_height);
-        mTextBf = res.getString(R.string.pref_bf);
-        mTextBfValue = res.getStringArray(R.array.difficulty_modes);
         mTextMode = res.getString(R.string.pref_mode);
-        mTextModeValue = res.getStringArray(R.array.game_modes);
+        mTextModeValue = res.getStringArray(R.array.difficulty_modes);
+        mTextType = res.getString(R.string.pref_type);
+        mTextTypeValue = res.getStringArray(R.array.game_types);
         mTextSort = res.getString(R.string.pref_sort);
         mTextSortValue = res.getStringArray(R.array.sort_types);
         mTextBack = res.getString(R.string.back);
@@ -121,14 +121,14 @@ public class LeaderboardView extends BaseView {
         int mLineGap = (int) (Dimensions.surfaceHeight * 0.06f);
         mTableMarginTop = marginTop + lineHeight + 3.4f * mLineGap;
 
-        mRectMode = new Rect(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
-        mRectMode.inset(0, -lineHeight / 3);
+        mRectType = new Rect(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
+        mRectType.inset(0, -lineHeight / 3);
         mRectWidth = new Rect(mSettingsGuides[2], marginTop,
                 (int) Dimensions.surfaceWidth, marginTop + lineHeight);
         mRectWidth.inset(0, -lineHeight / 3);
-        mRectBf = new Rect(0, marginTop + mLineGap,
+        mRectMode = new Rect(0, marginTop + mLineGap,
                 mSettingsGuides[2], marginTop + mLineGap + lineHeight);
-        mRectBf.inset(0, -lineHeight / 3);
+        mRectMode.inset(0, -lineHeight / 3);
         mRectHeight = new Rect(mSettingsGuides[2], marginTop + mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
         mRectHeight.inset(0, -lineHeight / 3);
@@ -152,13 +152,13 @@ public class LeaderboardView extends BaseView {
             dx = 0;
         }
 
-        if (mRectMode.contains(x, y)) {
-            mGameMode = ++mGameMode % Constants.GAME_MODES;
+        if (mRectType.contains(x, y)) {
+            mGameType = ++mGameType % Constants.GAME_TYPES;
             updateData();
         }
 
-        if (mRectBf.contains(x, y)) {
-            mHardMode = ++mHardMode % 2;
+        if (mRectMode.contains(x, y)) {
+            mMode = ++mMode % 2;
             updateData();
         }
 
@@ -200,7 +200,7 @@ public class LeaderboardView extends BaseView {
     private void updateData() {
         mTableItems.clear();
 
-        Cursor cursor = mDbHelper.query(mGameMode, mGameWidth, mGameHeight, mHardMode, mSortMode);
+        Cursor cursor = mDbHelper.query(mGameType, mGameWidth, mGameHeight, mMode, mSortMode);
         if (cursor.moveToFirst()) {
             int indexMoves = cursor.getColumnIndex(DBHelper.KEY_MOVES);
             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME);
@@ -229,8 +229,8 @@ public class LeaderboardView extends BaseView {
 
     @Override
     public boolean show() {
-        mGameMode = Settings.gameMode;
-        mHardMode = Settings.hardmode ? 1 : 0;
+        mGameType = Settings.gameType;
+        mMode = Settings.hardmode ? 1 : 0;
         mGameWidth = Settings.gameWidth;
         mGameHeight = Settings.gameHeight;
         mSortMode = 0;
@@ -249,12 +249,12 @@ public class LeaderboardView extends BaseView {
         canvas.drawColor(Colors.getOverlayColor());
 
         float s = Dimensions.menuFontSize * 0.29f;
+        canvas.drawText(mTextType, mSettingsGuides[0], mRectType.bottom - s, mPaintText);
+        canvas.drawText(mTextTypeValue[mGameType], mSettingsGuides[1],
+                mRectType.bottom - s, mPaintValue);
         canvas.drawText(mTextMode, mSettingsGuides[0], mRectMode.bottom - s, mPaintText);
-        canvas.drawText(mTextModeValue[mGameMode], mSettingsGuides[1],
+        canvas.drawText(mTextModeValue[mMode], mSettingsGuides[1],
                 mRectMode.bottom - s, mPaintValue);
-        canvas.drawText(mTextBf, mSettingsGuides[0], mRectBf.bottom - s, mPaintText);
-        canvas.drawText(mTextBfValue[mHardMode], mSettingsGuides[1],
-                mRectBf.bottom - s, mPaintValue);
         canvas.drawText(mTextSort, mSettingsGuides[0], mRectSort.bottom - s, mPaintText);
         canvas.drawText(mTextSortValue[mSortMode], mSettingsGuides[1],
                 mRectSort.bottom - s, mPaintValue);

@@ -14,8 +14,8 @@ public class Settings {
     private static final String KEY_GAME_HEIGHT = "puzzle_height";
     private static final String KEY_GAME_TILE_COLOR = "tile_color";
     private static final String KEY_GAME_BG_COLOR = "bg_color";
-    private static final String KEY_GAME_MODE = "mode";
-    private static final String KEY_GAME_BF = "blind";
+    private static final String KEY_GAME_TYPE = "mode";
+    private static final String KEY_GAME_MODE = "blind";
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
     private static final String KEY_MULTI_COLOR = "multi_color";
@@ -41,7 +41,7 @@ public class Settings {
     public static int tileColor = 0;
     public static int multiColor = Defaults.MULTI_COLOR;
     public static int colorMode = Defaults.COLOR_MODE;
-    public static int gameMode = Defaults.GAME_MODE;
+    public static int gameType = Defaults.GAME_TYPE;
     public static Typeface typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     public static boolean newGameDelay = Defaults.NEW_GAME_DELAY;
     public static int ingameInfoMoves = Defaults.INGAME_INFO_MOVES;
@@ -71,10 +71,10 @@ public class Settings {
         }
         tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, Defaults.TILE_COLOR);
         colorMode = prefs.getInt(KEY_GAME_BG_COLOR, Defaults.COLOR_MODE);
-        gameMode = prefs.getInt(KEY_GAME_MODE, Defaults.GAME_MODE);
+        gameType = prefs.getInt(KEY_GAME_TYPE, Defaults.GAME_TYPE);
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, Defaults.ANTI_ALIAS);
         animations = prefs.getBoolean(KEY_GAME_ANIMATION, Defaults.ANIMATIONS);
-        hardmode = prefs.getBoolean(KEY_GAME_BF, Defaults.HARD_MODE);
+        hardmode = prefs.getBoolean(KEY_GAME_MODE, Defaults.HARD_MODE);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, Defaults.MULTI_COLOR);
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, Defaults.NEW_GAME_DELAY);
@@ -115,10 +115,10 @@ public class Settings {
         editor.putInt(KEY_GAME_HEIGHT, gameHeight);
         editor.putInt(KEY_GAME_TILE_COLOR, tileColor);
         editor.putInt(KEY_GAME_BG_COLOR, colorMode);
-        editor.putInt(KEY_GAME_MODE, gameMode);
+        editor.putInt(KEY_GAME_TYPE, gameType);
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
-        editor.putBoolean(KEY_GAME_BF, hardmode);
+        editor.putBoolean(KEY_GAME_MODE, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
         editor.putInt(KEY_INGAME_INFO_MOVES, ingameInfoMoves);

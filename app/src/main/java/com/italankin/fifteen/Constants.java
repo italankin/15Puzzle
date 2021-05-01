@@ -12,10 +12,10 @@ public class Constants {
     public static final int COLOR_MODE_NIGHT = 1;
     public static final int COLOR_MODE_SYSTEM = 2;
 
-    public static final int GAME_MODES = 3;
-    public static final int MODE_CLASSIC = 0;
-    public static final int MODE_SNAKE = 1;
-    public static final int MODE_SPIRAL = 2;
+    public static final int GAME_TYPES = 3;
+    public static final int TYPE_CLASSIC = 0;
+    public static final int TYPE_SNAKE = 1;
+    public static final int TYPE_SPIRAL = 2;
 
     public static final int MULTI_COLOR_MODES = 5;
     public static final int MULTI_COLOR_OFF = 0;

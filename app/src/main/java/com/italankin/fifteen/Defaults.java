@@ -11,7 +11,7 @@ class Defaults {
     static final int ANIMATION_DURATION = 300;
     static final int MULTI_COLOR = Constants.MULTI_COLOR_OFF;
     static final int COLOR_MODE = Constants.COLOR_MODE_DAY;
-    static final int GAME_MODE = Constants.MODE_CLASSIC;
+    static final int GAME_TYPE = Constants.TYPE_CLASSIC;
     static final int INGAME_INFO_MOVES = Constants.INGAME_INFO_ON;
     static final int INGAME_INFO_TIME = Constants.INGAME_INFO_ON;
     static final int INGAME_INFO_TPS = Constants.INGAME_INFO_OFF;

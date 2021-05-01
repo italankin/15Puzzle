@@ -138,7 +138,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             int moves = Game.getMoves();
             long time = Game.getTime();
             dbHelper.insert(
-                    Settings.gameMode,
+                    Settings.gameType,
                     Settings.gameWidth,
                     Settings.gameHeight,
                     Settings.hardmode ? 1 : 0,
@@ -147,7 +147,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             statisticsManager.add(
                     Settings.gameWidth,
                     Settings.gameHeight,
-                    Settings.gameMode,
+                    Settings.gameType,
                     Settings.hardmode,
                     time,
                     moves);

@@ -23,15 +23,15 @@ public class InfoPanelView extends BaseView {
     private final Paint mPaintTextCaption;
     private final Paint mPaintTextHelp;
 
-    private final String[] mTextMode;
+    private final String[] mTextGameTypes;
     private final String mTextMoves;
     private final String mTextTime;
     private final String mTextTps;
 
     private final RectF mRectInfo;
-    private final RectF mRectMode;
+    private final RectF mRectGameType;
     private final RectF mRectHelp;
-    private final Rect mRectModeTextBounds = new Rect();
+    private final Rect mRectGameTypeTextBounds = new Rect();
 
     private final int mCaptionTextOffset;
     private final int mHelpTextOffset;
@@ -39,13 +39,13 @@ public class InfoPanelView extends BaseView {
     private float firstRowY;
     private float secondRowY;
     private float thirdRowY;
-    private float mModeTextX;
-    private float mModeTextY;
+    private float mGameTypeTextX;
+    private float mGameTypeTextY;
     private Callbacks mCallbacks;
-    private String mGameMode;
+    private String mGameType;
 
     public InfoPanelView(Resources res) {
-        mTextMode = res.getStringArray(R.array.game_modes);
+        mTextGameTypes = res.getStringArray(R.array.game_types);
         mTextMoves = res.getString(R.string.info_moves);
         mTextTime = res.getString(R.string.info_time);
         mTextTps = res.getString(R.string.info_tps);
@@ -72,10 +72,10 @@ public class InfoPanelView extends BaseView {
 
         mRectInfo = new RectF(0.0f, Dimensions.infoBarMarginTop,
                 Dimensions.surfaceWidth, Dimensions.infoBarMarginTop + Dimensions.infoBarHeight);
-        mRectMode = new RectF(mRectInfo);
-        mRectMode.right = Dimensions.surfaceWidth * 0.5f;
+        mRectGameType = new RectF(mRectInfo);
+        mRectGameType.right = Dimensions.surfaceWidth * 0.5f;
         float inset = mRectInfo.height() / 4.5f;
-        mRectMode.inset(inset, inset);
+        mRectGameType.inset(inset, inset);
 
         Rect tmp = new Rect();
         mPaintTextCaption.getTextBounds("A", 0, 1, tmp);
@@ -85,7 +85,7 @@ public class InfoPanelView extends BaseView {
 
         mRectHelp = new RectF(0f, 0f, Dimensions.interfaceFontSize * 1.1f, Dimensions.interfaceFontSize * 1.1f);
 
-        updateMode();
+        updateGameType();
         updateRows();
 
         mShow = true;
@@ -99,7 +99,7 @@ public class InfoPanelView extends BaseView {
 
         canvas.drawRect(mRectInfo, mPaintBg);
 
-        canvas.drawText(mGameMode, mModeTextX, mModeTextY, mPaintTextValue);
+        canvas.drawText(mGameType, mGameTypeTextX, mGameTypeTextY, mPaintTextValue);
 
         int alpha = mPaintTextValue.getAlpha();
         mPaintTextValue.setAlpha(128);
@@ -140,8 +140,8 @@ public class InfoPanelView extends BaseView {
         }
     }
 
-    private String getGameMode() {
-        return mTextMode[Settings.gameMode].toUpperCase(Locale.getDefault()) + (Settings.hardmode ? "*" : "");
+    private String getGameType() {
+        return mTextGameTypes[Settings.gameType].toUpperCase(Locale.getDefault()) + (Settings.hardmode ? "*" : "");
     }
 
     private void prepareTitlePaint() {
@@ -164,14 +164,14 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.setColor(Colors.getInfoTextColor());
         mPaintTextCaption.setColor(Colors.getInfoTextColor());
 
-        updateMode();
+        updateGameType();
         updateRows();
     }
 
     public boolean onClick(float x, float y) {
-        if (mRectMode.contains(x, y)) {
+        if (mRectGameType.contains(x, y)) {
             if (mCallbacks != null) {
-                mCallbacks.onModeClick();
+                mCallbacks.onGameTypeClick();
             }
             return true;
         }
@@ -193,18 +193,18 @@ public class InfoPanelView extends BaseView {
         }
     }
 
-    private void updateMode() {
-        mGameMode = getGameMode();
-        mPaintTextValue.getTextBounds(mGameMode, 0, mGameMode.length(), mRectModeTextBounds);
+    private void updateGameType() {
+        mGameType = getGameType();
+        mPaintTextValue.getTextBounds(mGameType, 0, mGameType.length(), mRectGameTypeTextBounds);
 
-        float contentWidth = mRectModeTextBounds.width() + mRectHelp.width() + Dimensions.spacing * 1.5f;
-        float margin = (mRectMode.width() - contentWidth) / 2;
+        float contentWidth = mRectGameTypeTextBounds.width() + mRectHelp.width() + Dimensions.spacing * 1.5f;
+        float margin = (mRectGameType.width() - contentWidth) / 2;
 
-        mModeTextX = mRectMode.left + margin;
-        mModeTextY = mRectMode.centerY() - mRectModeTextBounds.centerY();
+        mGameTypeTextX = mRectGameType.left + margin;
+        mGameTypeTextY = mRectGameType.centerY() - mRectGameTypeTextBounds.centerY();
 
         mRectHelp.offsetTo(
-                mRectMode.right - mRectHelp.width() - margin,
+                mRectGameType.right - mRectHelp.width() - margin,
                 mRectInfo.centerY() - mRectHelp.height() / 2);
     }
 
@@ -214,6 +214,6 @@ public class InfoPanelView extends BaseView {
 
     public interface Callbacks {
 
-        void onModeClick();
+        void onGameTypeClick();
     }
 }

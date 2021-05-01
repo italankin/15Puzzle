@@ -53,7 +53,7 @@ public class AdvancedPage implements SettingsPage {
         mTextMultiColor = res.getString(R.string.pref_fringe);
         mTextMultiColorValues = res.getStringArray(R.array.multi_color_modes);
         mTextStats = res.getString(R.string.pref_stats);
-        mTextHardMode = res.getString(R.string.pref_bf);
+        mTextHardMode = res.getString(R.string.pref_mode);
         mTextHardModeValues = res.getStringArray(R.array.difficulty_modes);
         mTextStatsValues = res.getStringArray(R.array.toggle);
     }

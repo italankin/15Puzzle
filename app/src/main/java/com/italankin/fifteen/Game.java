@@ -43,7 +43,7 @@ public class Game {
 
         grid.clear();
 
-        solvedGrid = Generator.generate(w, h, Settings.gameMode);
+        solvedGrid = Generator.generate(w, h, Settings.gameType);
         grid.addAll(solvedGrid);
 
         Collections.shuffle(grid, new Random());
@@ -273,18 +273,18 @@ public class Game {
     }
 
     private boolean isSolvable() {
-        switch (Settings.gameMode) {
-            case Constants.MODE_CLASSIC:
+        switch (Settings.gameType) {
+            case Constants.TYPE_CLASSIC:
                 return checkSolvableClassic();
 
-            case Constants.MODE_SNAKE:
+            case Constants.TYPE_SNAKE:
                 return checkSolvableSnake();
 
-            case Constants.MODE_SPIRAL:
+            case Constants.TYPE_SPIRAL:
                 return checkSolvableSpiral();
 
             default:
-                throw new IllegalStateException("Unknown gameMode=" + Settings.gameMode);
+                throw new IllegalStateException("Unknown gameType=" + Settings.gameType);
         }
     }
 

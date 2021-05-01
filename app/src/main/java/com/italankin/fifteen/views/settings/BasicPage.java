@@ -27,12 +27,12 @@ public class BasicPage implements SettingsPage {
     private String mTextColor;
     private String mTextColorMode;
     private String[] mTextColorModeValues;
-    private String mTextMode;
-    private String[] mTextModeValue;
+    private String mTextType;
+    private String[] mTextTypeValue;
 
     private RectF mRectWidth;
     private RectF mRectAnimations;
-    private RectF mRectMode;
+    private RectF mRectGameType;
     private RectF mRectHeight;
     private RectF mRectColor;
     private RectF mRectColorMode;
@@ -51,8 +51,8 @@ public class BasicPage implements SettingsPage {
         mTextHeightValue = Integer.toString(Settings.gameHeight);
         mTextWidth = res.getString(R.string.pref_width);
         mTextWidthValue = Integer.toString(Settings.gameWidth);
-        mTextMode = res.getString(R.string.pref_mode);
-        mTextModeValue = res.getStringArray(R.array.game_modes);
+        mTextType = res.getString(R.string.pref_type);
+        mTextTypeValue = res.getStringArray(R.array.game_types);
         mTextAnimations = res.getString(R.string.pref_animation);
         mTextAnimationsValues = res.getStringArray(R.array.toggle);
         mTextColorMode = res.getString(R.string.pref_color_mode);
@@ -67,8 +67,8 @@ public class BasicPage implements SettingsPage {
     @Override
     public void init(int lineSpacing, int topMargin, int padding, int textHeight) {
         topMargin += lineSpacing;
-        mRectMode = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectMode.inset(0, padding);
+        mRectGameType = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectGameType.inset(0, padding);
 
         topMargin += lineSpacing;
         mRectWidth = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
@@ -119,9 +119,9 @@ public class BasicPage implements SettingsPage {
         canvas.drawText(mTextColorModeValues[Settings.colorMode],
                 valueRight, mRectColorMode.bottom - textYOffset, mPaintValue);
 
-        canvas.drawText(mTextMode, textLeft, mRectMode.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextModeValue[Settings.gameMode],
-                valueRight, mRectMode.bottom - textYOffset, mPaintValue);
+        canvas.drawText(mTextType, textLeft, mRectGameType.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextTypeValue[Settings.gameType],
+                valueRight, mRectGameType.bottom - textYOffset, mPaintValue);
     }
 
     @Override
@@ -182,8 +182,8 @@ public class BasicPage implements SettingsPage {
             }
         }
 
-        if (mRectMode.contains(x, y)) {
-            Settings.gameMode = (++Settings.gameMode % Constants.GAME_MODES);
+        if (mRectGameType.contains(x, y)) {
+            Settings.gameType = (++Settings.gameType % Constants.GAME_TYPES);
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onSettingsChanged(true);

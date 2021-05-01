@@ -51,7 +51,7 @@ public class HelpOverlay extends FieldOverlay {
         float inset = -Dimensions.spacing * 2;
         mRectHelp.inset(inset, inset);
 
-        List<Integer> numbers = Generator.generate(Settings.gameWidth, Settings.gameHeight, Settings.gameMode);
+        List<Integer> numbers = Generator.generate(Settings.gameWidth, Settings.gameHeight, Settings.gameType);
         for (int i = 0, size = numbers.size(); i < size; i++) {
             int number = numbers.get(i);
             if (number == 0) {

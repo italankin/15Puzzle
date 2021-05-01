@@ -78,16 +78,16 @@ public class RecordsExporter implements Exporter {
 
                     try (Cursor cursor = dbHelper.queryAll()) {
                         if (cursor.moveToFirst()) {
-                            int indexMode = cursor.getColumnIndex(DBHelper.KEY_MODE);
-                            int indexHard = cursor.getColumnIndex(DBHelper.KEY_BLINDMODE);
+                            int indexType = cursor.getColumnIndex(DBHelper.KEY_TYPE);
+                            int indexHard = cursor.getColumnIndex(DBHelper.KEY_HARDMODE);
                             int indexWidth = cursor.getColumnIndex(DBHelper.KEY_WIDTH);
                             int indexHeight = cursor.getColumnIndex(DBHelper.KEY_HEIGHT);
                             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME);
                             int indexMoves = cursor.getColumnIndex(DBHelper.KEY_MOVES);
                             int indexDate = cursor.getColumnIndex(DBHelper.KEY_TIMESTAMP);
-                            String[] types = context.getResources().getStringArray(R.array.game_modes);
+                            String[] types = context.getResources().getStringArray(R.array.game_types);
                             do {
-                                w.write(types[cursor.getInt(indexMode)]);
+                                w.write(types[cursor.getInt(indexType)]);
                                 w.write(DELIMITER);
 
                                 w.write(String.valueOf(cursor.getInt(indexHard)));

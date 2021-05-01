@@ -127,7 +127,7 @@ public class StatisticsView extends BaseView {
 
     @Override
     public boolean show() {
-        statistics = statisticsManager.get(Settings.gameWidth, Settings.gameHeight, Settings.gameMode, Settings.hardmode);
+        statistics = statisticsManager.get(Settings.gameWidth, Settings.gameHeight, Settings.gameType, Settings.hardmode);
         return super.show();
     }
 

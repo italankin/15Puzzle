@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Generator {
 
-    public static List<Integer> generate(int width, int height, int mode) {
-        switch (mode) {
-            case Constants.MODE_CLASSIC:
+    public static List<Integer> generate(int width, int height, int type) {
+        switch (type) {
+            case Constants.TYPE_CLASSIC:
                 return classic(width, height);
-            case Constants.MODE_SNAKE:
+            case Constants.TYPE_SNAKE:
                 return snake(width, height);
-            case Constants.MODE_SPIRAL:
+            case Constants.TYPE_SPIRAL:
                 return spiral(width, height);
             default:
-                throw new IllegalStateException("Unknown mode=" + mode);
+                throw new IllegalStateException("Unknown type=" + type);
         }
     }
 
