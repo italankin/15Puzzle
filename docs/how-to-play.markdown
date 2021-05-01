@@ -138,8 +138,8 @@ classic;0;4;4;29.906;128;5/1/21
 |Setting|Values|Description|
 |-|-|-|
 |Type|`classic`, `snake`, `spiral`|See [game types](#3-game-types)|
-|Width|`3 - 8`|Width of the puzzle|
-|Height|`3 - 8`|Height of the puzzle|
+|Width|`3 - 10`|Width of the puzzle|
+|Height|`3 - 10`|Height of the puzzle|
 |Animation|`on`, `off`|Play animations on tiles moves, etc.|
 |Color theme|`day`, `night`, `system`|The overall color theme of the app. `system` will follow system dark mode settings|
 |Color|various colors|The color of tiles and interface|

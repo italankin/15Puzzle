@@ -11,7 +11,7 @@ Simple Android sliding puzzle game.
 ## Features
 * 3 game types: classic, snake, spiral
 * 2 game modes: normal, hard
-* custom puzzle size: anything between 3x3 and 8x8
+* custom puzzle size: anything between 3x3 and 10x10
 * hover control support
 * fringe color scheme support
 * session statistics: Ao5, Ao12, etc.
