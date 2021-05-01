@@ -61,6 +61,7 @@
     <string name="export_success">Сохранено</string>
     <string name="export_failure">Ошибка</string>
 
+    <string name="reset">сброс</string>
     <string name="back">назад</string>
 
     <string-array name="toggle">

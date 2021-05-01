@@ -47,6 +47,9 @@ public class StatisticsView extends BaseView {
     private final String mTextExport;
     private final RectF mRectExport;
 
+    private final String mTextReset;
+    private final RectF mRectReset;
+
     private final String mTextBack;
     private final RectF mRectBack;
 
@@ -103,6 +106,7 @@ public class StatisticsView extends BaseView {
 
         mTextBack = res.getString(R.string.back);
         mTextExport = res.getString(R.string.export);
+        mTextReset = res.getString(R.string.reset);
         mTextSingle = res.getString(R.string.stats_single);
         mTextAo5 = res.getString(R.string.stats_ao5);
         mTextAo12 = res.getString(R.string.stats_ao12);
@@ -125,8 +129,12 @@ public class StatisticsView extends BaseView {
         mRectBack.inset(0, padding);
 
         mRectExport = new RectF(0, mRectBack.top - textHeight - lineSpacing / 2f,
-                Dimensions.surfaceWidth, mRectBack.top - lineSpacing / 2f);
+                Dimensions.surfaceWidth / 2, mRectBack.top - lineSpacing / 2f);
         mRectExport.inset(0, padding);
+
+        mRectReset = new RectF(mRectExport);
+        mRectReset.left = Dimensions.surfaceWidth / 2;
+        mRectReset.right = Dimensions.surfaceWidth;
     }
 
     public void addCallbacks(Callbacks callbacks) {
@@ -139,6 +147,10 @@ public class StatisticsView extends BaseView {
         }
         if (mRectExport.contains(x, y) && callbacks != null) {
             callbacks.onExportClicked();
+        }
+        if (mRectReset.contains(x, y)) {
+            statisticsManager.clear();
+            statistics = Statistics.EMPTY;
         }
     }
 
@@ -162,6 +174,8 @@ public class StatisticsView extends BaseView {
                 mRectBack.bottom - textYOffset, mPaintControls);
         canvas.drawText(mTextExport, mRectExport.centerX(),
                 mRectExport.bottom - textYOffset, mPaintControls);
+        canvas.drawText(mTextReset, mRectReset.centerX(),
+                mRectReset.bottom - textYOffset, mPaintControls);
     }
 
     @Override

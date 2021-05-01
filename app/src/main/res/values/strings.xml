@@ -66,6 +66,7 @@
     <string name="export_success">Exported</string>
     <string name="export_failure">Error</string>
 
+    <string name="reset">reset</string>
     <string name="back">back</string>
 
     <string-array name="toggle">
