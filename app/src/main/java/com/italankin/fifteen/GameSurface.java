@@ -54,7 +54,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
     private final RectF mRectField = new RectF();
 
     private Paint mDebugPaint;
-    private final StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
+    private final StatisticsManager statisticsManager;
 
     private int mGestureStartX;
     private int mGestureStartY;
@@ -67,6 +67,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         super(context);
 
         this.dbHelper = dbHelper;
+        this.statisticsManager = StatisticsManager.getInstance(context);
         this.exportCallback = exportCallback;
 
         mResources = getResources();
@@ -131,7 +132,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         });
         mSolvedOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_win));
         mPauseOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_pause));
-        mStatistics = new StatisticsView(mResources);
+        mStatistics = new StatisticsView(statisticsManager, mResources);
         mStatistics.addCallbacks(exportCallback::exportSession);
 
         Game.setCallback(() -> {

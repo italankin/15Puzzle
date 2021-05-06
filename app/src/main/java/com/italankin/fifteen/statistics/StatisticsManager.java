@@ -1,38 +1,50 @@
 package com.italankin.fifteen.statistics;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StatisticsManager {
 
-    public static StatisticsManager INSTANCE = new StatisticsManager();
+    public synchronized static StatisticsManager getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new StatisticsManager(context);
+            INSTANCE.loadSession();
+        }
+        return INSTANCE;
+    }
 
-    private final Map<Key, List<Entry>> records = new HashMap<>(100);
+    private static StatisticsManager INSTANCE;
 
-    private StatisticsManager() {
+    private final SessionStorage sessionStorage;
+    private final Map<StatisticsKey, List<StatisticsEntry>> records = new ConcurrentHashMap<>(50);
+
+    private StatisticsManager(Context context) {
+        sessionStorage = new SessionStorage(context);
     }
 
     public void add(int width, int height, int type, boolean hard, long time, int moves) {
-        Key key = new Key(width, height, type, hard);
-        Entry entry = new Entry(time, moves);
-        List<Entry> entries = records.get(key);
+        StatisticsKey key = new StatisticsKey(width, height, type, hard);
+        StatisticsEntry entry = new StatisticsEntry(time, moves);
+        List<StatisticsEntry> entries = records.get(key);
         if (entries == null) {
             entries = new ArrayList<>(100);
             records.put(key, entries);
         }
         entries.add(entry);
+        sessionStorage.write(records);
     }
 
     public Statistics get(int width, int height, int type, boolean hard) {
         if (records.isEmpty()) {
             return Statistics.EMPTY;
         }
-        Key key = new Key(width, height, type, hard);
-        List<Entry> entries = records.get(key);
+        StatisticsKey key = new StatisticsKey(width, height, type, hard);
+        List<StatisticsEntry> entries = records.get(key);
         if (entries == null || entries.isEmpty()) {
             return Statistics.EMPTY;
         }
@@ -45,34 +57,34 @@ public class StatisticsManager {
         return new Statistics(entries.size(), single, ao5, ao12, ao50, ao100, session);
     }
 
-    public Map<Key, List<Entry>> getAll() {
+    public Map<StatisticsKey, List<StatisticsEntry>> getAll() {
         return Collections.unmodifiableMap(records);
-    }
-
-    public void clear(int width, int height, int type, boolean hard) {
-        Key key = new Key(width, height, type, hard);
-        records.remove(key);
     }
 
     public void clear() {
         records.clear();
+        sessionStorage.clear();
     }
 
-    private static Statistics.Avg avgSingle(List<Entry> entries) {
+    private void loadSession() {
+        sessionStorage.read(records::putAll);
+    }
+
+    private static Statistics.Avg avgSingle(List<StatisticsEntry> entries) {
         int size = entries.size();
         if (size < 1) {
             return null;
         }
-        Entry last = entries.get(size - 1);
+        StatisticsEntry last = entries.get(size - 1);
         return new Statistics.Avg(last.time, last.moves, last.tps);
     }
 
-    private static Statistics.Avg avg(List<Entry> entries, int num) {
+    private static Statistics.Avg avg(List<StatisticsEntry> entries, int num) {
         int size = entries.size();
         if (size < num || num < 3) {
             return null;
         }
-        List<Entry> lastN;
+        List<StatisticsEntry> lastN;
         if (size == num) {
             lastN = entries;
         } else {
@@ -85,113 +97,45 @@ public class StatisticsManager {
         return new Statistics.Avg(time, moves, tps);
     }
 
-    private static long avgTime(List<Entry> entries) {
-        Collections.sort(entries, Entry.BY_TIME);
+    private static long avgTime(List<StatisticsEntry> entries) {
+        Collections.sort(entries, StatisticsEntry.BY_TIME);
         int size = entries.size();
         if (size > 2) {
             entries.remove(size - 1);
             entries.remove(0);
         }
         long total = 0;
-        for (Entry entry : entries) {
+        for (StatisticsEntry entry : entries) {
             total += entry.time;
         }
         return total / entries.size();
     }
 
-    private static float avgMoves(List<Entry> entries) {
-        Collections.sort(entries, Entry.BY_MOVES);
+    private static float avgMoves(List<StatisticsEntry> entries) {
+        Collections.sort(entries, StatisticsEntry.BY_MOVES);
         int size = entries.size();
         if (size > 2) {
             entries.remove(size - 1);
             entries.remove(0);
         }
         float total = 0;
-        for (Entry entry : entries) {
+        for (StatisticsEntry entry : entries) {
             total += entry.moves;
         }
         return total / entries.size();
     }
 
-    private static float avgTps(List<Entry> entries) {
-        Collections.sort(entries, Entry.BY_TPS);
+    private static float avgTps(List<StatisticsEntry> entries) {
+        Collections.sort(entries, StatisticsEntry.BY_TPS);
         int size = entries.size();
         if (size > 2) {
             entries.remove(size - 1);
             entries.remove(0);
         }
         float total = 0;
-        for (Entry entry : entries) {
+        for (StatisticsEntry entry : entries) {
             total += entry.tps;
         }
         return total / entries.size();
-    }
-
-    public static class Key {
-
-        public final int width;
-        public final int height;
-        public final int type;
-        public final boolean hard;
-
-        private Key(int width, int height, int type, boolean hard) {
-            this.width = width;
-            this.height = height;
-            this.type = type;
-            this.hard = hard;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            Key key = (Key) o;
-            if (width != key.width) {
-                return false;
-            }
-            if (height != key.height) {
-                return false;
-            }
-            if (type != key.type) {
-                return false;
-            }
-            return hard == key.hard;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = width;
-            result = 31 * result + height;
-            result = 31 * result + type;
-            result = 31 * result + (hard ? 1 : 0);
-            return result;
-        }
-    }
-
-    public static class Entry {
-
-        static final Comparator<Entry> BY_TIME = (lhs, rhs) -> {
-            return Long.compare(lhs.time, rhs.time);
-        };
-        static final Comparator<Entry> BY_MOVES = (lhs, rhs) -> {
-            return Long.compare(lhs.moves, rhs.moves);
-        };
-        static final Comparator<Entry> BY_TPS = (lhs, rhs) -> {
-            return Float.compare(lhs.tps, rhs.tps);
-        };
-
-        public final long time;
-        public final int moves;
-        public final float tps;
-
-        private Entry(long time, int moves) {
-            this.time = time;
-            this.moves = moves;
-            this.tps = (float) moves / (float) time * 1000f;
-        }
     }
 }

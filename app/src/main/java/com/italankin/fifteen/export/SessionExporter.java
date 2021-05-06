@@ -9,9 +9,9 @@ import com.italankin.fifteen.Constants;
 import com.italankin.fifteen.Logger;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Tools;
+import com.italankin.fifteen.statistics.StatisticsEntry;
+import com.italankin.fifteen.statistics.StatisticsKey;
 import com.italankin.fifteen.statistics.StatisticsManager;
-import com.italankin.fifteen.statistics.StatisticsManager.Entry;
-import com.italankin.fifteen.statistics.StatisticsManager.Key;
 
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
@@ -84,10 +84,10 @@ public class SessionExporter implements Exporter {
 
                     String[] types = context.getResources().getStringArray(R.array.game_types);
 
-                    Map<Key, List<Entry>> all = StatisticsManager.INSTANCE.getAll();
-                    for (Map.Entry<Key, List<Entry>> mapEntry : all.entrySet()) {
-                        Key key = mapEntry.getKey();
-                        for (Entry entry : mapEntry.getValue()) {
+                    Map<StatisticsKey, List<StatisticsEntry>> all = StatisticsManager.getInstance(context).getAll();
+                    for (Map.Entry<StatisticsKey, List<StatisticsEntry>> mapEntry : all.entrySet()) {
+                        StatisticsKey key = mapEntry.getKey();
+                        for (StatisticsEntry entry : mapEntry.getValue()) {
                             w.write(types[key.type]);
                             w.write(DELIMITER);
 
