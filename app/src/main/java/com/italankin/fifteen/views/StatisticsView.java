@@ -60,7 +60,7 @@ public class StatisticsView extends BaseView {
     private final String mTextMoves;
     private final String mTextTps;
 
-    private final StatisticsManager statisticsManager = StatisticsManager.INSTANCE;
+    private final StatisticsManager statisticsManager;
     private Statistics statistics = Statistics.EMPTY;
 
     private final float[] mTableGuides = {
@@ -72,7 +72,8 @@ public class StatisticsView extends BaseView {
 
     private Callbacks callbacks;
 
-    public StatisticsView(Resources res) {
+    public StatisticsView(StatisticsManager statisticsManager, Resources res) {
+        this.statisticsManager = statisticsManager;
         mResources = res;
 
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.08f);
