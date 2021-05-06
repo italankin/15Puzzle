@@ -18,8 +18,8 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
     private static final int REQUEST_CODE_CREATE_DOC_RECORDS = 1;
     private static final int REQUEST_CODE_CREATE_DOC_SESSION = 2;
 
-    private RecordsExporter mRecordsExporter;
-    private SessionExporter mSessionExporter;
+    private Exporter mRecordsExporter;
+    private Exporter mSessionExporter;
     private DBHelper mDbHelper;
     private GameSurface mGameView;
 
@@ -88,8 +88,8 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
     public void exportRecords() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE, RecordsExporter.DEFAULT_FILENAME);
+        intent.setType(Exporter.MIME_TYPE);
+        intent.putExtra(Intent.EXTRA_TITLE, mRecordsExporter.defaultFilename());
         startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_RECORDS);
     }
 
@@ -97,8 +97,8 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
     public void exportSession() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE, SessionExporter.defaultFilename());
+        intent.setType(Exporter.MIME_TYPE);
+        intent.putExtra(Intent.EXTRA_TITLE, mSessionExporter.defaultFilename());
         startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_SESSION);
     }
 

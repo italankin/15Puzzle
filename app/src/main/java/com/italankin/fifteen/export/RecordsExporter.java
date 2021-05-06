@@ -22,7 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RecordsExporter implements Exporter {
 
-    public static final String DEFAULT_FILENAME = "15-puzzle-records.csv";
+    private static final String DEFAULT_FILENAME = "15-puzzle-records.csv";
     private static final char DELIMITER = ';';
 
     private final Context context;
@@ -39,6 +39,11 @@ public class RecordsExporter implements Exporter {
     @Override
     public void export(Uri uri, Callback callback) {
         executor.execute(new ExportTask(uri, callback));
+    }
+
+    @Override
+    public String defaultFilename() {
+        return DEFAULT_FILENAME;
     }
 
     private class ExportTask implements Runnable {

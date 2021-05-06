@@ -26,12 +26,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SessionExporter implements Exporter {
 
-    private static final String DEFAULT_FILENAME = "15-puzzle-session-%s.csv";
-
-    public static String defaultFilename() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.getDefault());
-        return String.format(DEFAULT_FILENAME, dateFormat.format(new Date()));
-    }
+    private static final String DEFAULT_FILENAME_FORMAT = "15-puzzle-session-%s.csv";
 
     private final Context context;
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -45,6 +40,12 @@ public class SessionExporter implements Exporter {
     @Override
     public void export(Uri uri, Callback callback) {
         executor.execute(new ExportTask(uri, callback));
+    }
+
+    @Override
+    public String defaultFilename() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.getDefault());
+        return String.format(DEFAULT_FILENAME_FORMAT, dateFormat.format(new Date()));
     }
 
     private class ExportTask implements Runnable {
