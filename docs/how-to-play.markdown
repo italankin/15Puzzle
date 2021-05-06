@@ -183,3 +183,21 @@ Statistics screen shows various information about current session, such as [aver
 <p align="center"><img src="/assets/stats.jpg" alt="Statistics" /></p>
 
 Statistics can be enabled in [advanced settings](#62-advanced).
+
+### 8.1. Export
+
+Current session statistics can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format by pressing `export` button.
+
+The exported file contains the following information:
+
+|type|hard mode|width|height|time|moves|tps|
+|-|-|-|-|-|-|-|
+|[game type](#3-game-types)|`0` for easy mode, `1` for [hard mode](#42-hard)|width of the puzzle|height of the puzzle|time in seconds (with milliseconds)|count of moves|[TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second)|
+
+For example:
+
+```
+type;hard mode;width;height;time;moves;tps
+classic;0;4;4;11.732;78;6.648
+classic;0;4;4;16.315;134;8.213
+```
