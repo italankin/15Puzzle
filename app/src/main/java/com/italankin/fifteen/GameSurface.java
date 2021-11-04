@@ -4,13 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.View;
 
 import com.italankin.fifteen.export.ExportCallback;
 import com.italankin.fifteen.statistics.StatisticsManager;
@@ -24,17 +21,13 @@ import com.italankin.fifteen.views.TopPanelView;
 import com.italankin.fifteen.views.help.HelpOverlay;
 import com.italankin.fifteen.views.overlay.FieldTextOverlay;
 
-public class GameSurface extends SurfaceView implements TopPanelView.Callback, SurfaceHolder.Callback {
+public class GameSurface extends View implements TopPanelView.Callback {
 
     private static final int BTN_NEW = 0;
     private static final int BTN_SETTINGS = 1;
     private static final int BTN_LEADERBOARD = 2;
     private static final int BTN_FOUR = 3;
 
-    /**
-     * Main render thread looper
-     */
-    private GameManager mGameLoopThread;
     private final DBHelper dbHelper;
     private final ExportCallback exportCallback;
 
@@ -53,13 +46,13 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
 
     private final RectF mRectField = new RectF();
 
-    private Paint mDebugPaint;
     private final StatisticsManager statisticsManager;
 
     private int mGestureStartX;
     private int mGestureStartY;
     private boolean mGestureTrail = false;
     private long lastSolvedTimestamp = 0;
+    private long lastOnDrawTimestamp = 0;
 
     private final TileAppearAnimator tileAppearAnimator = new TileAppearAnimator();
 
@@ -70,17 +63,23 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         this.statisticsManager = StatisticsManager.getInstance(context);
         this.exportCallback = exportCallback;
 
-        mResources = getResources();
-
-        getHolder().addCallback(this);
+        mResources = context.getResources();
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mGameLoopThread = new GameManager(this, holder);
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
+    }
 
-        Dimensions.update(this.getWidth(), this.getHeight());
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        if (mField == null) {
+            init();
+        }
+    }
 
+    private void init() {
         mTopPanel = new TopPanelView();
         mTopPanel.addButton(BTN_NEW, mResources.getString(R.string.action_new));
         mTopPanel.addButton(BTN_SETTINGS, mResources.getString(R.string.action_settings));
@@ -118,7 +117,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             mTopPanel.setButtonCaption(BTN_FOUR, mResources.getString(title));
             updateViews();
         });
-        mLeaderboard = new LeaderboardView(dbHelper, getResources());
+        mLeaderboard = new LeaderboardView(dbHelper, mResources);
         mLeaderboard.addCallback(new LeaderboardView.Callbacks() {
             @Override
             public void onChanged() {
@@ -157,40 +156,17 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             SaveGameManager.removeSavedGame();
         });
 
-        try {
-            mGameLoopThread.start();
-            mGameLoopThread.setRunning(true);
-        } catch (Exception e) {
-            Logger.e(e, "surfaceCreated: %s", e);
-        }
-
-        mDebugPaint = new Paint();
-        mDebugPaint.setTypeface(Settings.typeface);
-        mDebugPaint.setTextSize(Dimensions.interfaceFontSize * .75f);
-        mDebugPaint.setTextAlign(Paint.Align.LEFT);
-        mDebugPaint.setColor(Color.RED);
-
         updateViews();
 
         createNewGame(false);
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mGameLoopThread.setRunning(false);
-        while (true) {
-            try {
-                mGameLoopThread.join();
-                break;
-            } catch (InterruptedException e) {
-                Logger.e(e, "surfaceDestroyed: %s", e);
-            }
-        }
-        mGameLoopThread = null;
+    protected void onDraw(Canvas canvas) {
+        long current = System.currentTimeMillis();
+        draw(canvas, current - lastOnDrawTimestamp);
+        lastOnDrawTimestamp = current;
+        invalidate();
     }
 
     @Override
@@ -333,9 +309,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
         }
     }
 
-    public void draw(Canvas canvas, long elapsed, String info) {
-        super.draw(canvas);
-
+    private void draw(Canvas canvas, long elapsed) {
         boolean paused = Game.isPaused();
         boolean solved = Game.isSolved();
 
@@ -370,10 +344,6 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             mHelpOverlay.draw(canvas, elapsed);
         } else if (!helpShown && paused && !solved && mPauseOverlay.isShown()) {
             mPauseOverlay.draw(canvas, elapsed);
-        }
-
-        if (info != null) {
-            canvas.drawText(info, 0, Dimensions.surfaceHeight, mDebugPaint);
         }
     }
 
@@ -417,7 +387,7 @@ public class GameSurface extends SurfaceView implements TopPanelView.Callback, S
             }
         }
 
-        Dimensions.update(this.getWidth(), this.getHeight());
+        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
         mRectField.set(
                 Dimensions.fieldMarginLeft - Dimensions.spacing,
                 Dimensions.fieldMarginTop - Dimensions.spacing,
