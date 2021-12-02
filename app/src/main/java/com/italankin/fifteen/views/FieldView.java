@@ -10,17 +10,17 @@ import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
 import com.italankin.fifteen.Tools;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FieldView extends BaseView {
 
     private final Paint mPaintField;
-    private final CopyOnWriteArrayList<Tile> mData;
+    private final ArrayList<Tile> mData;
     private final RectF mRectField;
 
     public FieldView(RectF rect) {
-        mData = new CopyOnWriteArrayList<>();
+        mData = new ArrayList<>();
         mRectField = rect;
         mPaintField = new Paint();
 
