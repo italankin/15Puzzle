@@ -307,7 +307,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
         if (Game.isPeeking()) {
             Game.setPeeking(false);
         }
-        pauseGame();
+        if (mField != null) {
+            pauseGame();
+        }
     }
 
     private void draw(Canvas canvas, long elapsed) {
