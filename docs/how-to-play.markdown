@@ -131,6 +131,10 @@ classic;0;4;4;40.619;127;5/1/21
 classic;0;4;4;29.906;128;5/1/21
 ```
 
+### 5.2. Import
+
+Import previously [exported records](#51-export).
+
 ## 6. Settings
 
 ### 6.1. Basic
@@ -151,6 +155,7 @@ classic;0;4;4;29.906;128;5/1/21
 |Mode|`easy`, `hard`|See [game modes](#4-game-modes)|
 |Anti-alias|`on`, `off`|Smoother appearance of lines. Disabling can improve performance|
 |Multi-color|`off`, `rows`, `columns`, `fringe`, `solved`|See [multi-color](#7-multi-color)|
+|Animation speed|`off`, `fast`, `normal`|Tile animation speed|
 |Delay|`on`, `off`|After solving a puzzle, there is a small delay before you can start a new game by clicking on a game field|
 |Ingame&nbsp;info||See [ingame-info](#621-ingame-info)|
 |Stats|`on`, `off`|See [statistics](#8-statistics)|
