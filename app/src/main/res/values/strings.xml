@@ -55,6 +55,7 @@
     <string name="settings_page_advanced">advanced</string>
 
     <string name="export">export</string>
+    <string name="import_records">import</string>
     <string name="export_width">width</string>
     <string name="export_height">height</string>
     <string name="export_type">type</string>
@@ -63,8 +64,9 @@
     <string name="export_hard">hard mode</string>
     <string name="export_date">date</string>
     <string name="export_tps">tps</string>
-    <string name="export_success">Exported</string>
-    <string name="export_failure">Error</string>
+    <string name="export_success">Exported %1$d entries</string>
+    <string name="export_import_failure">Error</string>
+    <string name="import_success">Imported %1$d entries</string>
 
     <string name="reset">reset</string>
     <string name="back">back</string>

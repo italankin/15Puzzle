@@ -43,6 +43,11 @@ public class SessionExporter implements Exporter {
     }
 
     @Override
+    public void importData(Uri uri, Callback callback) {
+        throw new UnsupportedOperationException("Import is not supported for " + SessionExporter.class.getSimpleName());
+    }
+
+    @Override
     public String defaultFilename() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.getDefault());
         return String.format(DEFAULT_FILENAME_FORMAT, dateFormat.format(new Date()));
@@ -86,6 +91,7 @@ public class SessionExporter implements Exporter {
                     String[] types = context.getResources().getStringArray(R.array.game_types);
 
                     Map<StatisticsKey, List<StatisticsEntry>> all = StatisticsManager.getInstance(context).getAll();
+                    int exportedCount = 0;
                     for (Map.Entry<StatisticsKey, List<StatisticsEntry>> mapEntry : all.entrySet()) {
                         StatisticsKey key = mapEntry.getKey();
                         for (StatisticsEntry entry : mapEntry.getValue()) {
@@ -109,14 +115,15 @@ public class SessionExporter implements Exporter {
 
                             w.write(Tools.formatFloat(entry.tps));
                             w.write('\n');
+                            exportedCount++;
                         }
                     }
-
-                    handler.post(callback::onExportSuccess);
+                    int total = exportedCount;
+                    handler.post(() -> callback.onSuccess(total));
                 }
             } catch (Exception e) {
                 Logger.e(e, "SessionExporter error:");
-                handler.post(callback::onExportError);
+                handler.post(callback::onError);
             }
         }
     }

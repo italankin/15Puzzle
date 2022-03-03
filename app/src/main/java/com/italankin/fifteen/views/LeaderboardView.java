@@ -34,6 +34,7 @@ public class LeaderboardView extends BaseView {
     private final String mTextSort;
     private final String[] mTextSortValue;
     private final String mTextExport;
+    private final String mTextImport;
     private final String mTextBack;
     private final String mTextNoData;
 
@@ -43,6 +44,7 @@ public class LeaderboardView extends BaseView {
     private final Rect mRectMode;
     private final Rect mRectSort;
     private final RectF mRectExport;
+    private final RectF mRectImport;
     private final RectF mRectBack;
 
     private final ArrayList<TableItem> mTableItems = new ArrayList<>();
@@ -111,6 +113,7 @@ public class LeaderboardView extends BaseView {
         mTextSortValue = res.getStringArray(R.array.sort_types);
         mTextBack = res.getString(R.string.back);
         mTextExport = res.getString(R.string.export);
+        mTextImport = res.getString(R.string.import_records);
         mTextNoData = res.getString(R.string.info_no_data);
 
         Rect r = new Rect();
@@ -143,8 +146,11 @@ public class LeaderboardView extends BaseView {
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing);
         mRectBack.inset(0, padding);
         mRectExport = new RectF(0, mRectBack.top - lineHeight - r.height(),
-                Dimensions.surfaceWidth, mRectBack.top - (int) (lineSpacing * 0.375f));
+                Dimensions.surfaceWidth / 2, mRectBack.top - (int) (lineSpacing * 0.375f));
         mRectExport.inset(0, padding);
+        mRectImport = new RectF(Dimensions.surfaceWidth / 2, mRectBack.top - lineHeight - r.height(),
+                Dimensions.surfaceWidth, mRectBack.top - (int) (lineSpacing * 0.375f));
+        mRectImport.inset(0, padding);
     }
 
     public void onClick(int x, int y, int dx) {
@@ -194,6 +200,10 @@ public class LeaderboardView extends BaseView {
         }
         if (mRectExport.contains(x, y) && mCallbacks != null) {
             mCallbacks.onExportClicked();
+        }
+        if (mRectImport.contains(x, y) && mCallbacks != null) {
+            mCallbacks.onImportClicked();
+            hide();
         }
     }
 
@@ -265,6 +275,7 @@ public class LeaderboardView extends BaseView {
         float textYOffset = Dimensions.surfaceHeight * 0.02f;
         canvas.drawText(mTextBack, mRectBack.centerX(), mRectBack.bottom - textYOffset, mPaintControls);
         canvas.drawText(mTextExport, mRectExport.centerX(), mRectExport.bottom - textYOffset, mPaintControls);
+        canvas.drawText(mTextImport, mRectImport.centerX(), mRectImport.bottom - textYOffset, mPaintControls);
 
         if (mTableItems.size() == 0) {
             mPaintText.setAlpha(128);
@@ -328,5 +339,7 @@ public class LeaderboardView extends BaseView {
         void onChanged();
 
         void onExportClicked();
+
+        void onImportClicked();
     }
 }

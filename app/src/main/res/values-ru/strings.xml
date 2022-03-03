@@ -50,6 +50,7 @@
     <string name="settings_page_advanced">дополнительные</string>
 
     <string name="export">экспорт</string>
+    <string name="import_records">импорт</string>
     <string name="export_width">ширина</string>
     <string name="export_height">высота</string>
     <string name="export_type">тип</string>
@@ -58,8 +59,9 @@
     <string name="export_hard">сложный режим</string>
     <string name="export_date">дата</string>
     <string name="export_tps">tps</string>
-    <string name="export_success">Сохранено</string>
-    <string name="export_failure">Ошибка</string>
+    <string name="export_success">Сохранено %1$d записей</string>
+    <string name="export_import_failure">Ошибка</string>
+    <string name="import_success">Загружено %1$d записей</string>
 
     <string name="reset">сброс</string>
     <string name="back">назад</string>

@@ -39,6 +39,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void insert(int mode, int width, int height, int hardmode, int moves, long time) {
+        insert(mode, width, height, hardmode, moves, time, System.currentTimeMillis());
+    }
+
+    public void insert(int mode, int width, int height, int hardmode, int moves, long time, long timestamp) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -48,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(KEY_MOVES, moves);
         cv.put(KEY_TIME, time);
         cv.put(KEY_HARDMODE, hardmode);
-        cv.put(KEY_TIMESTAMP, System.currentTimeMillis());
+        cv.put(KEY_TIMESTAMP, timestamp);
 
         long rowid = db.insert(KEY_TABLE, null, cv);
 

@@ -10,12 +10,14 @@ public interface Exporter {
 
     void export(Uri uri, Callback callback);
 
+    void importData(Uri uri, Callback callback);
+
     String defaultFilename();
 
     interface Callback {
 
-        void onExportSuccess();
+        void onSuccess(int count);
 
-        void onExportError();
+        void onError();
     }
 }

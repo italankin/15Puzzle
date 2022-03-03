@@ -4,5 +4,7 @@ public interface ExportCallback {
 
     void exportRecords();
 
+    void importRecords();
+
     void exportSession();
 }

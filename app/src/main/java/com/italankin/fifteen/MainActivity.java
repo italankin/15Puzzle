@@ -13,15 +13,40 @@ import com.italankin.fifteen.export.Exporter;
 import com.italankin.fifteen.export.RecordsExporter;
 import com.italankin.fifteen.export.SessionExporter;
 
-public class MainActivity extends Activity implements ExportCallback, Exporter.Callback {
+public class MainActivity extends Activity implements ExportCallback {
 
-    private static final int REQUEST_CODE_CREATE_DOC_RECORDS = 1;
-    private static final int REQUEST_CODE_CREATE_DOC_SESSION = 2;
+    private static final int REQUEST_CODE_EXPORT_RECORDS = 1;
+    private static final int REQUEST_CODE_EXPORT_SESSION = 2;
+    private static final int REQUEST_CODE_IMPORT_RECORDS = 3;
 
     private Exporter mRecordsExporter;
     private Exporter mSessionExporter;
     private DBHelper mDbHelper;
     private GameSurface mGameView;
+
+    private final Exporter.Callback exportCallback = new Exporter.Callback() {
+        @Override
+        public void onSuccess(int count) {
+            Toast.makeText(MainActivity.this, getString(R.string.export_success, count), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError() {
+            Toast.makeText(MainActivity.this, R.string.export_import_failure, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private final Exporter.Callback importCallback = new Exporter.Callback() {
+        @Override
+        public void onSuccess(int count) {
+            Toast.makeText(MainActivity.this, getString(R.string.import_success, count), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError() {
+            Toast.makeText(MainActivity.this, R.string.export_import_failure, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +91,14 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
             Uri uri = data.getData();
             if (uri != null) {
                 switch (requestCode) {
-                    case REQUEST_CODE_CREATE_DOC_RECORDS:
-                        mRecordsExporter.export(uri, this);
+                    case REQUEST_CODE_EXPORT_RECORDS:
+                        mRecordsExporter.export(uri, exportCallback);
                         break;
-                    case REQUEST_CODE_CREATE_DOC_SESSION:
-                        mSessionExporter.export(uri, this);
+                    case REQUEST_CODE_EXPORT_SESSION:
+                        mSessionExporter.export(uri, exportCallback);
+                        break;
+                    case REQUEST_CODE_IMPORT_RECORDS:
+                        mRecordsExporter.importData(uri, importCallback);
                         break;
                 }
             }
@@ -90,7 +118,15 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType(Exporter.MIME_TYPE);
         intent.putExtra(Intent.EXTRA_TITLE, mRecordsExporter.defaultFilename());
-        startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_RECORDS);
+        startActivityForResult(intent, REQUEST_CODE_EXPORT_RECORDS);
+    }
+
+    @Override
+    public void importRecords() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(Exporter.MIME_TYPE);
+        startActivityForResult(intent, REQUEST_CODE_IMPORT_RECORDS);
     }
 
     @Override
@@ -99,16 +135,6 @@ public class MainActivity extends Activity implements ExportCallback, Exporter.C
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType(Exporter.MIME_TYPE);
         intent.putExtra(Intent.EXTRA_TITLE, mSessionExporter.defaultFilename());
-        startActivityForResult(intent, REQUEST_CODE_CREATE_DOC_SESSION);
-    }
-
-    @Override
-    public void onExportSuccess() {
-        Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onExportError() {
-        Toast.makeText(this, R.string.export_failure, Toast.LENGTH_SHORT).show();
+        startActivityForResult(intent, REQUEST_CODE_EXPORT_SESSION);
     }
 }

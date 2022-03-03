@@ -128,6 +128,11 @@ public class GameSurface extends View implements TopPanelView.Callback {
             public void onExportClicked() {
                 exportCallback.exportRecords();
             }
+
+            @Override
+            public void onImportClicked() {
+                exportCallback.importRecords();
+            }
         });
         mSolvedOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_win));
         mPauseOverlay = new FieldTextOverlay(mRectField, mResources.getString(R.string.info_pause));
