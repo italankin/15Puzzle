@@ -185,7 +185,7 @@ public class Tile {
     }
 
     public boolean isAnimating() {
-        if (!Settings.animations) {
+        if (!Settings.animations || Settings.tileAnimDuration == Constants.ANIMATION_DURATION_OFF) {
             return false;
         }
         return mTileScaleAnimator.isRunning() || mTileYAnimator.isRunning() || mTileXAnimator.isRunning();
@@ -216,7 +216,7 @@ public class Tile {
             float newY = Dimensions.fieldMarginTop +
                     (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
-            if (Settings.animations) {
+            if (Settings.animations && Settings.tileAnimDuration != Constants.ANIMATION_DURATION_OFF) {
                 if (mTileXAnimator.isRunning()) {
                     mTileXAnimator.cancel();
                 }

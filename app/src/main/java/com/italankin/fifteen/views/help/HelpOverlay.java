@@ -58,9 +58,7 @@ public class HelpOverlay extends FieldOverlay {
                 continue;
             }
             Tile t = new Tile(number, i);
-            if (Settings.animations) {
-                tileAppearAnimator.animateTile(t, TileAppearAnimator.ANIM_TYPE_NUMBER_ASC_NO_GROUP);
-            }
+            tileAppearAnimator.animateTile(t, TileAppearAnimator.ANIM_TYPE_NUMBER_ASC_NO_GROUP);
             fieldView.addTile(t);
         }
     }

@@ -24,6 +24,7 @@
     <string name="pref_width">Ширина</string>
     <string name="pref_height">Высота</string>
     <string name="pref_animation">Анимация</string>
+    <string name="pref_tile_anim_speed">Скор. аним.</string>
     <string name="pref_type">Тип</string>
     <string name="pref_color_mode">Тема</string>
     <string name="pref_color">Цвета</string>
@@ -39,6 +40,10 @@
     <string name="pref_ingame_info_moves">Время</string>
     <string name="pref_ingame_info_time">Ходы</string>
     <string name="pref_ingame_info_tps">TPS</string>
+
+    <string name="tile_anim_speed_off">выкл.</string>
+    <string name="tile_anim_speed_fast">быстрая</string>
+    <string name="tile_anim_speed_normal">обычная</string>
 
     <string name="stats_single">Послед.</string>
     <string name="stats_session_avg">Сессия</string>

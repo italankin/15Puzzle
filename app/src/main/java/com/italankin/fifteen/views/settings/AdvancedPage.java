@@ -29,6 +29,10 @@ public class AdvancedPage implements SettingsPage {
     private final String mTextIngameInfoValue;
     private final String mTextStats;
     private final String[] mTextStatsValues;
+    private final String mTextTileAnimSpeed;
+    private final String mTextTileAnimSpeedOff;
+    private final String mTextTileAnimSpeedFast;
+    private final String mTextTileAnimSpeedNormal;
 
     private RectF mRectMultiColor;
     private RectF mRectAntiAlias;
@@ -36,6 +40,7 @@ public class AdvancedPage implements SettingsPage {
     private RectF mRectIngameInfo;
     private RectF mRectBf;
     private RectF mRectStats;
+    private RectF mRectTileAnimSpeed;
 
     private SettingsView.Callbacks mCallbacks;
 
@@ -53,6 +58,10 @@ public class AdvancedPage implements SettingsPage {
         mTextMultiColor = res.getString(R.string.pref_fringe);
         mTextMultiColorValues = res.getStringArray(R.array.multi_color_modes);
         mTextStats = res.getString(R.string.pref_stats);
+        mTextTileAnimSpeed = res.getString(R.string.pref_tile_anim_speed);
+        mTextTileAnimSpeedOff = res.getString(R.string.tile_anim_speed_off);
+        mTextTileAnimSpeedFast = res.getString(R.string.tile_anim_speed_fast);
+        mTextTileAnimSpeedNormal = res.getString(R.string.tile_anim_speed_normal);
         mTextHardMode = res.getString(R.string.pref_mode);
         mTextHardModeValues = res.getStringArray(R.array.difficulty_modes);
         mTextStatsValues = res.getStringArray(R.array.toggle);
@@ -71,6 +80,10 @@ public class AdvancedPage implements SettingsPage {
         topMargin += lineSpacing;
         mRectMultiColor = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectMultiColor.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectTileAnimSpeed = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectTileAnimSpeed.inset(0, padding);
 
         topMargin += lineSpacing;
         mRectNewGameDelay = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
@@ -109,6 +122,14 @@ public class AdvancedPage implements SettingsPage {
         canvas.drawText(mTextStats, textLeft, mRectStats.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextStatsValues[Settings.stats ? 1 : 0],
                 valueRight, mRectStats.bottom - textYOffset, mPaintValue);
+
+        int alpha = Settings.animations ? 255 : 128;
+        mPaintText.setAlpha(alpha);
+        canvas.drawText(mTextTileAnimSpeed, textLeft, mRectTileAnimSpeed.bottom - textYOffset, mPaintText);
+        mPaintText.setAlpha(255);
+        mPaintValue.setAlpha(alpha);
+        canvas.drawText(tileAnimSpeed(), valueRight, mRectTileAnimSpeed.bottom - textYOffset, mPaintValue);
+        mPaintValue.setAlpha(255);
     }
 
     @Override
@@ -159,6 +180,16 @@ public class AdvancedPage implements SettingsPage {
                 mCallbacks.onSettingsChanged(false);
             }
         }
+
+        if (Settings.animations && mRectTileAnimSpeed.contains(x, y)) {
+            for (int i = 0, s = Constants.ANIMATION_DURATION_ARRAY.length; i < s; i++) {
+                if (Settings.tileAnimDuration == Constants.ANIMATION_DURATION_ARRAY[i]) {
+                    Settings.tileAnimDuration = Constants.ANIMATION_DURATION_ARRAY[(i + 1) % s];
+                    Settings.save();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -168,5 +199,15 @@ public class AdvancedPage implements SettingsPage {
 
     @Override
     public void update() {
+    }
+
+    private String tileAnimSpeed() {
+        if (!Settings.animations || Settings.tileAnimDuration == Constants.ANIMATION_DURATION_OFF) {
+            return mTextTileAnimSpeedOff;
+        }
+        if (Settings.tileAnimDuration == Constants.ANIMATION_DURATION_FAST) {
+            return mTextTileAnimSpeedFast;
+        }
+        return mTextTileAnimSpeedNormal;
     }
 }

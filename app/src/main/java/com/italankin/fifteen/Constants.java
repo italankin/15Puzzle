@@ -35,6 +35,15 @@ public class Constants {
     public static final int TIME_FORMAT_MIN_SEC_MS_LONG = 2;
     public static final int TIME_FORMAT_SEC_MS_LONG = 3;
 
+    public static final int ANIMATION_DURATION_NORMAL = 300;
+    public static final int ANIMATION_DURATION_FAST = 150;
+    public static final int ANIMATION_DURATION_OFF = 0;
+    public static final int[] ANIMATION_DURATION_ARRAY = {
+            ANIMATION_DURATION_NORMAL,
+            ANIMATION_DURATION_FAST,
+            ANIMATION_DURATION_OFF
+    };
+
     public static final int TILE_ANIM_FRAME_MULTIPLIER = 16;
 
     public static final long NEW_GAME_DELAY = 500;

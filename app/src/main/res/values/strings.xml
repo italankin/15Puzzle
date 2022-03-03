@@ -28,6 +28,7 @@
     <string name="pref_fringe">Multi-color</string>
     <string name="pref_type">Type</string>
     <string name="pref_animation">Animation</string>
+    <string name="pref_tile_anim_speed">Anim speed</string>
     <string name="pref_mode">Mode</string>
     <string name="pref_sort">Sort</string>
     <string name="pref_anti_alias">Anti-alias</string>
@@ -39,6 +40,10 @@
     <string name="pref_ingame_info_moves">Moves</string>
     <string name="pref_ingame_info_time">Time</string>
     <string name="pref_ingame_info_tps">TPS</string>
+
+    <string name="tile_anim_speed_off">off</string>
+    <string name="tile_anim_speed_fast">fast</string>
+    <string name="tile_anim_speed_normal">normal</string>
 
     <string name="stats_single">Single</string>
     <string name="stats_ao5" translatable="false">Ao5</string>

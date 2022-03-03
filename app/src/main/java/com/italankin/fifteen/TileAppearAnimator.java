@@ -52,6 +52,10 @@ public class TileAppearAnimator {
     }
 
     public void animateTile(Tile t, int animationType) {
+        if (!Settings.animations || Settings.tileAnimDuration == Constants.ANIMATION_DURATION_OFF) {
+            return;
+        }
+
         int size = Game.getSize();
         int index = t.getIndex();
         int number = t.getNumber();

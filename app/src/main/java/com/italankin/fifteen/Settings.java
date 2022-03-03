@@ -18,6 +18,7 @@ public class Settings {
     private static final String KEY_GAME_MODE = "hardmode";
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
     private static final String KEY_GAME_ANIMATION = "animation";
+    private static final String KEY_GAME_TILE_ANIMATION_DURATION = "tile_animation_duration";
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
@@ -36,7 +37,7 @@ public class Settings {
     public static boolean hardmode = Defaults.HARD_MODE;
     public static boolean animations = Defaults.ANIMATIONS;
     public static boolean antiAlias = Defaults.ANTI_ALIAS;
-    static long tileAnimDuration = Defaults.ANIMATION_DURATION;
+    public static long tileAnimDuration = Defaults.ANIMATION_DURATION;
     public static long screenAnimDuration = Defaults.ANIMATION_DURATION;
     public static int tileColor = 0;
     public static int multiColor = Defaults.MULTI_COLOR;
@@ -74,6 +75,7 @@ public class Settings {
         gameType = prefs.getInt(KEY_GAME_TYPE, Defaults.GAME_TYPE);
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, Defaults.ANTI_ALIAS);
         animations = prefs.getBoolean(KEY_GAME_ANIMATION, Defaults.ANIMATIONS);
+        tileAnimDuration = prefs.getLong(KEY_GAME_TILE_ANIMATION_DURATION, Defaults.ANIMATION_DURATION);
         hardmode = prefs.getBoolean(KEY_GAME_MODE, Defaults.HARD_MODE);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, Defaults.MULTI_COLOR);
@@ -118,6 +120,7 @@ public class Settings {
         editor.putInt(KEY_GAME_TYPE, gameType);
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
         editor.putBoolean(KEY_GAME_ANIMATION, animations);
+        editor.putLong(KEY_GAME_TILE_ANIMATION_DURATION, tileAnimDuration);
         editor.putBoolean(KEY_GAME_MODE, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
