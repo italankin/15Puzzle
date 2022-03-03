@@ -254,6 +254,7 @@ public class LeaderboardView extends BaseView {
 
         canvas.drawColor(Colors.getOverlayColor());
 
+        mPaintText.setTextAlign(Paint.Align.LEFT);
         float s = Dimensions.menuFontSize * 0.29f;
         canvas.drawText(mTextType, mSettingsGuides[0], mRectType.bottom - s, mPaintText);
         canvas.drawText(mTextTypeValue[mGameType], mSettingsGuides[1],
@@ -278,6 +279,7 @@ public class LeaderboardView extends BaseView {
         canvas.drawText(mTextImport, mRectImport.centerX(), mRectImport.bottom - textYOffset, mPaintControls);
 
         if (mTableItems.size() == 0) {
+            mPaintText.setTextAlign(Paint.Align.CENTER);
             mPaintText.setAlpha(128);
             canvas.drawText(mTextNoData,
                     Dimensions.surfaceWidth * .5f, mTableMarginTop, mPaintText);
