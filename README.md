@@ -1,4 +1,4 @@
-# 15 Puzzle
+# 15 Puzzle [![GitHub release (latest by date)](https://img.shields.io/github/v/release/italankin/15puzzle)](https://github.com/italankin/15puzzle/releases/latest)
 Simple Android sliding puzzle game.
 
 ![15 Puzzle](/art/15puzzle.jpg)
