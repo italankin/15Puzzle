@@ -4,7 +4,7 @@ layout: default
 
 # 15 puzzle
 
-Simple Android sliding puzzle game.
+Simple Android sliding puzzle game
 
 ![Features](/assets/features.jpg)
 
@@ -18,7 +18,7 @@ Simple Android sliding puzzle game.
 
 ## Download
 
-See [downloads](/downloads/)
+See [downloads](/downloads/).
 
 ## How to play
 
