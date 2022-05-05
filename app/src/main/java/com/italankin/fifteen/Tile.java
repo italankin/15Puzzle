@@ -25,6 +25,7 @@ public class Tile {
 
     private volatile int mIndex;
     private int mMultiColorIndex;
+    private final boolean mIsHelpTile;
     private final int mNumber;
 
     private volatile float mCanvasX;
@@ -62,9 +63,14 @@ public class Tile {
     }
 
     public Tile(int number, int index) {
+        this(number, index, false);
+    }
+
+    public Tile(int number, int index, boolean isHelpTile) {
         mIndex = index;
         mNumber = number;
         mMultiColorIndex = getMultiColorIndex(number);
+        mIsHelpTile = isHelpTile;
         tileColor = getTileColor();
         mDataText = Integer.toString(number);
 
@@ -263,7 +269,7 @@ public class Tile {
 
     private int getTileColor() {
         int tileColor = Colors.getTileColor();
-        if (useMultiColor && !Game.isPaused()) {
+        if (useMultiColor && (mIsHelpTile || !Game.isPaused())) {
             if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
                 return mIndex == Game.indexOfSolved(mNumber) ? tileColor : Colors.getUnsolvedTileColor();
             } else {
