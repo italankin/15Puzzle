@@ -24,6 +24,8 @@ public class Game {
 
     private Callback mCallback = null;
 
+    private final Random random = new Random();
+
     public static void create(int w, int h) {
         instance.init(w, h);
     }
@@ -36,19 +38,9 @@ public class Game {
         instance.paused = savedMoves > 0;
     }
 
-    public void init(int w, int h) {
+    private void init(int w, int h) {
         height = h;
         width = w;
-        int size = height * width;
-
-        grid.clear();
-
-        solvedGrid = Generator.generate(w, h, Settings.gameType);
-        grid.addAll(solvedGrid);
-
-        Collections.shuffle(grid, new Random());
-
-        zeroPos = grid.indexOf(0);
 
         moves = 0;
         time = 0;
@@ -56,17 +48,52 @@ public class Game {
         paused = false;
         peeking = false;
 
-        if (!isSolvable()) {
-            // if puzzle is not solvable
-            // we swap last two digits (e.g. 14 and 15)
-            Collections.swap(grid, grid.indexOf(size - 1), grid.indexOf(size - 2));
-        }
+        initGrid(w, h);
+        zeroPos = grid.indexOf(0);
 
         // a rare case where we have solved puzzle, create another
         if (checkSolution()) {
             init(width, height);
         } else {
             Logger.d("init: grid=%s", grid);
+        }
+    }
+
+    private void initGrid(int w, int h) {
+        int size = height * width;
+
+        grid.clear();
+
+        solvedGrid = Generator.generate(w, h, Settings.gameType);
+        grid.addAll(solvedGrid);
+
+        Collections.shuffle(grid, random);
+
+        int last = size - 1;
+        int penultimate = size - 2;
+
+        if (Settings.missingRandomTile) {
+            int indexOfZero = solvedGrid.indexOf(0);
+            int missingIndex = random.nextInt(size);
+            if (indexOfZero != missingIndex) {
+                last = width * height;
+                int missing = solvedGrid.get(missingIndex);
+                solvedGrid.set(indexOfZero, last);
+                solvedGrid.set(missingIndex, 0);
+                grid.set(grid.indexOf(0), last);
+                grid.set(grid.indexOf(missing), 0);
+
+                penultimate = last - 1;
+                if (penultimate == missing) {
+                    penultimate = missing - 1;
+                }
+            }
+        }
+
+        if (!isSolvable()) {
+            // if puzzle is not solvable
+            // we swap last two digits (e.g. 14 and 15)
+            Collections.swap(grid, grid.indexOf(last), grid.indexOf(penultimate));
         }
     }
 
@@ -104,6 +131,8 @@ public class Game {
                 instance.mCallback.onGameSolve();
             }
         }
+
+        instance.isSolvable();
 
         return newPos;
     }
@@ -180,6 +209,10 @@ public class Game {
 
     public static int indexOfSolved(int number) {
         return instance.solvedGrid.indexOf(number);
+    }
+
+    public static List<Integer> solvedGrid() {
+        return instance.solvedGrid;
     }
 
     /**
@@ -303,18 +336,17 @@ public class Game {
                 }
             }
         }
-        Logger.d("inversions=%d", inversions);
         // we need to add row number (counting from down) where zero is located
         if (width % 2 == 0) {
             // if we got an even width
             int z = height - zeroPos / width;
             if (z % 2 == 0) {
                 // and row number where zero is even
-                // number of inversions must be odd
-                return inversions % 2 == 1;
+                // number of inversions must be odd, so add 1
+                inversions += 1;
             }
-            // else number of inversions must be even
         }
+        Logger.d("inversions=%d", inversions);
         // inversions should be even
         return inversions % 2 == 0;
     }

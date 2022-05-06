@@ -35,6 +35,7 @@
     <string name="pref_new_game_delay">Delay</string>
     <string name="pref_time_format">Time format</string>
     <string name="pref_stats">Stats</string>
+    <string name="pref_missing_tile">Missing tile</string>
     <string name="pref_ingame_info">Ingame info</string>
     <string name="pref_ingame_info_customize">customize &gt;</string>
     <string name="pref_ingame_info_moves">Moves</string>
@@ -115,6 +116,10 @@
     <string-array name="sort_types">
         <item>fewer moves</item>
         <item>less time</item>
+    </string-array>
+    <string-array name="missing_tile_values">
+        <item>default</item>
+        <item>random</item>
     </string-array>
 
     <plurals name="stats_total">

@@ -27,6 +27,7 @@ public class Settings {
     private static final String KEY_INGAME_INFO_TPS = "ingame_info_tps";
     private static final String KEY_TIME_FORMAT = "time_format";
     private static final String KEY_STATS = "stats";
+    private static final String KEY_MISSING_RANDOM_TILE = "missing_random_tile";
 
     static final String KEY_SAVED_GAME_ARRAY = "puzzle_prev";
     static final String KEY_SAVED_GAME_MOVES = "puzzle_prev_moves";
@@ -37,6 +38,7 @@ public class Settings {
     public static boolean hardmode = Defaults.HARD_MODE;
     public static boolean animations = Defaults.ANIMATIONS;
     public static boolean antiAlias = Defaults.ANTI_ALIAS;
+    public static boolean missingRandomTile = Defaults.MISSING_RANDOM_TILE;
     public static long tileAnimDuration = Defaults.ANIMATION_DURATION;
     public static long screenAnimDuration = Defaults.ANIMATION_DURATION;
     public static int tileColor = 0;
@@ -82,6 +84,7 @@ public class Settings {
         newGameDelay = prefs.getBoolean(KEY_NEW_GAME_DELAY, Defaults.NEW_GAME_DELAY);
         timeFormat = prefs.getInt(KEY_TIME_FORMAT, Defaults.TIME_FORMAT);
         stats = prefs.getBoolean(KEY_STATS, Defaults.STATS);
+        missingRandomTile = prefs.getBoolean(KEY_MISSING_RANDOM_TILE, Defaults.MISSING_RANDOM_TILE);
 
         if (prefs.contains("ingame_info")) {
             // old logic for backward compatibility
@@ -129,6 +132,7 @@ public class Settings {
         editor.putInt(KEY_INGAME_INFO_TPS, ingameInfoTps);
         editor.putInt(KEY_TIME_FORMAT, timeFormat);
         editor.putBoolean(KEY_STATS, stats);
+        editor.putBoolean(KEY_MISSING_RANDOM_TILE, missingRandomTile);
         SaveGameManager.saveGame(editor);
         if (sync) {
             editor.commit();
