@@ -55,13 +55,6 @@ android {
     }
 }
 
-tasks.withType(Test) {
-    testLogging {
-        showStandardStreams true
-        events "passed", "failed"
-    }
-}
-
 dependencies {
     testImplementation 'junit:junit:4.12'
 }
