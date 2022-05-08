@@ -5,10 +5,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Game;
+import com.italankin.fifteen.CurrentGame;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
-import com.italankin.fifteen.Tools;
+import com.italankin.fifteen.game.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +41,8 @@ public class FieldView extends BaseView {
     public void moveTiles(float startX, float startY, int direction, boolean forced) {
         int startIndex = at(startX, startY);
         if (startIndex >= 0) {
-            if (direction == Tools.DIRECTION_DEFAULT) {
-                direction = Game.getDirection(startIndex);
-            }
-            List<Integer> numbersToMove = Game.findMovingTiles(direction, startIndex);
+            Game game = CurrentGame.get();
+            List<Integer> numbersToMove = game.findMovingTiles(startIndex, direction);
             if (numbersToMove.isEmpty()) {
                 return;
             }

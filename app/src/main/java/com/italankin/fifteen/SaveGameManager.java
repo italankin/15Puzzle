@@ -2,6 +2,8 @@ package com.italankin.fifteen;
 
 import android.content.SharedPreferences;
 
+import com.italankin.fifteen.game.Game;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -35,11 +37,13 @@ class SaveGameManager {
     }
 
     static void saveGame(SharedPreferences.Editor editor) {
-        if (!Game.isSolved()) {
-            String array = Game.getGridStr();
+        Game game = CurrentGame.get();
+        if (!game.isSolved()) {
+            String gridAsStr = game.getGrid().toString();
+            String array = gridAsStr.substring(1, gridAsStr.length() - 1);
             editor.putString(Settings.KEY_SAVED_GAME_ARRAY, array);
-            editor.putInt(Settings.KEY_SAVED_GAME_MOVES, Game.getMoves());
-            editor.putLong(Settings.KEY_SAVED_GAME_TIME, Game.getTime());
+            editor.putInt(Settings.KEY_SAVED_GAME_MOVES, game.getMoves());
+            editor.putLong(Settings.KEY_SAVED_GAME_TIME, game.getTime());
         } else {
             editor.remove(Settings.KEY_SAVED_GAME_ARRAY);
             editor.remove(Settings.KEY_SAVED_GAME_MOVES);
@@ -49,12 +53,7 @@ class SaveGameManager {
 
     static class SavedGame {
 
-        static final SavedGame INVALID = new SavedGame(Collections.emptyList(), 0, 0) {
-            @Override
-            boolean isValid() {
-                return false;
-            }
-        };
+        static final SavedGame INVALID = new SavedGame(Collections.emptyList(), 0, 0);
 
         final List<Integer> grid;
         final int moves;
@@ -64,10 +63,6 @@ class SaveGameManager {
             this.grid = grid;
             this.moves = moves;
             this.time = time;
-        }
-
-        boolean isValid() {
-            return grid.size() == Game.getSize();
         }
     }
 }

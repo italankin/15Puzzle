@@ -9,11 +9,12 @@ import android.graphics.RectF;
 import android.view.animation.AccelerateInterpolator;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.CurrentGame;
 import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.Game;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tools;
+import com.italankin.fifteen.game.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +56,13 @@ public class HardModeView extends BaseView {
             if ((button.frame -= elapsedTime) > 0) {
                 float fraction = interpolator.getInterpolation(1 - (float) button.frame / getAnimDuration());
                 color = Tools.interpolateColor(Colors.ERROR, Colors.getHardModeButtonsColor(), fraction);
-            } else if (Game.isNotStarted() || Game.isPaused() || Game.isSolved()) {
-                color = Colors.getHardModeButtonsColor() & 0x40ffffff;
             } else {
-                color = Colors.getHardModeButtonsColor();
+                Game game = CurrentGame.get();
+                if (game.isNotStarted() || game.isPaused() || game.isSolved()) {
+                    color = Colors.getHardModeButtonsColor() & 0x40ffffff;
+                } else {
+                    color = Colors.getHardModeButtonsColor();
+                }
             }
             mPaintTextValue.setColor(color);
             canvas.drawText(button.title, button.rect.centerX(), button.rect.centerY() - mTextOffsetY, mPaintTextValue);
@@ -82,7 +86,8 @@ public class HardModeView extends BaseView {
     }
 
     public boolean onClick(int x, int y) {
-        if (mCallbacks != null && !Game.isNotStarted() && !Game.isPaused()) {
+        Game game = CurrentGame.get();
+        if (mCallbacks != null && !game.isNotStarted() && !game.isPaused()) {
             Button check = findButtonById(ID_CHECK);
             if (check.contains(x, y)) {
                 if (!mCallbacks.onCheckButtonClick()) {

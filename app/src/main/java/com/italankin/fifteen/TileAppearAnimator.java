@@ -56,7 +56,7 @@ public class TileAppearAnimator {
             return;
         }
 
-        int size = Game.getSize();
+        int size = CurrentGame.get().getSize();
         int index = t.getIndex();
         int number = t.getNumber();
         int shift = size / 26 + 1; // group tiles by 'shift' count

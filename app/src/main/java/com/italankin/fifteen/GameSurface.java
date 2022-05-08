@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.italankin.fifteen.export.ExportCallback;
+import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.statistics.StatisticsManager;
 import com.italankin.fifteen.views.FieldView;
 import com.italankin.fifteen.views.HardModeView;
@@ -91,7 +92,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mInfoPanel = new InfoPanelView(mResources);
         mInfoPanel.addCallback(() -> {
             pauseGame();
-            Game.setHelp(true);
+            CurrentGame.get().setHelp(true);
             RectF window = new RectF(0, 0, Dimensions.surfaceWidth, Dimensions.surfaceHeight);
             mHelpOverlay = new HelpOverlay(getResources(), tileAppearAnimator, window, mRectField);
             mHelpOverlay.addCallback(() -> {
@@ -107,7 +108,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mField = new FieldView(mRectField);
 
         mHardModeView = new HardModeView(mResources);
-        mHardModeView.setCallbacks(Game::checkSolvedHm);
+        mHardModeView.setCallbacks(() -> CurrentGame.get().checkSolvedHardmode());
         mSettings = new SettingsView(mResources);
         mSettings.addCallback(needUpdate -> {
             if (needUpdate) {
@@ -139,28 +140,6 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mStatistics = new StatisticsView(statisticsManager, mResources);
         mStatistics.addCallbacks(exportCallback::exportSession);
 
-        Game.setCallback(() -> {
-            mSolvedOverlay.show();
-            int moves = Game.getMoves();
-            long time = Game.getTime();
-            dbHelper.insert(
-                    Settings.gameType,
-                    Settings.gameWidth,
-                    Settings.gameHeight,
-                    Settings.hardmode ? 1 : 0,
-                    moves,
-                    time);
-            statisticsManager.add(
-                    Settings.gameWidth,
-                    Settings.gameHeight,
-                    Settings.gameType,
-                    Settings.hardmode,
-                    time,
-                    moves);
-            lastSolvedTimestamp = System.currentTimeMillis();
-            SaveGameManager.removeSavedGame();
-        });
-
         updateViews();
 
         createNewGame(false);
@@ -180,31 +159,33 @@ public class GameSurface extends View implements TopPanelView.Callback {
         int x = (int) event.getX();
         int y = (int) event.getY();
 
+        Game game = CurrentGame.get();
+
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 mGestureStartX = x;
                 mGestureStartY = y;
                 boolean fieldFullyVisible = isFieldFullyVisible();
                 mGestureTrail = fieldFullyVisible && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
-                if (fieldFullyVisible && Settings.hardmode && !Game.isNotStarted() && !Game.isPaused()) {
-                    Game.setPeeking(mHardModeView.isPeekAt(x, y));
+                if (fieldFullyVisible && Settings.hardmode && !game.isNotStarted() && !game.isPaused()) {
+                    game.setPeeking(mHardModeView.isPeekAt(x, y));
                 }
                 return true;
             }
 
             case MotionEvent.ACTION_MOVE: {
-                if (Game.isPaused() || Game.isSolved() || !isFieldFullyVisible()) {
+                if (game.isPaused() || game.isSolved() || !isFieldFullyVisible()) {
                     return true;
                 }
                 if (mGestureTrail) {
-                    mField.moveTiles(x, y, Tools.DIRECTION_DEFAULT, false);
+                    mField.moveTiles(x, y, Game.DIRECTION_DEFAULT, false);
                     return true;
                 }
                 int dx = x - mGestureStartX;
                 int dy = y - mGestureStartY;
                 float minSwipeDistance = Dimensions.tileSize / 6.0f;
                 if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
-                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.direction(dx, dy));
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Game.direction(dx, dy));
                     event.setAction(MotionEvent.ACTION_CANCEL);
                 }
                 return true;
@@ -219,8 +200,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     return true;
                 }
 
-                if (Game.isPeeking()) {
-                    Game.setPeeking(false);
+                if (game.isPeeking()) {
+                    game.setPeeking(false);
                 }
 
                 int dx = x - mGestureStartX;
@@ -235,7 +216,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
                 } else if (mStatistics.isShown()) {
                     mStatistics.onClick(mGestureStartX, mGestureStartY);
                     return true;
-                } else if (Game.isSolved() && mRectField.contains(x, y)) {
+                } else if (game.isSolved() && mRectField.contains(x, y)) {
                     createNewGame(true);
                     return true;
                 } else if (mTopPanel.onClick(x, y)) {
@@ -248,14 +229,14 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     return true;
                 }
 
-                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !Game.isPaused()) {
-                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.direction(dx, dy));
-                } else if (Game.isPaused() && mRectField.contains(x, y)) {
-                    Game.setPaused(false);
+                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !game.isPaused()) {
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Game.direction(dx, dy));
+                } else if (game.isPaused() && mRectField.contains(x, y)) {
+                    game.setPaused(false);
                     mPauseOverlay.hide();
                     mField.update();
-                } else if (!Game.isSolved()) {
-                    mField.moveTiles(mGestureStartX, mGestureStartY, Tools.DIRECTION_DEFAULT);
+                } else if (!game.isSolved()) {
+                    mField.moveTiles(mGestureStartX, mGestureStartY, Game.DIRECTION_DEFAULT);
                 }
                 return true;
             }
@@ -287,8 +268,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     pauseGame();
                     mStatistics.show();
                 } else {
-                    if (!Game.isSolved()) {
-                        Game.invertPaused();
+                    Game game = CurrentGame.get();
+                    if (!game.isSolved()) {
+                        game.invertPaused();
                     }
                     mField.update();
                     if (mPauseOverlay.isShown()) {
@@ -309,8 +291,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     public void onPause() {
-        if (Game.isPeeking()) {
-            Game.setPeeking(false);
+        Game game = CurrentGame.get();
+        if (game.isPeeking()) {
+            game.setPeeking(false);
         }
         if (mField != null) {
             pauseGame();
@@ -318,11 +301,12 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     private void draw(Canvas canvas, long elapsed) {
-        boolean paused = Game.isPaused();
-        boolean solved = Game.isSolved();
+        Game game = CurrentGame.get();
+        boolean paused = game.isPaused();
+        boolean solved = game.isSolved();
 
         if (!paused && !solved) {
-            Game.incTime(elapsed);
+            game.incTime(elapsed);
         }
 
         canvas.drawColor(Colors.getBackgroundColor());
@@ -379,21 +363,60 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mPauseOverlay.hide();
         mSolvedOverlay.hide();
 
-        Game.create(Settings.gameWidth, Settings.gameHeight);
-        Game.setPeeking(false);
-        Game.setHelp(mHelpOverlay != null && mHelpOverlay.isShown());
+        Game newGame = null;
 
         if (SaveGameManager.hasSavedGame()) {
             SaveGameManager.SavedGame savedGame = SaveGameManager.getSavedGame();
-            if (isUser || !savedGame.isValid()) {
+            if (isUser || (savedGame.grid.size() != (Settings.gameWidth * Settings.gameHeight))) {
                 SaveGameManager.removeSavedGame();
             } else {
-                Game.load(savedGame.grid, savedGame.moves, savedGame.time);
-                if (Game.isPaused()) {
+                newGame = GameFactory.create(
+                        Settings.gameType,
+                        Settings.gameWidth,
+                        Settings.gameHeight,
+                        Settings.hardmode,
+                        savedGame.grid,
+                        savedGame.moves,
+                        savedGame.time
+                );
+                if (newGame.isPaused()) {
                     mPauseOverlay.show();
                 }
             }
         }
+        if (newGame == null) {
+            newGame = GameFactory.create(
+                    Settings.gameType,
+                    Settings.gameWidth,
+                    Settings.gameHeight,
+                    Settings.hardmode,
+                    Settings.randomMissingTile
+            );
+        }
+
+        CurrentGame.set(newGame);
+
+        newGame.setCallback(game -> {
+            mSolvedOverlay.show();
+            int moves = game.getMoves();
+            long time = game.getTime();
+            dbHelper.insert(
+                    Settings.gameType,
+                    Settings.gameWidth,
+                    Settings.gameHeight,
+                    Settings.hardmode ? 1 : 0,
+                    moves,
+                    time);
+            statisticsManager.add(
+                    Settings.gameWidth,
+                    Settings.gameHeight,
+                    Settings.gameType,
+                    Settings.hardmode,
+                    time,
+                    moves);
+            lastSolvedTimestamp = System.currentTimeMillis();
+            SaveGameManager.removeSavedGame();
+        });
 
         Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
         mRectField.set(
@@ -406,8 +429,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
         boolean animate = Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() &&
                 !mStatistics.isShown() && !mPauseOverlay.isShown();
-        for (int index = 0, size = Game.getSize(); index < size; index++) {
-            int number = Game.getAt(index);
+        for (int index = 0, size = newGame.getSize(); index < size; index++) {
+            int number = newGame.getGrid().get(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
                 if (animate) {
@@ -422,8 +445,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     private void pauseGame() {
-        Game.setPaused(!Game.isSolved() && Game.getMoves() > 0);
-        if (Game.isPaused()) {
+        Game game = CurrentGame.get();
+        game.setPaused(!game.isSolved() && game.getMoves() > 0);
+        if (game.isPaused()) {
             mPauseOverlay.show();
         }
         mField.update();
@@ -441,7 +465,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     private boolean hideHelpOverlay() {
         if (mHelpOverlay != null) {
-            Game.setHelp(false);
+            CurrentGame.get().setHelp(false);
             mHelpOverlay.hide();
             mHelpOverlay = null;
             return true;

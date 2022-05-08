@@ -133,7 +133,7 @@ public class AdvancedPage implements SettingsPage {
                 valueRight, mRectStats.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextMissingTile, textLeft, mRectMissingTile.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextMissingTileValues[Settings.missingRandomTile ? 1 : 0],
+        canvas.drawText(mTextMissingTileValues[Settings.randomMissingTile ? 1 : 0],
                 valueRight, mRectMissingTile.bottom - textYOffset, mPaintValue);
 
         int alpha = Settings.animations ? 255 : 128;
@@ -195,7 +195,7 @@ public class AdvancedPage implements SettingsPage {
         }
 
         if (mRectMissingTile.contains(x, y)) {
-            Settings.missingRandomTile = !Settings.missingRandomTile;
+            Settings.randomMissingTile = !Settings.randomMissingTile;
             Settings.save();
             if (mCallbacks != null) {
                 mCallbacks.onSettingsChanged(true);

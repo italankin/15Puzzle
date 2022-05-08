@@ -7,8 +7,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
+import com.italankin.fifteen.CurrentGame;
 import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.Game;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
@@ -51,7 +51,7 @@ public class HelpOverlay extends FieldOverlay {
         float inset = -Dimensions.spacing * 2;
         mRectHelp.inset(inset, inset);
 
-        List<Integer> numbers = Game.solvedGrid();
+        List<Integer> numbers = CurrentGame.get().getSolvedGrid();
         for (int i = 0, size = numbers.size(); i < size; i++) {
             int number = numbers.get(i);
             if (number == 0) {

@@ -13,6 +13,7 @@ import android.view.animation.OvershootInterpolator;
 import com.italankin.fifteen.anim.TileScaleAnimator;
 import com.italankin.fifteen.anim.TileXAnimator;
 import com.italankin.fifteen.anim.TileYAnimator;
+import com.italankin.fifteen.game.Game;
 
 public class Tile {
 
@@ -120,18 +121,15 @@ public class Tile {
             mTileScaleAnimator.nextFrame(elapsedTime);
         }
 
-        if (mDrawPath == null) {
-            return;
-        }
-
         sPaintPath.setColor(tileColor);
 
         canvas.drawPath(mDrawPath, sPaintPath);
 
-        if ((!Game.isPaused() || Game.isHelp()) && mTextScale > 0) {
+        Game game = CurrentGame.get();
+        if ((!game.isPaused() || game.isHelp()) && mTextScale > 0) {
             sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
             sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
-            if (Game.isNotStarted() || Game.isSolved() || !Settings.hardmode || Game.isPeeking() || Game.isHelp()) {
+            if (game.isNotStarted() || game.isSolved() || !Settings.hardmode || game.isPeeking() || game.isHelp()) {
                 canvas.drawText(mDataText, mRectShape.centerX(),
                         mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
@@ -210,7 +208,7 @@ public class Tile {
         int x = mIndex % Settings.gameWidth;
         int y = mIndex / Settings.gameWidth;
 
-        int newIndex = Game.move(x, y);
+        int newIndex = CurrentGame.get().move(x, y);
 
         // if index has changed, we made a move
         if (mIndex != newIndex) {
@@ -269,9 +267,12 @@ public class Tile {
 
     private int getTileColor() {
         int tileColor = Colors.getTileColor();
-        if (useMultiColor && (mIsHelpTile || !Game.isPaused())) {
+        Game game = CurrentGame.get();
+        if (useMultiColor && (mIsHelpTile || !game.isPaused())) {
             if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
-                return mIndex == Game.indexOfSolved(mNumber) ? tileColor : Colors.getUnsolvedTileColor();
+                return mIndex == game.getSolvedGrid().indexOf(mNumber)
+                        ? tileColor
+                        : Colors.getUnsolvedTileColor();
             } else {
                 int colorIndex = mMultiColorIndex;
                 if (colorIndex >= 0 && colorIndex < Colors.multiColorTiles.length) {
@@ -283,7 +284,7 @@ public class Tile {
     }
 
     private static int getMultiColorIndex(int number) {
-        int index = Game.indexOfSolved(number);
+        int index = CurrentGame.get().getSolvedGrid().indexOf(number);
         int gameWidth = Settings.gameWidth;
         switch (Settings.multiColor) {
             case Constants.MULTI_COLOR_ROWS:

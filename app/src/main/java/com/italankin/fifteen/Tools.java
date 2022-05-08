@@ -9,12 +9,6 @@ import java.util.Locale;
 
 public class Tools {
 
-    public static final int DIRECTION_DEFAULT = -1;
-    public static final int DIRECTION_UP = 0;
-    public static final int DIRECTION_RIGHT = 1;
-    public static final int DIRECTION_DOWN = 2;
-    public static final int DIRECTION_LEFT = 3;
-
     public static int interpolateColor(int startColor, int endColor, float fraction) {
         float[] start = new float[3], end = new float[3];
         Color.colorToHSV(startColor, start);
@@ -55,17 +49,6 @@ public class Tools {
             }
         }
         return result;
-    }
-
-    public static int direction(float dx, float dy) {
-        if (dx == 0 && dy == 0) {
-            return DIRECTION_DEFAULT;
-        }
-        if (Math.abs(dx) > Math.abs(dy)) {
-            return dx > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
-        } else {
-            return dy > 0 ? DIRECTION_DOWN : DIRECTION_UP;
-        }
     }
 
     public static String formatFloat(float f) {
