@@ -43,13 +43,9 @@ public class FieldView extends BaseView {
         if (startIndex >= 0) {
             Game game = CurrentGame.get();
             List<Integer> numbersToMove = game.findMovingTiles(startIndex, direction);
-            if (numbersToMove.isEmpty()) {
-                return;
-            }
-            for (int i = 0, s = numbersToMove.size(); i < s; i++) {
-                int num = numbersToMove.get(i);
+            for (Integer num : numbersToMove) {
                 for (Tile t : mData) {
-                    if ((forced || !t.isAnimating()) && t.getIndex() == num) {
+                    if (t.getIndex() == num && (forced || !t.isAnimating())) {
                         t.onClick();
                     }
                 }
