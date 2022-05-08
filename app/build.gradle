@@ -49,5 +49,12 @@ android {
     }
 
     sourceSets { main { java.srcDirs = ['src/main/java'] } }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
