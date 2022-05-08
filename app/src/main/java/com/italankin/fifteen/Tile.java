@@ -24,13 +24,13 @@ public class Tile {
     private final Path mShape;
     private final RectF mRectShape;
 
-    private volatile int mIndex;
+    private int mIndex;
     private int mMultiColorIndex;
     private final boolean mIsHelpTile;
     private final int mNumber;
 
-    private volatile float mCanvasX;
-    private volatile float mCanvasY;
+    private float mCanvasX;
+    private float mCanvasY;
 
     private final TileXAnimator mTileXAnimator;
     private final TileYAnimator mTileYAnimator;
