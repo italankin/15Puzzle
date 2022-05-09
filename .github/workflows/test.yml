@@ -22,3 +22,10 @@ jobs:
 
       - name: test
         run: ./gradlew :app:testReleaseUnitTest
+
+      - name: upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: app/build/reports/tests/testReleaseUnitTest/**
+          retention-days: 2
