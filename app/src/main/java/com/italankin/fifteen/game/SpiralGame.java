@@ -51,6 +51,11 @@ public class SpiralGame extends BaseGame {
         return inversions;
     }
 
+    @Override
+    public boolean isSolvable() {
+        return inversions() % 2 == 0;
+    }
+
     /**
      * Return game grid in spiral order.
      * For example, if we have grid in this form:

@@ -62,6 +62,11 @@ public class SnakeGame extends BaseGame {
     }
 
     @Override
+    public boolean isSolvable() {
+        return inversions() % 2 == 0;
+    }
+
+    @Override
     public Game copy() {
         return new SnakeGame(this);
     }

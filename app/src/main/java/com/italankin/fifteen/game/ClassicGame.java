@@ -39,14 +39,9 @@ public class ClassicGame extends BaseGame {
         // for every number we need to count:
         // - numbers less than chosen
         // - follow chosen number (by rows)
-        int indexOfZero = -1;
         for (int i = 0; i < size; i++) {
             int n = grid.get(i);
-            if (n == 0) {
-                indexOfZero = i;
-                continue;
-            } else if (n == 1) {
-                // there's no numbers less than 1
+            if (n <= 1) {
                 continue;
             }
             for (int j = i + 1; j < size; j++) {
@@ -56,21 +51,28 @@ public class ClassicGame extends BaseGame {
                 }
             }
         }
+        return inversions;
+    }
+
+    @Override
+    public boolean isSolvable() {
+        int inversions = inversions();
         // for puzzles with even width
-        // we need to add difference between row number (counting from down) where zero is located in the grid and
+        // we need to add difference between row number where zero is located in the grid and
         // zero's row number in the solved position
         if (width % 2 == 0) {
             int targetRowIndex;
-            if (missingTile == size) {
+            if (missingTile == width * height) {
                 // for classic variations it will always be the last row
                 targetRowIndex = height - 1;
             } else {
                 targetRowIndex = solvedGrid.indexOf(0) / width;
             }
-            int zeroRowIndex = indexOfZero / width;
-            inversions += (targetRowIndex - zeroRowIndex);
+            int zeroRowIndex = grid.indexOf(0) / width;
+            // since we're only interested in parity, we can add indices instead of subtraction
+            return (inversions % 2) == (targetRowIndex + zeroRowIndex) % 2;
         }
-        return inversions;
+        return inversions % 2 == 0;
     }
 
     @Override

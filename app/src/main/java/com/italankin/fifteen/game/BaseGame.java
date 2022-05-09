@@ -91,6 +91,8 @@ abstract class BaseGame implements Game {
 
     protected abstract List<Integer> generateSolved();
 
+    protected abstract boolean isSolvable();
+
     @Override
     public int getWidth() {
         return width;
@@ -328,7 +330,7 @@ abstract class BaseGame implements Game {
             }
         }
 
-        if (inversions() % 2 != 0) { // inversions should be even
+        if (!isSolvable()) {
             // if puzzle is not solvable
             // we swap last two digits (e.g. 14 and 15)
             Collections.swap(grid, grid.indexOf(last), grid.indexOf(secondLast));
