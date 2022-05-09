@@ -41,6 +41,9 @@ public class SpiralGame extends BaseGame {
         int max = size - 1; // for last number count will be always 0
         for (int i = 0; i < max; i++) {
             int n = list.get(i);
+            if (n <= 1) {
+                continue;
+            }
             for (int j = i + 1; j < size; j++) {
                 int m = list.get(j);
                 if (m > 0 && m < n) {

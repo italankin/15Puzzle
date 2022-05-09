@@ -43,7 +43,7 @@ public class SnakeGame extends BaseGame {
             } else {
                 n = grid.get(width * (1 + i / width) - i % width - 1);
             }
-            if (n == 0 || n == 1) {
+            if (n <= 1) {
                 continue;
             }
             for (int j = i + 1; j < size; j++) {
