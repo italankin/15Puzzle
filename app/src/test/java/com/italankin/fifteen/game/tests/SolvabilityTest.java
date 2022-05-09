@@ -22,7 +22,6 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class SolvabilityTest {
 
-    private static final boolean VERBOSE = true;
     private static final long TIMEOUT = 60 * 1000;
     private static final int RUNS = 100;
 
@@ -34,8 +33,8 @@ public class SolvabilityTest {
     private static final int HEIGHT_MIN = 3;
     private static final int HEIGHT_MAX = 4;
 
-    private static final Heuristics HEURISTICS = Heuristics.MISPLACED_TILES;
-    private static final Comparator<Move> MOVE_COMPARATOR = new Move.HeuristicsCmp();
+    private static final Heuristics HEURISTICS = Heuristics.MANHATTAN_DISTANCE;
+    private static final Comparator<Move> MOVE_COMPARATOR = new Move.HeuristicsMovesCmp(4);
 
     @Parameters(name = "#{0} {1} {2}x{3} randomMissingTile={4}")
     public static Collection<Object[]> parameters() {
@@ -74,22 +73,15 @@ public class SolvabilityTest {
         Game game = createGame();
         Solver solver = new Solver(game, HEURISTICS, MOVE_COMPARATOR);
 
-        if (VERBOSE) {
-            System.out.println("Starting position:");
-            System.out.println(solver.start());
-        }
+        System.out.println("Starting position:");
+        System.out.println(solver.start());
 
         long startTime = System.nanoTime();
         Solver.Solution solution = solver.solve();
         long time = System.nanoTime() - startTime;
 
-        if (VERBOSE) {
-            System.out.println("End position:");
-            System.out.println(solution.value);
-            float timeMs = time / 1_000_000f;
-            System.out.printf("Solved %s %dx%d in %.3fms, %d moves, %d nodes explored\n",
-                    gameType, width, height, timeMs, solution.moves(), solution.explored);
-        }
+        System.out.printf("Solved %s %dx%d in %.3fms, %d moves, %d nodes explored\n",
+                gameType, width, height, time / 1_000_000f, solution.moves(), solution.explored);
     }
 
     private Game createGame() {

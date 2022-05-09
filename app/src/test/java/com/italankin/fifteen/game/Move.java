@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Move {
 
-    final Game state;
-    final int heuristicsValue;
+    public final Game state;
+    public final int heuristicsValue;
     private final Heuristics heuristics;
 
     public Move(Heuristics heuristics, Game state) {
@@ -104,24 +104,29 @@ public class Move {
     /**
      * Compare moves by {@link #heuristicsValue}, also considering move count.
      * <br>
-     * {@link #HeuristicsMovesCmp(int)} accepts {@code depth} parameter, which controls the "quality" of
+     * {@link #HeuristicsMovesCmp(int)} accepts {@code tolerance} parameter, which controls the "quality" of
      * solutions.
      * Given equal {@link Move#heuristicsValue}s, a {@link Move} with lower move count will have higher priority for
      * analysis.
+     * <br>
+     * Generally, low {@code tolerance} values will result in more efficient solutions at the cost of
+     * high memory consumption and slower solve speed.
      */
     public static final class HeuristicsMovesCmp implements Comparator<Move> {
-        private final int depth;
+        private final int tolerance;
 
-        public HeuristicsMovesCmp(int depth) {
-            this.depth = depth;
+        public HeuristicsMovesCmp(int tolerance) {
+            if (tolerance < 1) {
+                throw new IllegalArgumentException("tolerance must be >= 1, got: " + tolerance);
+            }
+            this.tolerance = tolerance;
         }
 
         @Override
         public int compare(Move lhs, Move rhs) {
-            // the bigger depth, the bigger move count and faster solve speed
             return Integer.compare(
-                    lhs.heuristicsValue + lhs.state.getMoves() / depth,
-                    rhs.heuristicsValue + rhs.state.getMoves() / depth);
+                    lhs.heuristicsValue + lhs.state.getMoves() / tolerance,
+                    rhs.heuristicsValue + rhs.state.getMoves() / tolerance);
         }
     }
 }
