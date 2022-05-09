@@ -49,11 +49,11 @@ abstract class BaseGame implements Game {
 
         int size = width * height;
         int missingTile = -1;
-        solvedGrid.set(solvedGrid.indexOf(0), size);
         for (int i = 0; i < size; i++) {
             int number = i + 1;
             if (!grid.contains(number)) {
                 missingTile = number;
+                solvedGrid.set(solvedGrid.indexOf(0), size);
                 solvedGrid.set(solvedGrid.indexOf(number), 0);
                 break;
             }
