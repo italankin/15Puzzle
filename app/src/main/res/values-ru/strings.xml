@@ -35,6 +35,7 @@
     <string name="pref_new_game_delay">Задержка</string>
     <string name="pref_time_format">Формат врем.</string>
     <string name="pref_stats">Статистика</string>
+    <string name="pref_missing_tile">Пустая клетка</string>
     <string name="pref_ingame_info">Инфо</string>
     <string name="pref_ingame_info_customize">настроить &gt;</string>
     <string name="pref_ingame_info_moves">Время</string>
@@ -104,6 +105,10 @@
     <string-array name="sort_types">
         <item>меньше ходов</item>
         <item>лучшее время</item>
+    </string-array>
+    <string-array name="missing_tile_values">
+        <item>по умолчанию</item>
+        <item>случайно</item>
     </string-array>
 
     <plurals name="stats_total">
