@@ -41,7 +41,7 @@ public class SettingsView extends BaseView {
     private int mCurrentPage = PAGE_BASIC;
 
     public SettingsView(Resources res) {
-        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f);
+        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.08f);
         int topMargin = (int) (Dimensions.surfaceHeight * 0.07f);
         int padding = -lineSpacing / 4;
 

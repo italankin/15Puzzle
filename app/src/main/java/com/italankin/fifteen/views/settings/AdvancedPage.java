@@ -79,6 +79,10 @@ public class AdvancedPage implements SettingsPage {
         mRectBf.inset(0, padding);
 
         topMargin += lineSpacing;
+        mRectMissingTile = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectMissingTile.inset(0, padding);
+
+        topMargin += lineSpacing;
         mRectAntiAlias = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectAntiAlias.inset(0, padding);
 
@@ -101,10 +105,6 @@ public class AdvancedPage implements SettingsPage {
         topMargin += lineSpacing;
         mRectStats = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectStats.inset(0, padding);
-
-        topMargin += lineSpacing;
-        mRectMissingTile = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
-        mRectMissingTile.inset(0, padding);
     }
 
     @Override
