@@ -70,8 +70,10 @@ public class Move {
         StringBuilder sb = new StringBuilder();
         sb.append("---------------\nh=");
         sb.append(heuristicsValue);
-        sb.append("\tm=");
+        sb.append(" m=");
         sb.append(state.getMoves());
+        sb.append(" i=");
+        sb.append(state.inversions());
         sb.append("\n---------------\n");
         List<Integer> grid = state.getGrid();
         for (int i = 0, s = grid.size(); i < s; i++) {
