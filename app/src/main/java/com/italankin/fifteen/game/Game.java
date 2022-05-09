@@ -69,38 +69,13 @@ public interface Game {
 
     int getMoves();
 
-    void incTime(long time);
-
-    long getTime();
-
     boolean isSolved();
-
-    /**
-     * Check whenever puzzle is solved in hardmode
-     */
-    boolean checkSolvedHardmode();
 
     /**
      * @return number of inversions in the current state
      * @see <a href="https://en.wikipedia.org/wiki/Parity_(mathematics)">Parity</a>
      */
     int inversions();
-
-    boolean isPeeking();
-
-    void setPeeking(boolean peeking);
-
-    boolean isHelp();
-
-    void setHelp(boolean help);
-
-    boolean isNotStarted();
-
-    void setPaused(boolean paused);
-
-    void invertPaused();
-
-    boolean isPaused();
 
     int getSize();
 
@@ -110,6 +85,6 @@ public interface Game {
 
     interface Callback {
 
-        void onGameSolve(Game game);
+        void onGameSolve();
     }
 }

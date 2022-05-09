@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class SnakeGame extends BaseGame {
 
-    public SnakeGame(int width, int height, boolean hardmode, boolean randomMissingTile) {
-        super(width, height, hardmode, randomMissingTile);
+    public SnakeGame(int width, int height, boolean randomMissingTile) {
+        super(width, height, randomMissingTile);
     }
 
-    public SnakeGame(int width, int height, boolean hardmode, List<Integer> savedGrid, int savedMoves, long savedTime) {
-        super(width, height, hardmode, savedGrid, savedMoves, savedTime);
+    public SnakeGame(int width, int height, List<Integer> savedGrid, int savedMoves) {
+        super(width, height, savedGrid, savedMoves);
     }
 
     private SnakeGame(SnakeGame game) {

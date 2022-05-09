@@ -18,21 +18,14 @@ abstract class BaseGame implements Game {
     protected List<Integer> solvedGrid;
 
     protected int moves;
-    protected long time;
     protected boolean solved;
-    protected boolean paused;
-    protected final boolean hardmode;
     protected final int missingTile;
-
-    protected boolean peeking;
-    protected boolean help;
 
     protected Callback callback = null;
 
-    BaseGame(int width, int height, boolean hardmode, boolean randomMissingTile) {
+    BaseGame(int width, int height, boolean randomMissingTile) {
         this.width = width;
         this.height = height;
-        this.hardmode = hardmode;
         int size = width * height;
         this.missingTile = randomMissingTile ? (1 + random.nextInt(size)) : size;
         grid = new ArrayList<>(size);
@@ -46,16 +39,11 @@ abstract class BaseGame implements Game {
 
     BaseGame(int width,
             int height,
-            boolean hardmode,
             List<Integer> savedGrid,
-            int savedMoves,
-            long savedTime) {
+            int savedMoves) {
         this.width = width;
         this.height = height;
-        this.hardmode = hardmode;
         moves = savedMoves;
-        time = savedTime;
-        paused = savedMoves > 0;
         solvedGrid = generateSolved();
         grid = new ArrayList<>(savedGrid);
 
@@ -76,16 +64,11 @@ abstract class BaseGame implements Game {
     BaseGame(BaseGame game) {
         this.width = game.width;
         this.height = game.height;
-        this.hardmode = game.hardmode;
         this.missingTile = game.missingTile;
         this.grid = new ArrayList<>(game.grid);
         this.solvedGrid = game.solvedGrid;
         this.moves = game.moves;
-        this.time = game.time;
         this.solved = game.solved;
-        this.paused = game.paused;
-        this.peeking = game.peeking;
-        this.help = game.help;
         this.callback = game.callback;
     }
 
@@ -121,17 +104,11 @@ abstract class BaseGame implements Game {
         }
 
         Collections.swap(grid, pos, zeroPos);
-
         moves++;
 
-        if (!hardmode) {
-            // on hard mode checkSolvedHardmode should be called to check if puzzle is solved
-            if (grid.equals(solvedGrid)) {
-                solved = true;
-                if (callback != null) {
-                    callback.onGameSolve(this);
-                }
-            }
+        solved = grid.equals(solvedGrid);
+        if (solved && callback != null) {
+            callback.onGameSolve();
         }
 
         return zeroPos;
@@ -228,73 +205,8 @@ abstract class BaseGame implements Game {
     }
 
     @Override
-    public void incTime(long time) {
-        if (moves > 0) {
-            this.time += time;
-        }
-    }
-
-    @Override
-    public long getTime() {
-        return time;
-    }
-
-    @Override
     public boolean isSolved() {
         return solved;
-    }
-
-    @Override
-    public boolean checkSolvedHardmode() {
-        if (grid.equals(solvedGrid)) {
-            solved = true;
-            if (callback != null) {
-                callback.onGameSolve(this);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isPeeking() {
-        return peeking;
-    }
-
-    @Override
-    public void setPeeking(boolean peeking) {
-        this.peeking = peeking;
-    }
-
-    @Override
-    public boolean isHelp() {
-        return help;
-    }
-
-    @Override
-    public void setHelp(boolean help) {
-        this.help = help;
-    }
-
-    @Override
-    public boolean isNotStarted() {
-        return moves == 0;
-    }
-
-    @Override
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    @Override
-    public void invertPaused() {
-        paused = !paused;
-    }
-
-    @Override
-    public boolean isPaused() {
-        return paused;
     }
 
     @Override

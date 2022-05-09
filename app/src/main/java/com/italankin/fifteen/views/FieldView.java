@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.CurrentGame;
+import com.italankin.fifteen.GameState;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tile;
 import com.italankin.fifteen.game.Game;
@@ -41,7 +41,7 @@ public class FieldView extends BaseView {
     public void moveTiles(float startX, float startY, int direction, boolean forced) {
         int startIndex = at(startX, startY);
         if (startIndex >= 0) {
-            Game game = CurrentGame.get();
+            Game game = GameState.get().game;
             List<Integer> numbersToMove = game.findMovingTiles(startIndex, direction);
             for (Integer num : numbersToMove) {
                 for (Tile t : mData) {

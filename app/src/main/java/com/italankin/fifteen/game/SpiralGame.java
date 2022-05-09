@@ -16,12 +16,12 @@ import java.util.List;
  */
 public class SpiralGame extends BaseGame {
 
-    public SpiralGame(int width, int height, boolean hardmode, boolean randomMissingTile) {
-        super(width, height, hardmode, randomMissingTile);
+    public SpiralGame(int width, int height, boolean randomMissingTile) {
+        super(width, height, randomMissingTile);
     }
 
-    public SpiralGame(int width, int height, boolean hardmode, List<Integer> savedGrid, int savedMoves, long savedTime) {
-        super(width, height, hardmode, savedGrid, savedMoves, savedTime);
+    public SpiralGame(int width, int height, List<Integer> savedGrid, int savedMoves) {
+        super(width, height, savedGrid, savedMoves);
     }
 
     private SpiralGame(SpiralGame game) {

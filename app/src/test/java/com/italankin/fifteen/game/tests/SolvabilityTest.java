@@ -87,11 +87,11 @@ public class SolvabilityTest {
     private Game createGame() {
         switch (gameType) {
             case CLASSIC:
-                return new ClassicGame(width, height, false, randomMissingTile);
+                return new ClassicGame(width, height, randomMissingTile);
             case SNAKE:
-                return new SnakeGame(width, height, false, randomMissingTile);
+                return new SnakeGame(width, height, randomMissingTile);
             case SPIRAL:
-                return new SpiralGame(width, height, false, randomMissingTile);
+                return new SpiralGame(width, height, randomMissingTile);
         }
         throw new IllegalArgumentException("Unsupported type: " + gameType);
     }

@@ -2,8 +2,6 @@ package com.italankin.fifteen;
 
 import android.content.SharedPreferences;
 
-import com.italankin.fifteen.game.Game;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -37,13 +35,13 @@ class SaveGameManager {
     }
 
     static void saveGame(SharedPreferences.Editor editor) {
-        Game game = CurrentGame.get();
-        if (!game.isSolved()) {
-            String gridAsStr = game.getGrid().toString();
+        GameState state = GameState.get();
+        if (!state.isSolved()) {
+            String gridAsStr = state.game.getGrid().toString();
             String array = gridAsStr.substring(1, gridAsStr.length() - 1);
             editor.putString(Settings.KEY_SAVED_GAME_ARRAY, array);
-            editor.putInt(Settings.KEY_SAVED_GAME_MOVES, game.getMoves());
-            editor.putLong(Settings.KEY_SAVED_GAME_TIME, game.getTime());
+            editor.putInt(Settings.KEY_SAVED_GAME_MOVES, state.getMoves());
+            editor.putLong(Settings.KEY_SAVED_GAME_TIME, state.time);
         } else {
             editor.remove(Settings.KEY_SAVED_GAME_ARRAY);
             editor.remove(Settings.KEY_SAVED_GAME_MOVES);

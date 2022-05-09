@@ -8,12 +8,11 @@ import android.graphics.RectF;
 
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Constants;
-import com.italankin.fifteen.CurrentGame;
 import com.italankin.fifteen.Dimensions;
+import com.italankin.fifteen.GameState;
 import com.italankin.fifteen.R;
 import com.italankin.fifteen.Settings;
 import com.italankin.fifteen.Tools;
-import com.italankin.fifteen.game.Game;
 
 import java.util.Locale;
 
@@ -108,13 +107,13 @@ public class InfoPanelView extends BaseView {
         mPaintTextValue.setAlpha(alpha);
         canvas.drawText("?", mRectHelp.centerX(), mRectHelp.centerY() - mHelpTextOffset, mPaintTextHelp);
 
-        Game game = CurrentGame.get();
+        GameState state = GameState.get();
         if (shouldShowInfo(Settings.ingameInfoMoves)) {
             prepareTitlePaint();
             canvas.drawText(mTextMoves, Dimensions.surfaceWidth / 2.0f, firstRowY, mPaintTextCaption);
 
             prepareValuePaint();
-            canvas.drawText(Integer.toString(game.getMoves()),
+            canvas.drawText(Integer.toString(state.getMoves()),
                     Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, firstRowY, mPaintTextCaption);
         }
         if (shouldShowInfo(Settings.ingameInfoTime)) {
@@ -122,7 +121,7 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(mTextTime, Dimensions.surfaceWidth / 2.0f, secondRowY, mPaintTextCaption);
 
             prepareValuePaint();
-            String time = Tools.timeToString(Settings.timeFormat, game.getTime());
+            String time = Tools.timeToString(Settings.timeFormat, state.time);
             canvas.drawText(time, Dimensions.surfaceWidth - Dimensions.spacing * 2.0f, secondRowY, mPaintTextCaption);
         }
         if (shouldShowInfo(Settings.ingameInfoTps)) {
@@ -130,8 +129,8 @@ public class InfoPanelView extends BaseView {
             canvas.drawText(mTextTps, Dimensions.surfaceWidth / 2.0f, thirdRowY, mPaintTextCaption);
 
             prepareValuePaint();
-            long time = game.getTime();
-            int moves = game.getMoves();
+            long time = state.time;
+            int moves = state.getMoves();
             String tps;
             if (time == 0 || moves == 0) {
                 tps = "0.000";
@@ -211,7 +210,7 @@ public class InfoPanelView extends BaseView {
     }
 
     private boolean shouldShowInfo(int info) {
-        return info == Constants.INGAME_INFO_ON || info == Constants.INGAME_INFO_AFTER_SOLVE && CurrentGame.get().isSolved();
+        return info == Constants.INGAME_INFO_ON || info == Constants.INGAME_INFO_AFTER_SOLVE && GameState.get().isSolved();
     }
 
     public interface Callbacks {
