@@ -1,8 +1,5 @@
 package com.italankin.fifteen.game;
 
-import com.italankin.fifteen.Constants;
-import com.italankin.fifteen.Generator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,69 +27,36 @@ public class SpiralGame extends BaseGame {
 
     @Override
     protected List<Integer> generateSolved() {
-        return Generator.generate(width, height, Constants.TYPE_SPIRAL);
-    }
-
-    @Override
-    public int inversions() {
-        int inversions = 0;
-        List<Integer> list = traverseSpiral();
-        int size = list.size();
-        int max = size - 1; // for last number count will be always 0
-        for (int i = 0; i < max; i++) {
-            int n = list.get(i);
-            if (n <= 1) {
-                continue;
-            }
-            for (int j = i + 1; j < size; j++) {
-                int m = list.get(j);
-                if (m > 0 && m < n) {
-                    inversions++;
-                }
-            }
-        }
-        return inversions;
-    }
-
-    @Override
-    public boolean isSolvable() {
-        return inversions() % 2 == 0;
-    }
-
-    /**
-     * Return game grid in spiral order.
-     * For example, if we have grid in this form:
-     * <pre>
-     * 1 2 3
-     * 8 0 4
-     * 7 6 5
-     * </pre>
-     * then resulting list will be {@code [1, 2, 3, 4, 5, 6, 7, 8, 0]}
-     */
-    private List<Integer> traverseSpiral() {
-        int h = height, w = width;
-        int r = 0, c = 0;
-        List<Integer> result = new ArrayList<>(width * height);
+        int h = height, w = width, size = width * height;
+        int number = 1;
+        int r = 0, c = 0; // start row and column
+        int[][] array = new int[h][w];
         while (r < h && c < w) {
             for (int i = c; i < w; i++) {
-                result.add(grid.get(r * width + i));
+                array[r][i] = number++ % size;
             }
             r++;
             for (int i = r; i < h; i++) {
-                result.add(grid.get(i * width + w - 1));
+                array[i][w - 1] = number++ % size;
             }
             w--;
             if (r < h) {
                 for (int i = w - 1; i >= c; i--) {
-                    result.add(grid.get((h - 1) * width + i));
+                    array[h - 1][i] = number++ % size;
                 }
                 h--;
             }
             if (c < w) {
                 for (int i = h - 1; i >= r; i--) {
-                    result.add(grid.get(i * width + c));
+                    array[i][c] = number++ % size;
                 }
                 c++;
+            }
+        }
+        List<Integer> result = new ArrayList<>(size);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                result.add(array[i][j]);
             }
         }
         return result;

@@ -74,7 +74,10 @@ abstract class BaseGame implements Game {
 
     protected abstract List<Integer> generateSolved();
 
-    protected abstract boolean isSolvable();
+    @Override
+    public int inversions() {
+        return inversions(grid);
+    }
 
     @Override
     public int getWidth() {
@@ -247,5 +250,47 @@ abstract class BaseGame implements Game {
             // we swap last two digits (e.g. 14 and 15)
             Collections.swap(grid, grid.indexOf(last), grid.indexOf(secondLast));
         }
+    }
+
+    private boolean isSolvable() {
+        int inversions = inversions(grid);
+        int solvedInversions = inversions(solvedGrid);
+        if (width % 2 == 0) {
+            int targetRowIndex = solvedGrid.indexOf(0) / width;
+            int zeroRowIndex = grid.indexOf(0) / width;
+            // if solved grid inversions is even
+            // grid inversions and difference between target zero row index and zero row index in the grid
+            // should have the same parity
+            // if solved grid inversions is odd, grid inversions and difference must have different parity
+
+            // since we're interested only in parity, an optimization is possible
+            return solvedInversions % 2 == (inversions + targetRowIndex + zeroRowIndex) % 2;
+        }
+        // grid inversions should have the same parity as solved grid inversions
+        return inversions % 2 == solvedInversions % 2;
+    }
+
+    /**
+     * Calculate number of inversions in the {@code list}
+     */
+    private static int inversions(List<Integer> list) {
+        int inversions = 0;
+        int size = list.size();
+        // for every number we need to count:
+        // - numbers less than chosen
+        // - follow chosen number (by rows)
+        for (int i = 0; i < size; i++) {
+            int n = list.get(i);
+            if (n <= 1) {
+                continue;
+            }
+            for (int j = i + 1; j < size; j++) {
+                int m = list.get(j);
+                if (m > 0 && n > m) {
+                    inversions++;
+                }
+            }
+        }
+        return inversions;
     }
 }

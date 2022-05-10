@@ -1,8 +1,6 @@
 package com.italankin.fifteen.game;
 
-import com.italankin.fifteen.Constants;
-import com.italankin.fifteen.Generator;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,41 +27,19 @@ public class SnakeGame extends BaseGame {
 
     @Override
     protected List<Integer> generateSolved() {
-        return Generator.generate(width, height, Constants.TYPE_SNAKE);
-    }
-
-    @Override
-    public int inversions() {
-        int inversions = 0;
-        int size = height * width;
+        int size = width * height;
+        List<Integer> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
+            int row = i / width;
             int n;
-            if ((i / width) % 2 == 0) {
-                n = grid.get(i);
+            if (row % 2 == 0) {
+                n = i + 1;
             } else {
-                n = grid.get(width * (1 + i / width) - i % width - 1);
+                n = (width * (1 + i / width) - i % width);
             }
-            if (n <= 1) {
-                continue;
-            }
-            for (int j = i + 1; j < size; j++) {
-                int m;
-                if ((j / width) % 2 == 0) {
-                    m = grid.get(j);
-                } else {
-                    m = grid.get(width * (1 + j / width) - j % width - 1);
-                }
-                if (m > 0 && n > m) {
-                    inversions++;
-                }
-            }
+            result.add(n % size);
         }
-        return inversions;
-    }
-
-    @Override
-    public boolean isSolvable() {
-        return inversions() % 2 == 0;
+        return result;
     }
 
     @Override
