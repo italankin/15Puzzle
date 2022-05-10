@@ -5,8 +5,10 @@ import com.italankin.fifteen.Tools;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 abstract class BaseGame implements Game {
 
@@ -14,69 +16,85 @@ abstract class BaseGame implements Game {
 
     protected final int width;
     protected final int height;
-    protected final List<Integer> grid;
-    protected List<Integer> solvedGrid;
+    protected final List<Integer> state;
+    protected final List<Integer> goal;
 
     protected int moves;
     protected boolean solved;
-    protected final int missingTile;
 
     protected Callback callback = null;
 
-    BaseGame(int width, int height, boolean randomMissingTile) {
+    BaseGame(int width, int height, List<Integer> goal, boolean randomMissingTile) {
         this.width = width;
         this.height = height;
+        this.goal = new ArrayList<>(goal);
+
         int size = width * height;
-        this.missingTile = randomMissingTile ? (1 + random.nextInt(size)) : size;
-        grid = new ArrayList<>(size);
+        int missingTile = randomMissingTile ? (1 + random.nextInt(size)) : size;
+        if (missingTile != size) {
+            this.goal.set(this.goal.indexOf(0), size);
+            this.goal.set(this.goal.indexOf(missingTile), 0);
+        }
 
+        List<Integer> state;
         do {
-            initGrid();
-        } while (grid.equals(solvedGrid));
+            state = initRandomState(missingTile);
+        } while (state.equals(this.goal));
 
-        Logger.d("init: inversions=%d, grid=%s", inversions(), grid);
+        this.state = state;
+
+        Logger.d("init: inversions=%d, state=%s", inversions(), state);
     }
 
     BaseGame(int width,
             int height,
-            List<Integer> savedGrid,
-            int savedMoves) {
+            List<Integer> state,
+            List<Integer> goal,
+            int moves) {
         this.width = width;
         this.height = height;
-        moves = savedMoves;
-        solvedGrid = generateSolved();
-        grid = new ArrayList<>(savedGrid);
+        this.moves = moves;
+        this.goal = new ArrayList<>(goal);
+        this.state = new ArrayList<>(state);
 
+        Set<Integer> numbers = new HashSet<>(state);
         int size = width * height;
-        int missingTile = -1;
         for (int i = 0; i < size; i++) {
             int number = i + 1;
-            if (!grid.contains(number)) {
-                missingTile = number;
-                solvedGrid.set(solvedGrid.indexOf(0), size);
-                solvedGrid.set(solvedGrid.indexOf(number), 0);
+            if (!numbers.contains(number)) {
+                this.goal.set(this.goal.indexOf(0), size);
+                this.goal.set(this.goal.indexOf(number), 0);
                 break;
             }
         }
-        this.missingTile = missingTile;
+    }
+
+    BaseGame(int width, int height, List<Integer> state, List<Integer> goal) {
+        this.width = width;
+        this.height = height;
+        this.goal = goal;
+        this.state = new ArrayList<>(state);
+        if (!isSolvable()) {
+            throw new IllegalStateException(
+                    String.format("goal=%s (%d inversions) is unreachable from state=%s (%d inversions)",
+                            goal, inversions(goal), state, inversions(state))
+            );
+        }
     }
 
     BaseGame(BaseGame game) {
         this.width = game.width;
         this.height = game.height;
-        this.missingTile = game.missingTile;
-        this.grid = new ArrayList<>(game.grid);
-        this.solvedGrid = game.solvedGrid;
+        this.state = new ArrayList<>(game.state);
+        this.goal = game.goal;
         this.moves = game.moves;
         this.solved = game.solved;
         this.callback = game.callback;
     }
 
-    protected abstract List<Integer> generateSolved();
-
     @Override
     public int inversions() {
-        return inversions(grid);
+        return inversions(state);
     }
 
     @Override
@@ -94,10 +112,10 @@ abstract class BaseGame implements Game {
         // find position in array of tile at [x, y]
         int pos = y * width + x;
 
-        if (grid.get(pos) == 0) {
+        if (state.get(pos) == 0) {
             return pos;
         }
-        int zeroPos = grid.indexOf(0);
+        int zeroPos = state.indexOf(0);
         int x0 = zeroPos % width;
         int y0 = zeroPos / width;
 
@@ -106,10 +124,10 @@ abstract class BaseGame implements Game {
             return pos;
         }
 
-        Collections.swap(grid, pos, zeroPos);
+        Collections.swap(state, pos, zeroPos);
         moves++;
 
-        solved = grid.equals(solvedGrid);
+        solved = state.equals(goal);
         if (solved && callback != null) {
             callback.onGameSolve();
         }
@@ -129,7 +147,7 @@ abstract class BaseGame implements Game {
         int x1 = startIndex % width;
         int y1 = startIndex / width;
 
-        int zeroPos = grid.indexOf(0);
+        int zeroPos = state.indexOf(0);
         int x0 = zeroPos % width;
         int y0 = zeroPos / width;
 
@@ -186,17 +204,17 @@ abstract class BaseGame implements Game {
 
     @Override
     public List<Integer> getGrid() {
-        return grid;
+        return state;
     }
 
     @Override
     public List<Integer> getSolvedGrid() {
-        return solvedGrid;
+        return goal;
     }
 
     @Override
     public int getDirection(int index) {
-        int zeroPos = grid.indexOf(0);
+        int zeroPos = state.indexOf(0);
         int dx = zeroPos % width - index % width;
         int dy = zeroPos / width - index / width;
         return Game.direction(dx, dy);
@@ -214,7 +232,7 @@ abstract class BaseGame implements Game {
 
     @Override
     public int getSize() {
-        return grid.size();
+        return state.size();
     }
 
     @Override
@@ -222,52 +240,51 @@ abstract class BaseGame implements Game {
         this.callback = callback;
     }
 
-    private void initGrid() {
-        solvedGrid = generateSolved();
-        grid.clear();
-        grid.addAll(solvedGrid);
-        Collections.shuffle(grid, random);
+    private List<Integer> initRandomState(int missingTile) {
+        List<Integer> result = new ArrayList<>(goal);
+        Collections.shuffle(result, random);
 
-        int size = height * width;
-        int last = size - 1;
-        int secondLast = size - 2;
-
-        if (missingTile != size) {
-            last = size;
-            solvedGrid.set(solvedGrid.indexOf(0), last);
-            solvedGrid.set(solvedGrid.indexOf(missingTile), 0);
-            grid.set(grid.indexOf(0), last);
-            grid.set(grid.indexOf(missingTile), 0);
-
-            secondLast = last - 1;
-            if (missingTile == secondLast) {
-                secondLast = missingTile - 1;
-            }
-        }
-
-        if (!isSolvable()) {
+        if (!isSolvable(result, goal, width)) {
             // if puzzle is not solvable
             // we swap last two digits (e.g. 14 and 15)
-            Collections.swap(grid, grid.indexOf(last), grid.indexOf(secondLast));
+
+            int size = height * width;
+            int last, secondLast;
+            if (missingTile == size) {
+                last = size - 1;
+                secondLast = size - 2;
+            } else {
+                last = size;
+                secondLast = last - 1;
+                if (missingTile == secondLast) {
+                    secondLast = missingTile - 1;
+                }
+            }
+            Collections.swap(result, result.indexOf(last), result.indexOf(secondLast));
         }
+        return result;
     }
 
     private boolean isSolvable() {
-        int inversions = inversions(grid);
-        int solvedInversions = inversions(solvedGrid);
+        return isSolvable(state, goal, width);
+    }
+
+    private static boolean isSolvable(List<Integer> state, List<Integer> goal, int width) {
+        int stateInversions = inversions(state);
+        int goalInversions = inversions(goal);
         if (width % 2 == 0) {
-            int targetRowIndex = solvedGrid.indexOf(0) / width;
-            int zeroRowIndex = grid.indexOf(0) / width;
-            // if solved grid inversions is even
-            // grid inversions and difference between target zero row index and zero row index in the grid
+            int goalZeroRowIndex = goal.indexOf(0) / width;
+            int startZeroRowIndex = state.indexOf(0) / width;
+            // if 'goalInversions' is even
+            // 'stateInversions' and difference between 'goal' zero row index and zero row index in the 'state'
             // should have the same parity
-            // if solved grid inversions is odd, grid inversions and difference must have different parity
+            // if 'goalInversions' is odd, 'stateInversions' and difference must have different parity
 
             // since we're interested only in parity, an optimization is possible
-            return solvedInversions % 2 == (inversions + targetRowIndex + zeroRowIndex) % 2;
+            return goalInversions % 2 == (stateInversions + goalZeroRowIndex + startZeroRowIndex) % 2;
         }
-        // grid inversions should have the same parity as solved grid inversions
-        return inversions % 2 == solvedInversions % 2;
+        // 'startInversions' should have the same parity as 'goalInversions'
+        return stateInversions % 2 == goalInversions % 2;
     }
 
     /**

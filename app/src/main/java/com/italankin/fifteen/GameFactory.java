@@ -9,7 +9,8 @@ import java.util.List;
 
 public class GameFactory {
 
-    public static Game create(int type,
+    public static Game create(
+            int type,
             int width,
             int height,
             boolean randomMissingTile) {
@@ -25,18 +26,19 @@ public class GameFactory {
         }
     }
 
-    public static Game create(int type,
+    public static Game create(
+            int type,
             int width,
             int height,
-            List<Integer> savedGrid,
-            int savedMoves) {
+            List<Integer> state,
+            int moves) {
         switch (type) {
             case Constants.TYPE_CLASSIC:
-                return new ClassicGame(width, height, savedGrid, savedMoves);
+                return new ClassicGame(width, height, state, moves);
             case Constants.TYPE_SNAKE:
-                return new SnakeGame(width, height, savedGrid, savedMoves);
+                return new SnakeGame(width, height, state, moves);
             case Constants.TYPE_SPIRAL:
-                return new SpiralGame(width, height, savedGrid, savedMoves);
+                return new SpiralGame(width, height, state, moves);
             default:
                 throw new IllegalStateException("Unknown type=" + type);
         }

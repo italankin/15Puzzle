@@ -14,11 +14,15 @@ import java.util.List;
 public class SnakeGame extends BaseGame {
 
     public SnakeGame(int width, int height, boolean randomMissingTile) {
-        super(width, height, randomMissingTile);
+        super(width, height, generateGoal(width, height), randomMissingTile);
     }
 
-    public SnakeGame(int width, int height, List<Integer> savedGrid, int savedMoves) {
-        super(width, height, savedGrid, savedMoves);
+    public SnakeGame(int width, int height, List<Integer> state, int moves) {
+        super(width, height, state, generateGoal(width, height), moves);
+    }
+
+    public SnakeGame(int width, int height, List<Integer> state) {
+        super(width, height, state, generateGoal(width, height));
     }
 
     private SnakeGame(SnakeGame game) {
@@ -26,7 +30,11 @@ public class SnakeGame extends BaseGame {
     }
 
     @Override
-    protected List<Integer> generateSolved() {
+    public Game copy() {
+        return new SnakeGame(this);
+    }
+
+    private static List<Integer> generateGoal(int width, int height) {
         int size = width * height;
         List<Integer> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -40,10 +48,5 @@ public class SnakeGame extends BaseGame {
             result.add(n % size);
         }
         return result;
-    }
-
-    @Override
-    public Game copy() {
-        return new SnakeGame(this);
     }
 }

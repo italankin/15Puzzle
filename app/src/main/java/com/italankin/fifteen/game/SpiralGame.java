@@ -14,11 +14,15 @@ import java.util.List;
 public class SpiralGame extends BaseGame {
 
     public SpiralGame(int width, int height, boolean randomMissingTile) {
-        super(width, height, randomMissingTile);
+        super(width, height, generateGoal(width, height), randomMissingTile);
     }
 
-    public SpiralGame(int width, int height, List<Integer> savedGrid, int savedMoves) {
-        super(width, height, savedGrid, savedMoves);
+    public SpiralGame(int width, int height, List<Integer> state, int moves) {
+        super(width, height, state, generateGoal(width, height), moves);
+    }
+
+    public SpiralGame(int width, int height, List<Integer> state) {
+        super(width, height, state, generateGoal(width, height));
     }
 
     private SpiralGame(SpiralGame game) {
@@ -26,7 +30,11 @@ public class SpiralGame extends BaseGame {
     }
 
     @Override
-    protected List<Integer> generateSolved() {
+    public Game copy() {
+        return new SpiralGame(this);
+    }
+
+    private static List<Integer> generateGoal(int width, int height) {
         int h = height, w = width, size = width * height;
         int number = 1;
         int r = 0, c = 0; // start row and column
@@ -60,10 +68,5 @@ public class SpiralGame extends BaseGame {
             }
         }
         return result;
-    }
-
-    @Override
-    public Game copy() {
-        return new SpiralGame(this);
     }
 }
