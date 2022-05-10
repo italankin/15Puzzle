@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.view.MotionEvent;
@@ -324,6 +325,16 @@ public class GameSurface extends View implements TopPanelView.Callback {
         boolean helpShown = mHelpOverlay != null && mHelpOverlay.isShown();
         if (!helpShown) {
             mField.draw(canvas, elapsed);
+        }
+
+        if (BuildConfig.DEBUG) {
+            Paint p = new Paint();
+            p.setColor(Colors.getOverlayTextColor());
+            float textFontSize = Dimensions.interfaceFontSize * .7f;
+            p.setTextSize(textFontSize);
+            float x = Dimensions.fieldMarginLeft;
+            float y = Dimensions.fieldMarginTop + Dimensions.fieldHeight + Dimensions.spacing + textFontSize;
+            canvas.drawText("inversions=" + state.game.inversions(), x, y, p);
         }
 
         if (Settings.hardmode) {

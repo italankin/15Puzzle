@@ -34,7 +34,7 @@ abstract class BaseGame implements Game {
             initGrid();
         } while (grid.equals(solvedGrid));
 
-        Logger.d("init: inversions%d, grid=%s", inversions(), grid);
+        Logger.d("init: inversions=%d, grid=%s", inversions(), grid);
     }
 
     BaseGame(int width,
