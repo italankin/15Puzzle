@@ -2,15 +2,16 @@ package com.italankin.fifteen;
 
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 class SaveGameManager {
 
     static SavedGame getSavedGame() {
-        String strings = Settings.prefs.getString(Settings.KEY_SAVED_GAME_ARRAY, null);
-        if (strings != null) {
-            List<Integer> state = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
+        String array = Settings.prefs.getString(Settings.KEY_SAVED_GAME_ARRAY, null);
+        if (array != null) {
+            List<Integer> state = stringToState(array);
             int moves = Settings.prefs.getInt(Settings.KEY_SAVED_GAME_MOVES, 0);
             long time = Settings.prefs.getLong(Settings.KEY_SAVED_GAME_TIME, 0);
             return new SavedGame(state, moves, time);
@@ -37,8 +38,7 @@ class SaveGameManager {
     static void saveGame(SharedPreferences.Editor editor) {
         GameState state = GameState.get();
         if (!state.isSolved()) {
-            String stateAsStr = state.game.getState().toString();
-            String array = stateAsStr.substring(1, stateAsStr.length() - 1);
+            String array = stateToString(state);
             editor.putString(Settings.KEY_SAVED_GAME_ARRAY, array);
             editor.putInt(Settings.KEY_SAVED_GAME_MOVES, state.getMoves());
             editor.putLong(Settings.KEY_SAVED_GAME_TIME, state.time);
@@ -47,6 +47,32 @@ class SaveGameManager {
             editor.remove(Settings.KEY_SAVED_GAME_MOVES);
             editor.remove(Settings.KEY_SAVED_GAME_TIME);
         }
+    }
+
+    private static String stateToString(GameState state) {
+        List<Integer> puzzleState = state.game.getState();
+        int size = puzzleState.size();
+        StringBuilder sb = new StringBuilder(size * 3);
+        sb.append(puzzleState.get(0));
+        for (int i = 1; i < size; i++) {
+            sb.append(',');
+            sb.append(puzzleState.get(i));
+        }
+        return sb.toString();
+    }
+
+    private static List<Integer> stringToState(String array) {
+        ArrayList<Integer> result = new ArrayList<>();
+        String[] strings = array.split(",");
+        for (String s : strings) {
+            try {
+                result.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                Logger.e(e, "getIntegerArray: %s is not a number", s);
+                return Collections.emptyList();
+            }
+        }
+        return result;
     }
 
     static class SavedGame {

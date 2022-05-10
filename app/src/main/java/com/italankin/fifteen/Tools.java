@@ -2,9 +2,6 @@ package com.italankin.fifteen;
 
 import android.graphics.Color;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 
 public class Tools {
@@ -36,19 +33,6 @@ public class Tools {
             default:
                 return String.format(Locale.ROOT, "%d:%02d", min, sec);
         }
-    }
-
-    public static List<Integer> getIntegerArray(String... strings) {
-        ArrayList<Integer> result = new ArrayList<>();
-        for (String s : strings) {
-            try {
-                result.add(Integer.parseInt(s));
-            } catch (NumberFormatException e) {
-                Logger.e(e, "getIntegerArray: %s is not a number", s);
-                return Collections.emptyList();
-            }
-        }
-        return result;
     }
 
     public static String formatFloat(float f) {
