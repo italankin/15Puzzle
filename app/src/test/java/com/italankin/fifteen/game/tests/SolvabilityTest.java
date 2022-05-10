@@ -4,6 +4,7 @@ import com.italankin.fifteen.game.ClassicGame;
 import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.game.Heuristics;
 import com.italankin.fifteen.game.Move;
+import com.italankin.fifteen.game.RandomGoalGame;
 import com.italankin.fifteen.game.SnakeGame;
 import com.italankin.fifteen.game.Solver;
 import com.italankin.fifteen.game.SpiralGame;
@@ -25,7 +26,7 @@ public class SolvabilityTest {
     private static final long TIMEOUT = 60 * 1000;
     private static final int RUNS = 100;
 
-    private static final List<GameType> GAME_TYPES = Arrays.asList(GameType.values());
+    private static final List<GameType> GAME_TYPES = Arrays.asList(GameType.CLASSIC, GameType.SNAKE, GameType.SPIRAL);
 
     private static final int WIDTH_MIN = 3;
     private static final int WIDTH_MAX = 4;
@@ -92,6 +93,8 @@ public class SolvabilityTest {
                 return new SnakeGame(width, height, randomMissingTile);
             case SPIRAL:
                 return new SpiralGame(width, height, randomMissingTile);
+            case RANDOM:
+                return new RandomGoalGame(width, height, randomMissingTile);
         }
         throw new IllegalArgumentException("Unsupported type: " + gameType);
     }
@@ -99,7 +102,8 @@ public class SolvabilityTest {
     private enum GameType {
         CLASSIC,
         SNAKE,
-        SPIRAL;
+        SPIRAL,
+        RANDOM;
 
         @Override
         public String toString() {
