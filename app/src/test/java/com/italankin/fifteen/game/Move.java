@@ -26,7 +26,7 @@ public class Move {
         int width = state.getWidth();
         int height = state.getHeight();
 
-        int zeroIndex = state.getGrid().indexOf(0);
+        int zeroIndex = state.getState().indexOf(0);
         int[] coords = Util.coords(zeroIndex, width);
         int x = coords[0], y = coords[1];
 
@@ -55,14 +55,14 @@ public class Move {
             if (heuristicsValue != another.heuristicsValue) {
                 return false;
             }
-            return state.getGrid().equals(another.state.getGrid());
+            return state.getState().equals(another.state.getState());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return state.getGrid().hashCode();
+        return state.getState().hashCode();
     }
 
     @Override
@@ -75,9 +75,9 @@ public class Move {
         sb.append(" i=");
         sb.append(state.inversions());
         sb.append("\n---------------\n");
-        List<Integer> grid = state.getGrid();
-        for (int i = 0, s = grid.size(); i < s; i++) {
-            int number = grid.get(i);
+        List<Integer> puzzleState = state.getState();
+        for (int i = 0, s = puzzleState.size(); i < s; i++) {
+            int number = puzzleState.get(i);
             if (number != 0) {
                 sb.append(number);
             } else {

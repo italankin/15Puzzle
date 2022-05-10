@@ -10,10 +10,10 @@ class SaveGameManager {
     static SavedGame getSavedGame() {
         String strings = Settings.prefs.getString(Settings.KEY_SAVED_GAME_ARRAY, null);
         if (strings != null) {
-            List<Integer> grid = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
+            List<Integer> state = Tools.getIntegerArray(strings.split("\\s*,\\s*"));
             int moves = Settings.prefs.getInt(Settings.KEY_SAVED_GAME_MOVES, 0);
             long time = Settings.prefs.getLong(Settings.KEY_SAVED_GAME_TIME, 0);
-            return new SavedGame(grid, moves, time);
+            return new SavedGame(state, moves, time);
         } else {
             return SavedGame.INVALID;
         }
@@ -37,8 +37,8 @@ class SaveGameManager {
     static void saveGame(SharedPreferences.Editor editor) {
         GameState state = GameState.get();
         if (!state.isSolved()) {
-            String gridAsStr = state.game.getGrid().toString();
-            String array = gridAsStr.substring(1, gridAsStr.length() - 1);
+            String stateAsStr = state.game.getState().toString();
+            String array = stateAsStr.substring(1, stateAsStr.length() - 1);
             editor.putString(Settings.KEY_SAVED_GAME_ARRAY, array);
             editor.putInt(Settings.KEY_SAVED_GAME_MOVES, state.getMoves());
             editor.putLong(Settings.KEY_SAVED_GAME_TIME, state.time);
@@ -53,12 +53,12 @@ class SaveGameManager {
 
         static final SavedGame INVALID = new SavedGame(Collections.emptyList(), 0, 0);
 
-        final List<Integer> grid;
+        final List<Integer> state;
         final int moves;
         final long time;
 
-        SavedGame(List<Integer> grid, int moves, long time) {
-            this.grid = grid;
+        SavedGame(List<Integer> state, int moves, long time) {
+            this.state = state;
             this.moves = moves;
             this.time = time;
         }

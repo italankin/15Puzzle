@@ -46,12 +46,12 @@ public interface Game {
     /**
      * @return current state of the game
      */
-    List<Integer> getGrid();
+    List<Integer> getState();
 
     /**
      * @return final state of the game
      */
-    List<Integer> getSolvedGrid();
+    List<Integer> getGoal();
 
     int getWidth();
 

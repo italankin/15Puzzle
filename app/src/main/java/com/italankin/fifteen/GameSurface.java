@@ -386,14 +386,14 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
         if (SaveGameManager.hasSavedGame()) {
             SaveGameManager.SavedGame savedGame = SaveGameManager.getSavedGame();
-            if (isUser || (savedGame.grid.size() != (Settings.gameWidth * Settings.gameHeight))) {
+            if (isUser || (savedGame.state.size() != (Settings.gameWidth * Settings.gameHeight))) {
                 SaveGameManager.removeSavedGame();
             } else {
                 newGame = GameFactory.create(
                         Settings.gameType,
                         Settings.gameWidth,
                         Settings.gameHeight,
-                        savedGame.grid,
+                        savedGame.state,
                         savedGame.moves
                 );
             }
@@ -432,7 +432,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         boolean animate = Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() &&
                 !mStatistics.isShown() && !mPauseOverlay.isShown();
         for (int index = 0, size = newGame.getSize(); index < size; index++) {
-            int number = newGame.getGrid().get(index);
+            int number = newGame.getState().get(index);
             if (number > 0) {
                 Tile t = new Tile(number, index);
                 if (animate) {

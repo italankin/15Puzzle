@@ -51,9 +51,9 @@ public class HelpOverlay extends FieldOverlay {
         float inset = -Dimensions.spacing * 2;
         mRectHelp.inset(inset, inset);
 
-        List<Integer> numbers = GameState.get().game.getSolvedGrid();
-        for (int i = 0, size = numbers.size(); i < size; i++) {
-            int number = numbers.get(i);
+        List<Integer> goal = GameState.get().game.getGoal();
+        for (int i = 0, size = goal.size(); i < size; i++) {
+            int number = goal.get(i);
             if (number == 0) {
                 continue;
             }

@@ -14,16 +14,16 @@ public enum Heuristics {
     MANHATTAN_DISTANCE {
         @Override
         public int calc(Game game) {
-            List<Integer> solvedGrid = game.getSolvedGrid();
-            List<Integer> grid = game.getGrid();
+            List<Integer> goal = game.getGoal();
+            List<Integer> state = game.getState();
             int distance = 0;
-            for (int i = 0, s = solvedGrid.size(); i < s; i++) {
-                int[] solvedCoords = Util.coords(i, game.getWidth());
-                int sx = solvedCoords[0];
-                int sy = solvedCoords[1];
-                int[] gridCoords = Util.coords(grid.indexOf(solvedGrid.get(i)), game.getWidth());
-                int gx = gridCoords[0];
-                int gy = gridCoords[1];
+            for (int i = 0, s = goal.size(); i < s; i++) {
+                int[] goalCoords = Util.coords(i, game.getWidth());
+                int sx = goalCoords[0];
+                int sy = goalCoords[1];
+                int[] stateCoords = Util.coords(state.indexOf(goal.get(i)), game.getWidth());
+                int gx = stateCoords[0];
+                int gy = stateCoords[1];
                 distance += Tools.manhattan(sx, sy, gx, gy);
             }
             return distance;
@@ -33,11 +33,11 @@ public enum Heuristics {
         @Override
         int calc(Game game) {
             int outOfPlace = 0;
-            List<Integer> grid = game.getGrid();
-            List<Integer> solvedGrid = game.getSolvedGrid();
-            for (int i = 0; i < solvedGrid.size(); i++) {
-                int actual = grid.get(i);
-                int expected = solvedGrid.get(i);
+            List<Integer> state = game.getState();
+            List<Integer> goal = game.getGoal();
+            for (int i = 0; i < goal.size(); i++) {
+                int actual = state.get(i);
+                int expected = goal.get(i);
                 if (actual != expected) {
                     outOfPlace++;
                 }

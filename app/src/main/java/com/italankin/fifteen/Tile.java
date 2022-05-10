@@ -269,7 +269,7 @@ public class Tile {
         GameState state = GameState.get();
         if (useMultiColor && (mIsHelpTile || !state.paused)) {
             if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
-                return mIndex == state.game.getSolvedGrid().indexOf(mNumber)
+                return mIndex == state.game.getGoal().indexOf(mNumber)
                         ? tileColor
                         : Colors.getUnsolvedTileColor();
             } else {
@@ -283,7 +283,7 @@ public class Tile {
     }
 
     private static int getMultiColorIndex(int number) {
-        int index = GameState.get().game.getSolvedGrid().indexOf(number);
+        int index = GameState.get().game.getGoal().indexOf(number);
         int gameWidth = Settings.gameWidth;
         switch (Settings.multiColor) {
             case Constants.MULTI_COLOR_ROWS:

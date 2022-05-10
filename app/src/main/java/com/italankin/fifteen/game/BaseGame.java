@@ -203,12 +203,12 @@ abstract class BaseGame implements Game {
     }
 
     @Override
-    public List<Integer> getGrid() {
+    public List<Integer> getState() {
         return state;
     }
 
     @Override
-    public List<Integer> getSolvedGrid() {
+    public List<Integer> getGoal() {
         return goal;
     }
 
