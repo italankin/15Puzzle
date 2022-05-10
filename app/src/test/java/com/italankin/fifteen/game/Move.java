@@ -68,29 +68,45 @@ public class Move {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("---------------\nh=");
+
+        int cellWidth = String.valueOf(state.getSize()).length() + 2;
+        char delimiter = ' ';
+
+        int width = state.getWidth();
+        int lineLength = cellWidth * width;
+        StringBuilder line = new StringBuilder(lineLength);
+        for (int i = 0; i < lineLength; i++) {
+            line.append('-');
+        }
+
+        sb.append(line);
+        sb.append("\nh=");
         sb.append(heuristicsValue);
         sb.append(" m=");
         sb.append(state.getMoves());
         sb.append(" i=");
         sb.append(state.inversions());
-        sb.append("\n---------------\n");
+        sb.append('\n');
+        sb.append(line);
+        sb.append('\n');
         List<Integer> puzzleState = state.getState();
         for (int i = 0, s = puzzleState.size(); i < s; i++) {
             int number = puzzleState.get(i);
-            if (number != 0) {
-                sb.append(number);
-            } else {
-                sb.append('-');
-            }
-            if ((i + 1) % state.getWidth() == 0) {
+            appendNum(sb, number, cellWidth, delimiter);
+            if ((i + 1) % width == 0) {
                 sb.append('\n');
-            } else {
-                sb.append('\t');
             }
         }
-        sb.append("---------------");
+        sb.append(line);
         return sb.toString();
+    }
+
+    private static void appendNum(StringBuilder sb, int num, int cellWidth, char delimiter) {
+        String s = String.valueOf(num);
+        for (int i = 0, c = cellWidth - s.length(); i < c; i++) {
+            sb.append(delimiter);
+        }
+        sb.append(num == 0 ? '-' : s);
     }
 
     /**
