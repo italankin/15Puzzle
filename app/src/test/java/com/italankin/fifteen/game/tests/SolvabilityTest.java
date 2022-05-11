@@ -6,8 +6,11 @@ import com.italankin.fifteen.game.Heuristics;
 import com.italankin.fifteen.game.Move;
 import com.italankin.fifteen.game.RandomGoalGame;
 import com.italankin.fifteen.game.SnakeGame;
-import com.italankin.fifteen.game.Solver;
 import com.italankin.fifteen.game.SpiralGame;
+import com.italankin.fifteen.game.solver.Algorithm;
+import com.italankin.fifteen.game.solver.Solution;
+import com.italankin.fifteen.game.solver.Solver;
+import com.italankin.fifteen.game.solver.impl.AStar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +20,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 @RunWith(Parameterized.class)
@@ -35,7 +37,7 @@ public class SolvabilityTest {
     private static final int HEIGHT_MAX = 4;
 
     private static final Heuristics HEURISTICS = Heuristics.MANHATTAN_DISTANCE;
-    private static final Comparator<Move> MOVE_COMPARATOR = new Move.HeuristicsMovesCmp(4);
+    private static final Algorithm ALGORITHM = new AStar(new Move.HeuristicsMovesCmp(4));
 
     @Parameters(name = "#{0} {1} {2}x{3} randomMissingTile={4}")
     public static Collection<Object[]> parameters() {
@@ -72,14 +74,20 @@ public class SolvabilityTest {
     @Test(timeout = TIMEOUT)
     public void checkSolvability() {
         Game game = createGame();
-        Solver solver = new Solver(game, HEURISTICS, MOVE_COMPARATOR);
+        Solver solver = new Solver(game, HEURISTICS, ALGORITHM);
 
+        System.out.printf("Using algorithm: %s\n", ALGORITHM.getClass().getSimpleName());
         System.out.println("Starting position:");
         System.out.println(solver.start());
 
         long startTime = System.nanoTime();
-        Solver.Solution solution = solver.solve();
+        Solution solution = solver.solve();
         long time = System.nanoTime() - startTime;
+
+        if (gameType == GameType.RANDOM) {
+            System.out.println("End position:");
+            System.out.println(solution.value);
+        }
 
         System.out.printf("Solved %s %dx%d in %.3fms, %d moves, %d nodes explored\n",
                 gameType, width, height, time / 1_000_000f, solution.moves(), solution.explored);

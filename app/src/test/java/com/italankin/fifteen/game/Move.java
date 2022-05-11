@@ -9,20 +9,23 @@ public class Move {
     public final Game state;
     public final int heuristicsValue;
     private final Heuristics heuristics;
+    private final int parentZeroX;
+    private final int parentZeroY;
 
     public Move(Heuristics heuristics, Game state) {
+        this(heuristics, state, -1, -1);
+    }
+
+    public Move(Heuristics heuristics, Game state, int parentZeroX, int parentZeroY) {
         this.heuristics = heuristics;
         this.state = state;
+        // store parent zero coordinates to exclude parent positions from possible moves
+        this.parentZeroX = parentZeroX;
+        this.parentZeroY = parentZeroY;
         this.heuristicsValue = heuristics.calc(state);
     }
 
-    Move newMove(int x, int y) {
-        Game newState = state.copy();
-        newState.move(x, y);
-        return new Move(heuristics, newState);
-    }
-
-    List<Move> possibleMoves() {
+    public List<Move> possibleMoves() {
         int width = state.getWidth();
         int height = state.getHeight();
 
@@ -32,18 +35,34 @@ public class Move {
 
         List<Move> moves = new ArrayList<>(4);
         if (x > 0) {
-            moves.add(newMove(x - 1, y));
+            int newX = x - 1;
+            if (parentZeroX != newX || parentZeroY != y) {
+                moves.add(newMove(newX, y));
+            }
         }
         if (x < width - 1) {
-            moves.add(newMove(x + 1, y));
+            int newX = x + 1;
+            if (parentZeroX != newX || parentZeroY != y) {
+                moves.add(newMove(newX, y));
+            }
         }
         if (y > 0) {
-            moves.add(newMove(x, y - 1));
+            int newY = y - 1;
+            if (parentZeroX != x || parentZeroY != newY) {
+                moves.add(newMove(x, newY));
+            }
         }
         if (y < height - 1) {
-            moves.add(newMove(x, y + 1));
+            int newY = y + 1;
+            if (parentZeroX != x || parentZeroY != newY) {
+                moves.add(newMove(x, newY));
+            }
         }
         return moves;
+    }
+
+    public boolean isSolved() {
+        return state.isSolved();
     }
 
     @Override
@@ -101,12 +120,18 @@ public class Move {
         return sb.toString();
     }
 
+    private Move newMove(int x, int y) {
+        Game newState = state.copy();
+        newState.move(x, y);
+        return new Move(heuristics, newState, x, y);
+    }
+
     private static void appendNum(StringBuilder sb, int num, int cellWidth, char delimiter) {
         String s = String.valueOf(num);
         for (int i = 0, c = cellWidth - s.length(); i < c; i++) {
             sb.append(delimiter);
         }
-        sb.append(num == 0 ? '-' : s);
+        sb.append(num == 0 ? "-" : s);
     }
 
     /**

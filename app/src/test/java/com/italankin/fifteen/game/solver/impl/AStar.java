@@ -1,24 +1,23 @@
-package com.italankin.fifteen.game;
+package com.italankin.fifteen.game.solver.impl;
+
+import com.italankin.fifteen.game.Move;
+import com.italankin.fifteen.game.solver.Algorithm;
+import com.italankin.fifteen.game.solver.Solution;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
-public class Solver {
+public class AStar implements Algorithm {
 
-    private final Move start;
     private final Comparator<Move> moveComparator;
 
-    public Solver(Game start, Heuristics heuristics, Comparator<Move> moveComparator) {
-        this.start = new Move(heuristics, start);
+    public AStar(Comparator<Move> moveComparator) {
         this.moveComparator = moveComparator;
     }
 
-    public Move start() {
-        return start;
-    }
-
-    public Solution solve() {
+    @Override
+    public Solution run(Move start) {
         // use hashCode values to lower memory consumption
         HashSet<Integer> explored = new HashSet<>();
         int initialCapacity = 1 << (start.state.getWidth() * start.state.getHeight() - 2);
@@ -29,7 +28,7 @@ public class Solver {
         while (!moveQueue.isEmpty()) {
             Move move = moveQueue.remove();
             explored.add(move.hashCode());
-            if (move.state.isSolved()) {
+            if (move.isSolved()) {
                 return new Solution(move, explored.size());
             }
             if (best == null || move.heuristicsValue <= best.heuristicsValue) {
@@ -43,19 +42,5 @@ public class Solver {
         }
         throw new IllegalStateException("No solution! " +
                 explored.size() + " nodes explored.\nBest solution found:\n" + best);
-    }
-
-    public static class Solution {
-        public final Move value;
-        public final int explored;
-
-        Solution(Move value, int explored) {
-            this.value = value;
-            this.explored = explored;
-        }
-
-        public int moves() {
-            return value.state.getMoves();
-        }
     }
 }

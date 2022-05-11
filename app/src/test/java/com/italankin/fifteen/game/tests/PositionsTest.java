@@ -4,7 +4,10 @@ import com.italankin.fifteen.game.ClassicGame;
 import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.game.Heuristics;
 import com.italankin.fifteen.game.Move;
-import com.italankin.fifteen.game.Solver;
+import com.italankin.fifteen.game.solver.Algorithm;
+import com.italankin.fifteen.game.solver.Solution;
+import com.italankin.fifteen.game.solver.Solver;
+import com.italankin.fifteen.game.solver.impl.AStar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +16,6 @@ import org.junit.runners.Parameterized;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 @RunWith(Parameterized.class)
@@ -22,7 +24,7 @@ public class PositionsTest {
     private static final long TIMEOUT = 60 * 1000;
 
     private static final Heuristics HEURISTICS = Heuristics.MANHATTAN_DISTANCE;
-    private static final Comparator<Move> MOVE_COMPARATOR = new Move.HeuristicsMovesCmp(2);
+    private static final Algorithm ALGORITHM = new AStar(new Move.HeuristicsMovesCmp(2));
 
     private static final Game[] GAMES = new Game[]{
             new ClassicGame(4, 4, Arrays.asList(
@@ -68,13 +70,13 @@ public class PositionsTest {
 
     @Test(timeout = TIMEOUT)
     public void checkPosition() {
-        Solver solver = new Solver(game, HEURISTICS, MOVE_COMPARATOR);
+        Solver solver = new Solver(game, HEURISTICS, ALGORITHM);
 
         System.out.println("Starting position:");
         System.out.println(solver.start());
 
         long startTime = System.nanoTime();
-        Solver.Solution solution = solver.solve();
+        Solution solution = solver.solve();
         long time = System.nanoTime() - startTime;
 
         System.out.printf("Solved %dx%d in %.3fms, %d moves, %d nodes explored\n",
