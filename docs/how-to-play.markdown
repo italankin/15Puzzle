@@ -153,11 +153,12 @@ Import previously [exported records](#51-export).
 |Setting|Values|Description|
 |-|-|-|
 |Mode|`easy`, `hard`|See [game modes](#4-game-modes)|
+|Missing tile|`default`, `random`|See [missing tile](#622-missing-tile)|
 |Anti-alias|`on`, `off`|Smoother appearance of lines. Disabling can improve performance|
 |Multi-color|`off`, `rows`, `columns`, `fringe`, `solved`|See [multi-color](#7-multi-color)|
 |Animation speed|`off`, `fast`, `normal`|Tile animation speed|
 |Delay|`on`, `off`|After solving a puzzle, there is a small delay before you can start a new game by clicking on a game field|
-|Ingame&nbsp;info||See [ingame-info](#621-ingame-info)|
+|Ingame&nbsp;info||See [ingame info](#621-ingame-info)|
 |Stats|`on`, `off`|See [statistics](#8-statistics)|
 
 ### 6.2.1. Ingame info
@@ -168,6 +169,18 @@ Import previously [exported records](#51-export).
 |Moves|`on`,<br>`after solve`, `off`|Show number of moves on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
 |Time|`on`,<br>`after solve`, `off`|Show elapsed time on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
 |TPS|`on`,<br>`after solve`, `off`|Show current [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
+
+### 6.2.2. Missing tile
+
+By `default`, the missing tile will be the last one (for 4x4 it's number 16, 9 for 3x3, 12 for 4x3 and so on). If set to `random`, the tile will be chosen randomly and the goal will be different.
+
+For example, in this position the missing tile is 6:
+
+<p align="center"><img src="/assets/missing-tile-start.jpg" alt="Missing tile starting position" /></p>
+
+So, you need to arrange tiles in this order:
+
+<p align="center"><img src="/assets/missing-tile-goal.jpg" alt="Missing tile goal position" /></p>
 
 ## 7. Multi-color
 
