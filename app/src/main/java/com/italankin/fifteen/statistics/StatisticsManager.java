@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +55,20 @@ public class StatisticsManager {
         Statistics.Avg ao50 = avg(entries, 50);
         Statistics.Avg ao100 = avg(entries, 100);
         Statistics.Avg session = avg(entries, entries.size());
-        return new Statistics(entries.size(), single, ao5, ao12, ao50, ao100, session);
+
+        Statistics.Avg[] byTime = bestWorstBy(entries, StatisticsEntry.BY_TIME);
+        Statistics.Avg[] byMoves = bestWorstBy(entries, StatisticsEntry.BY_MOVES);
+        return new Statistics(entries.size(),
+                single,
+                ao5,
+                ao12,
+                ao50,
+                ao100,
+                session,
+                byTime[0],
+                byMoves[0],
+                byTime[1],
+                byMoves[1]);
     }
 
     public Map<StatisticsKey, List<StatisticsEntry>> getAll() {
@@ -95,6 +109,31 @@ public class StatisticsManager {
         float moves = avgMoves(new ArrayList<>(lastN));
         float tps = avgTps(new ArrayList<>(lastN));
         return new Statistics.Avg(time, moves, tps);
+    }
+
+    /**
+     * @return an array {@code [best, worst]} by a given {@code comparator}
+     */
+    private static Statistics.Avg[] bestWorstBy(
+            List<StatisticsEntry> entries,
+            Comparator<StatisticsEntry> comparator) {
+        int size = entries.size();
+        switch (size) {
+            case 0:
+                return new Statistics.Avg[]{null, null};
+            case 1:
+                StatisticsEntry entry = entries.get(0);
+                Statistics.Avg avg = new Statistics.Avg(entry.time, entry.moves, entry.tps);
+                return new Statistics.Avg[]{avg, avg};
+            default:
+                Collections.sort(entries, comparator);
+                StatisticsEntry best = entries.get(0);
+                StatisticsEntry worst = entries.get(entries.size() - 1);
+                return new Statistics.Avg[]{
+                        new Statistics.Avg(best.time, best.moves, best.tps),
+                        new Statistics.Avg(worst.time, worst.moves, worst.tps)
+                };
+        }
     }
 
     private static long avgTime(List<StatisticsEntry> entries) {

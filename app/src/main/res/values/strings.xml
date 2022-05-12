@@ -52,6 +52,10 @@
     <string name="stats_ao100" translatable="false">Ao100</string>
     <string name="stats_tps" translatable="false">TPS</string>
     <string name="stats_session_avg">Session</string>
+    <string name="stats_best_time">Best time</string>
+    <string name="stats_best_moves">Best moves</string>
+    <string name="stats_worst_time">Worst time</string>
+    <string name="stats_worst_moves">Worst moves</string>
     <string name="stats_na">n/a</string>
     <string name="stats_time">Time</string>
     <string name="stats_moves">Moves</string>

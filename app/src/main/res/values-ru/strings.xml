@@ -47,6 +47,10 @@
 
     <string name="stats_single">Послед.</string>
     <string name="stats_session_avg">Сессия</string>
+    <string name="stats_best_time">Лучш. время</string>
+    <string name="stats_best_moves">Лучш. ходы</string>
+    <string name="stats_worst_time">Худш. время</string>
+    <string name="stats_worst_moves">Худш. ходы</string>
     <string name="stats_na">н/д</string>
     <string name="stats_time">Время</string>
     <string name="stats_moves">Ходы</string>

@@ -44,6 +44,18 @@ public class StatisticsView extends BaseView {
     private final String mTextSessionAvg;
     private RectF mRectSessionAvg;
 
+    private final String mTextBestTime;
+    private RectF mRectBestTime;
+
+    private final String mTextBestMoves;
+    private RectF mRectBestMoves;
+
+    private final String mTextWorstTime;
+    private RectF mRectWorstTime;
+
+    private final String mTextWorstMoves;
+    private RectF mRectWorstMoves;
+
     private final String mTextExport;
     private final RectF mRectExport;
 
@@ -64,10 +76,10 @@ public class StatisticsView extends BaseView {
     private Statistics statistics = Statistics.EMPTY;
 
     private final float[] mTableGuides = {
-            Dimensions.surfaceWidth * 0.25f,
             Dimensions.surfaceWidth * 0.29f,
-            Dimensions.surfaceWidth * 0.53f,
-            Dimensions.surfaceWidth * 0.77f
+            Dimensions.surfaceWidth * 0.32f,
+            Dimensions.surfaceWidth * 0.59f,
+            Dimensions.surfaceWidth * 0.82f
     };
 
     private Callbacks callbacks;
@@ -76,10 +88,10 @@ public class StatisticsView extends BaseView {
         this.statisticsManager = statisticsManager;
         mResources = res;
 
-        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.08f);
+        int lineSpacing = (int) (Dimensions.surfaceHeight * 0.06f);
         int topMargin = (int) (Dimensions.surfaceHeight * 0.08f);
         int padding = -lineSpacing / 4;
-        float textSize = Dimensions.menuFontSize * .7f;
+        float textSize = Dimensions.menuFontSize * .65f;
 
         mPaintText = new Paint();
         mPaintText.setAntiAlias(Settings.antiAlias);
@@ -114,6 +126,10 @@ public class StatisticsView extends BaseView {
         mTextAo50 = res.getString(R.string.stats_ao50);
         mTextAo100 = res.getString(R.string.stats_ao100);
         mTextSessionAvg = res.getString(R.string.stats_session_avg);
+        mTextBestTime = res.getString(R.string.stats_best_time);
+        mTextBestMoves = res.getString(R.string.stats_best_moves);
+        mTextWorstTime = res.getString(R.string.stats_worst_time);
+        mTextWorstMoves = res.getString(R.string.stats_worst_moves);
         mTextNa = res.getString(R.string.stats_na);
         mTextTime = res.getString(R.string.stats_time);
         mTextMoves = res.getString(R.string.stats_moves);
@@ -218,6 +234,22 @@ public class StatisticsView extends BaseView {
         mRectAo100.inset(0, padding);
 
         topMargin += lineSpacing;
+        mRectBestTime = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectBestTime.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectBestMoves = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectBestMoves.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectWorstTime = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectWorstTime.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectWorstMoves = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectWorstMoves.inset(0, padding);
+
+        topMargin += lineSpacing;
         mRectSessionAvg = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectSessionAvg.inset(0, padding);
 
@@ -260,6 +292,26 @@ public class StatisticsView extends BaseView {
         canvas.drawText(formatTime(statistics.session), mTableGuides[1], mRectSessionAvg.bottom - textYOffset, mPaintValue);
         canvas.drawText(formatMoves(statistics.session), mTableGuides[2], mRectSessionAvg.bottom - textYOffset, mPaintValue);
         canvas.drawText(formatTps(statistics.session), mTableGuides[3], mRectSessionAvg.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextBestTime, mTableGuides[0], mRectBestTime.bottom - textYOffset, mPaintText);
+        canvas.drawText(formatTime(statistics.bestTime), mTableGuides[1], mRectBestTime.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatMoves(statistics.bestTime), mTableGuides[2], mRectBestTime.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatTps(statistics.bestTime), mTableGuides[3], mRectBestTime.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextBestMoves, mTableGuides[0], mRectBestMoves.bottom - textYOffset, mPaintText);
+        canvas.drawText(formatTime(statistics.bestMoves), mTableGuides[1], mRectBestMoves.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatMoves(statistics.bestMoves), mTableGuides[2], mRectBestMoves.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatTps(statistics.bestMoves), mTableGuides[3], mRectBestMoves.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextWorstTime, mTableGuides[0], mRectWorstTime.bottom - textYOffset, mPaintText);
+        canvas.drawText(formatTime(statistics.worstTime), mTableGuides[1], mRectWorstTime.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatMoves(statistics.worstTime), mTableGuides[2], mRectWorstTime.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatTps(statistics.worstTime), mTableGuides[3], mRectWorstTime.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextWorstMoves, mTableGuides[0], mRectWorstMoves.bottom - textYOffset, mPaintText);
+        canvas.drawText(formatTime(statistics.worstMoves), mTableGuides[1], mRectWorstMoves.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatMoves(statistics.worstMoves), mTableGuides[2], mRectWorstMoves.bottom - textYOffset, mPaintValue);
+        canvas.drawText(formatTps(statistics.worstMoves), mTableGuides[3], mRectWorstMoves.bottom - textYOffset, mPaintValue);
 
         String total = mResources.getQuantityString(R.plurals.stats_total, statistics.totalCount, statistics.totalCount);
         canvas.drawText(total, mRectTotal.centerX(), mRectTotal.bottom - textYOffset, mPaintTotal);
