@@ -188,7 +188,7 @@ public class Tile {
     }
 
     public boolean isAnimating() {
-        if (!Settings.animations || Settings.tileAnimDuration == Constants.ANIMATION_DURATION_OFF) {
+        if (!Settings.animationsEnabled()) {
             return false;
         }
         return mTileScaleAnimator.isRunning() || mTileYAnimator.isRunning() || mTileXAnimator.isRunning();
@@ -219,7 +219,7 @@ public class Tile {
             float newY = Dimensions.fieldMarginTop +
                     (Dimensions.tileSize + Dimensions.spacing) * (mIndex / Settings.gameWidth);
 
-            if (Settings.animations && Settings.tileAnimDuration != Constants.ANIMATION_DURATION_OFF) {
+            if (Settings.animationsEnabled()) {
                 if (mTileXAnimator.isRunning()) {
                     mTileXAnimator.cancel();
                 }
@@ -230,8 +230,8 @@ public class Tile {
                 mTileXAnimator.setValues(mCanvasX, newX);
                 mTileYAnimator.setValues(mCanvasY, newY);
 
-                mTileXAnimator.setDuration(Settings.tileAnimDuration);
-                mTileYAnimator.setDuration(Settings.tileAnimDuration);
+                mTileXAnimator.setDuration(Settings.animationSpeed);
+                mTileYAnimator.setDuration(Settings.animationSpeed);
 
                 mTileXAnimator.start();
                 mTileYAnimator.start();
@@ -251,7 +251,7 @@ public class Tile {
         if (mTileScaleAnimator.isRunning()) {
             mTileScaleAnimator.cancel();
         }
-        mTileScaleAnimator.setDuration(Settings.tileAnimDuration);
+        mTileScaleAnimator.setDuration(Settings.animationSpeed);
         mTileScaleAnimator.setValues(0, 1);
         mTileScaleAnimator.setStartDelay(delay);
         mTileScaleAnimator.start();

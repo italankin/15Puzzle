@@ -429,7 +429,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
         mField.clear();
 
-        boolean animate = Settings.animations && !mSettings.isShown() && !mLeaderboard.isShown() &&
+        boolean animate = Settings.animationsEnabled() && !mSettings.isShown() && !mLeaderboard.isShown() &&
                 !mStatistics.isShown() && !mPauseOverlay.isShown();
         for (int index = 0, size = newGame.getSize(); index < size; index++) {
             int number = newGame.getState().get(index);

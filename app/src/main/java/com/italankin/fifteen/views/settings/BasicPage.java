@@ -22,8 +22,10 @@ public class BasicPage implements SettingsPage {
     private String mTextWidthValue;
     private final String mTextHeight;
     private String mTextHeightValue;
-    private final String mTextAnimations;
-    private final String[] mTextAnimationsValues;
+    private final String mTextTileAnimation;
+    private final String mTextTileAnimationOff;
+    private final String mTextTileAnimationFast;
+    private final String mTextTileAnimationNormal;
     private final String mTextColor;
     private final String mTextColorMode;
     private final String[] mTextColorModeValues;
@@ -53,8 +55,10 @@ public class BasicPage implements SettingsPage {
         mTextWidthValue = Integer.toString(Settings.gameWidth);
         mTextType = res.getString(R.string.pref_type);
         mTextTypeValue = res.getStringArray(R.array.game_types);
-        mTextAnimations = res.getString(R.string.pref_animation);
-        mTextAnimationsValues = res.getStringArray(R.array.toggle);
+        mTextTileAnimation = res.getString(R.string.pref_animation);
+        mTextTileAnimationOff = res.getString(R.string.tile_anim_speed_off);
+        mTextTileAnimationFast = res.getString(R.string.tile_anim_speed_fast);
+        mTextTileAnimationNormal = res.getString(R.string.tile_anim_speed_normal);
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValues = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
@@ -107,9 +111,8 @@ public class BasicPage implements SettingsPage {
         canvas.drawText(mTextHeight, textLeft, mRectHeight.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextHeightValue, valueRight, mRectHeight.bottom - textYOffset, mPaintValue);
 
-        canvas.drawText(mTextAnimations, textLeft, mRectAnimations.bottom - textYOffset, mPaintText);
-        canvas.drawText(mTextAnimationsValues[Settings.animations ? 1 : 0],
-                valueRight, mRectAnimations.bottom - textYOffset, mPaintValue);
+        canvas.drawText(mTextTileAnimation, textLeft, mRectAnimations.bottom - textYOffset, mPaintText);
+        canvas.drawText(tileAnimSpeed(), valueRight, mRectAnimations.bottom - textYOffset, mPaintValue);
 
         canvas.drawText(mTextColor, textLeft, mRectColor.bottom - textYOffset, mPaintText);
         mPaintIcon.setColor(Colors.getTileColor());
@@ -155,8 +158,13 @@ public class BasicPage implements SettingsPage {
         }
 
         if (mRectAnimations.contains(x, y)) {
-            Settings.animations = !Settings.animations;
-            Settings.save();
+            for (int i = 0, s = Constants.ANIMATION_SPEED_ARRAY.length; i < s; i++) {
+                if (Settings.animationSpeed == Constants.ANIMATION_SPEED_ARRAY[i]) {
+                    Settings.animationSpeed = Constants.ANIMATION_SPEED_ARRAY[(i + 1) % s];
+                    Settings.save();
+                    break;
+                }
+            }
         }
 
         if (mRectColor.contains(x, y)) {
@@ -194,5 +202,15 @@ public class BasicPage implements SettingsPage {
     @Override
     public void update() {
         mPaintIcon.setAntiAlias(Settings.antiAlias);
+    }
+
+    private String tileAnimSpeed() {
+        if (!Settings.animationsEnabled()) {
+            return mTextTileAnimationOff;
+        }
+        if (Settings.animationSpeed == Constants.ANIMATION_SPEED_FAST) {
+            return mTextTileAnimationFast;
+        }
+        return mTextTileAnimationNormal;
     }
 }

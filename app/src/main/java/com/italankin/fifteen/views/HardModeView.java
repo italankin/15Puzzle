@@ -136,7 +136,7 @@ public class HardModeView extends BaseView {
     }
 
     private long getAnimDuration() {
-        return Settings.screenAnimDuration * 2;
+        return Settings.animationSpeed * 2;
     }
 
     private static class Button {

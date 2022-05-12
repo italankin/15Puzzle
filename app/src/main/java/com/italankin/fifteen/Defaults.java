@@ -6,9 +6,8 @@ class Defaults {
     static final int GAME_HEIGHT = 4;
     static final boolean HARD_MODE = false;
     static final int TILE_COLOR = 0;
-    static final boolean ANIMATIONS = true;
     static final boolean ANTI_ALIAS = true;
-    static final int ANIMATION_DURATION = Constants.ANIMATION_DURATION_NORMAL;
+    static final int ANIMATION_SPEED = Constants.ANIMATION_SPEED_NORMAL;
     static final int MULTI_COLOR = Constants.MULTI_COLOR_OFF;
     static final int COLOR_MODE = Constants.COLOR_MODE_DAY;
     static final int GAME_TYPE = Constants.TYPE_CLASSIC;

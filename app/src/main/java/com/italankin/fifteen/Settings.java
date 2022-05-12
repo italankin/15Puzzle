@@ -17,8 +17,7 @@ public class Settings {
     private static final String KEY_GAME_TYPE = "mode";
     private static final String KEY_GAME_MODE = "hardmode";
     private static final String KEY_GAME_ANTI_ALIAS = "antialias";
-    private static final String KEY_GAME_ANIMATION = "animation";
-    private static final String KEY_GAME_TILE_ANIMATION_DURATION = "tile_animation_duration";
+    private static final String KEY_ANIMATION_SPEED = "animation_speed";
     private static final String KEY_MULTI_COLOR = "multi_color";
     private static final String KEY_NEW_GAME_DELAY = "new_game_delay";
     private static final String KEY_INGAME_INFO = "ingame_info";
@@ -36,11 +35,9 @@ public class Settings {
     public static int gameWidth = Defaults.GAME_WIDTH;
     public static int gameHeight = Defaults.GAME_HEIGHT;
     public static boolean hardmode = Defaults.HARD_MODE;
-    public static boolean animations = Defaults.ANIMATIONS;
     public static boolean antiAlias = Defaults.ANTI_ALIAS;
     public static boolean randomMissingTile = Defaults.RANDOM_MISSING_TILE;
-    public static long tileAnimDuration = Defaults.ANIMATION_DURATION;
-    public static long screenAnimDuration = Defaults.ANIMATION_DURATION;
+    public static long animationSpeed = Defaults.ANIMATION_SPEED;
     public static int tileColor = 0;
     public static int multiColor = Defaults.MULTI_COLOR;
     public static int colorMode = Defaults.COLOR_MODE;
@@ -76,8 +73,6 @@ public class Settings {
         colorMode = prefs.getInt(KEY_GAME_BG_COLOR, Defaults.COLOR_MODE);
         gameType = prefs.getInt(KEY_GAME_TYPE, Defaults.GAME_TYPE);
         antiAlias = prefs.getBoolean(KEY_GAME_ANTI_ALIAS, Defaults.ANTI_ALIAS);
-        animations = prefs.getBoolean(KEY_GAME_ANIMATION, Defaults.ANIMATIONS);
-        tileAnimDuration = prefs.getLong(KEY_GAME_TILE_ANIMATION_DURATION, Defaults.ANIMATION_DURATION);
         hardmode = prefs.getBoolean(KEY_GAME_MODE, Defaults.HARD_MODE);
         dateFormat = android.text.format.DateFormat.getDateFormat(context);
         multiColor = prefs.getInt(KEY_MULTI_COLOR, Defaults.MULTI_COLOR);
@@ -103,6 +98,20 @@ public class Settings {
             ingameInfoTime = prefs.getInt(KEY_INGAME_INFO_TIME, Defaults.INGAME_INFO_TIME);
             ingameInfoTps = prefs.getInt(KEY_INGAME_INFO_TPS, Defaults.INGAME_INFO_TPS);
         }
+
+        if (prefs.contains("animation")) {
+            boolean oldAnimationsEnabled = prefs.getBoolean("animation", true);
+            animationSpeed = oldAnimationsEnabled
+                    ? prefs.getLong("tile_animation_duration", Defaults.ANIMATION_SPEED)
+                    : Defaults.ANIMATION_SPEED;
+            prefs.edit()
+                    .putLong(KEY_ANIMATION_SPEED, animationSpeed)
+                    .remove("animation")
+                    .remove("tile_animation_duration")
+                    .apply();
+        } else {
+            animationSpeed = prefs.getLong(KEY_ANIMATION_SPEED, Defaults.ANIMATION_SPEED);
+        }
     }
 
     static void updateUiMode(Context context) {
@@ -122,8 +131,7 @@ public class Settings {
         editor.putInt(KEY_GAME_BG_COLOR, colorMode);
         editor.putInt(KEY_GAME_TYPE, gameType);
         editor.putBoolean(KEY_GAME_ANTI_ALIAS, antiAlias);
-        editor.putBoolean(KEY_GAME_ANIMATION, animations);
-        editor.putLong(KEY_GAME_TILE_ANIMATION_DURATION, tileAnimDuration);
+        editor.putLong(KEY_ANIMATION_SPEED, animationSpeed);
         editor.putBoolean(KEY_GAME_MODE, hardmode);
         editor.putInt(KEY_MULTI_COLOR, multiColor);
         editor.putBoolean(KEY_NEW_GAME_DELAY, newGameDelay);
@@ -154,5 +162,9 @@ public class Settings {
 
     static boolean useMultiColor() {
         return multiColor != Constants.MULTI_COLOR_OFF && !hardmode;
+    }
+
+    public static boolean animationsEnabled() {
+        return animationSpeed != Constants.ANIMATION_SPEED_OFF;
     }
 }

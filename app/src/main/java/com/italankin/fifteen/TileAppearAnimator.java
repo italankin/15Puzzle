@@ -52,7 +52,7 @@ public class TileAppearAnimator {
     }
 
     public void animateTile(Tile t, int animationType) {
-        if (!Settings.animations || Settings.tileAnimDuration == Constants.ANIMATION_DURATION_OFF) {
+        if (!Settings.animationsEnabled()) {
             return;
         }
 

@@ -75,7 +75,7 @@ public class TopPanelView extends BaseView {
     public boolean onClick(float x, float y) {
         for (Button b : mButtons) {
             if (b.contains(x, y)) {
-                b.setOverlay(Settings.screenAnimDuration);
+                b.setOverlay(Settings.animationSpeed);
                 if (mCallback != null) {
                     mCallback.onTopPanelButtonClick(b.id);
                 }
@@ -95,7 +95,7 @@ public class TopPanelView extends BaseView {
 
         for (Button button : mButtons) {
             if ((button.frame -= elapsedTime) > 0) {
-                float a = interpolator.getInterpolation((float) button.frame / Settings.screenAnimDuration);
+                float a = interpolator.getInterpolation((float) button.frame / Settings.animationSpeed);
                 mPaintOverlay.setAlpha((int) (255 * a));
                 canvas.drawRect(button.rect, mPaintOverlay);
             }
