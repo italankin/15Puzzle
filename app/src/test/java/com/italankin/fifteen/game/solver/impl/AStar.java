@@ -4,8 +4,10 @@ import com.italankin.fifteen.game.Move;
 import com.italankin.fifteen.game.solver.Algorithm;
 import com.italankin.fifteen.game.solver.Solution;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class AStar implements Algorithm {
@@ -29,7 +31,12 @@ public class AStar implements Algorithm {
             Move move = moveQueue.remove();
             explored.add(move.hashCode());
             if (move.isSolved()) {
-                return new Solution(move, explored.size());
+                List<Move> moves = new ArrayList<>(move.state.getMoves() + 1);
+                Move p = move;
+                do {
+                    moves.add(0, p);
+                } while ((p = p.parent) != null);
+                return new Solution(moves, explored.size());
             }
             if (best == null || move.heuristicsValue <= best.heuristicsValue) {
                 best = move;

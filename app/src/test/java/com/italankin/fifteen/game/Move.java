@@ -6,22 +6,27 @@ import java.util.List;
 
 public class Move {
 
-    public final Game state;
-    public final int heuristicsValue;
-    private final Heuristics heuristics;
-    private final int parentZeroX;
-    private final int parentZeroY;
-
-    public Move(Heuristics heuristics, Game state) {
-        this(heuristics, state, -1, -1);
+    private static int[] zero(Game game) {
+        int index = game.getState().indexOf(0);
+        int width = game.getWidth();
+        return new int[]{index % width, index / width};
     }
 
-    public Move(Heuristics heuristics, Game state, int parentZeroX, int parentZeroY) {
+    public final Move parent;
+    public final Game state;
+    public final int heuristicsValue;
+    public final int[] zero;
+    private final Heuristics heuristics;
+
+    public Move(Heuristics heuristics, Game state) {
+        this(heuristics, null, state, zero(state));
+    }
+
+    public Move(Heuristics heuristics, Move parent, Game state, int[] zero) {
         this.heuristics = heuristics;
+        this.parent = parent;
         this.state = state;
-        // store parent zero coordinates to exclude parent positions from possible moves
-        this.parentZeroX = parentZeroX;
-        this.parentZeroY = parentZeroY;
+        this.zero = zero;
         this.heuristicsValue = heuristics.calc(state);
     }
 
@@ -36,25 +41,25 @@ public class Move {
         List<Move> moves = new ArrayList<>(4);
         if (x > 0) {
             int newX = x - 1;
-            if (parentZeroX != newX || parentZeroY != y) {
+            if (include(newX, y)) {
                 moves.add(newMove(newX, y));
             }
         }
         if (x < width - 1) {
             int newX = x + 1;
-            if (parentZeroX != newX || parentZeroY != y) {
+            if (include(newX, y)) {
                 moves.add(newMove(newX, y));
             }
         }
         if (y > 0) {
             int newY = y - 1;
-            if (parentZeroX != x || parentZeroY != newY) {
+            if (include(x, newY)) {
                 moves.add(newMove(x, newY));
             }
         }
         if (y < height - 1) {
             int newY = y + 1;
-            if (parentZeroX != x || parentZeroY != newY) {
+            if (include(x, newY)) {
                 moves.add(newMove(x, newY));
             }
         }
@@ -120,10 +125,15 @@ public class Move {
         return sb.toString();
     }
 
+    private boolean include(int x, int y) {
+        // only include moves that does not lead to the parent position
+        return parent == null || parent.zero[0] != x || parent.zero[1] != y;
+    }
+
     private Move newMove(int x, int y) {
         Game newState = state.copy();
         newState.move(x, y);
-        return new Move(heuristics, newState, x, y);
+        return new Move(heuristics, this, newState, new int[]{x, y});
     }
 
     private static void appendNum(StringBuilder sb, int num, int cellWidth, char delimiter) {

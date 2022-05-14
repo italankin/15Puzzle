@@ -79,7 +79,8 @@ public class PositionsTest {
         Solution solution = solver.solve();
         long time = System.nanoTime() - startTime;
 
-        System.out.printf("Solved %dx%d in %.3fms, %d moves, %d nodes explored\n",
-                game.getWidth(), game.getHeight(), time / 1_000_000f, solution.moves(), solution.explored);
+        System.out.printf("Solved %dx%d in %.3fms, %d moves, %d nodes explored\nMoves: %s\n",
+                game.getWidth(), game.getHeight(), time / 1_000_000f, solution.moves(),
+                solution.explored, solution.movesNumbers());
     }
 }

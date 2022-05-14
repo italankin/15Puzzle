@@ -86,11 +86,12 @@ public class SolvabilityTest {
 
         if (gameType == GameType.RANDOM) {
             System.out.println("End position:");
-            System.out.println(solution.value);
+            System.out.println(solution.end());
         }
 
-        System.out.printf("Solved %s %dx%d in %.3fms, %d moves, %d nodes explored\n",
-                gameType, width, height, time / 1_000_000f, solution.moves(), solution.explored);
+        System.out.printf("Solved %s %dx%d in %.3fms, %d moves, %d nodes explored\nMoves: %s\n",
+                gameType, width, height, time / 1_000_000f, solution.moves(), solution.explored,
+                solution.movesNumbers());
     }
 
     private Game createGame() {

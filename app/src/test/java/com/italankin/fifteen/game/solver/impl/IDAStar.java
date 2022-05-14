@@ -5,6 +5,7 @@ import com.italankin.fifteen.game.solver.Algorithm;
 import com.italankin.fifteen.game.solver.Solution;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +22,7 @@ public class IDAStar implements Algorithm {
         while (true) {
             int t = search(path, 0, threshold, visitedNodes);
             if (t == FOUND) {
-                return new Solution(path.getLast(), visitedNodes.get());
+                return new Solution(new ArrayList<>(path), visitedNodes.get());
             }
             threshold = t;
         }
