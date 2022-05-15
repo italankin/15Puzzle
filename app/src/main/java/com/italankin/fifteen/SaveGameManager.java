@@ -37,6 +37,9 @@ class SaveGameManager {
 
     static void saveGame(SharedPreferences.Editor editor) {
         GameState state = GameState.get();
+        if (state == null) {
+            return;
+        }
         if (!state.isSolved()) {
             String array = stateToString(state);
             editor.putString(Settings.KEY_SAVED_GAME_ARRAY, array);
