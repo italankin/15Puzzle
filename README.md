@@ -1,4 +1,4 @@
-# 15 Puzzle ![Tests Status](https://img.shields.io/github/workflow/status/italankin/15Puzzle/test) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/italankin/15puzzle)](https://github.com/italankin/15puzzle/releases/latest) 
+# 15 Puzzle [![tests](https://github.com/italankin/15Puzzle/actions/workflows/tests.yml/badge.svg)](https://github.com/italankin/15Puzzle/actions/workflows/tests.yml) [![Latest release](https://img.shields.io/github/v/release/italankin/15puzzle)](https://github.com/italankin/15puzzle/releases/latest) 
 
 Simple Android sliding puzzle game.
 
