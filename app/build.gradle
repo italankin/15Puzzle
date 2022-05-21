@@ -22,11 +22,11 @@ android {
         }
         release {
             Properties propsRelease = new Properties()
-            File propsFileRelease = new File('app/keystore-release/release.properties')
+            File propsFileRelease = file('keystore-release/release.properties')
             if (propsFileRelease.exists()) {
                 propsRelease.load(new FileInputStream(propsFileRelease))
 
-                storeFile file(propsRelease['keystore'])
+                storeFile file('keystore-release/' + propsRelease['keystore'])
                 storePassword propsRelease['keystore_password']
                 keyAlias propsRelease['alias']
                 keyPassword propsRelease['alias_password']

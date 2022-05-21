@@ -11,11 +11,6 @@ jobs:
 
     env:
       OUTPUT_PATH: 'app/build/outputs/apk/release'
-      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-      KEYSTORE_ENC_KEY: ${{ secrets.KEYSTORE_ENC_KEY }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-      KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
 
     steps:
     - uses: actions/checkout@v2
@@ -26,7 +21,15 @@ jobs:
         java-version: 1.11
 
     - name: decode keystore
-      run: ./.github/scripts/decode_keystore.sh $KEYSTORE_BASE64
+      uses: italankin/android-keystore-decode-action@v1
+      with:
+        output_dir: 'app/keystore-release/'
+        keystore_name: 'release.keystore'
+        properties_name: 'release.properties'
+        encoded_keystore: ${{ secrets.KEYSTORE_BASE64 }}
+        keystore_password: ${{ secrets.KEYSTORE_PASSWORD }}
+        key_alias: ${{ secrets.KEYSTORE_ALIAS }}
+        key_alias_password: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
 
     - name: make gradlew executable
       run: chmod +x gradlew
