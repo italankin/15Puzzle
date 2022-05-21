@@ -1,4 +1,4 @@
-name: create release
+name: create-release
 
 on:
   push:
@@ -37,14 +37,14 @@ jobs:
     - name: assemble
       run: ./gradlew assembleRelease
 
-    - name: current tag
+    - name: get current tag
       id: current_tag
       run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
     - name: rename apk
       run: mv "$OUTPUT_PATH/app-release.apk" "$OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk"
 
-    - name: release
+    - name: create release
       uses: ncipollo/release-action@v1
       with:
         artifacts: "${{ env.OUTPUT_PATH }}/*.apk"

@@ -1,4 +1,4 @@
-name: test
+name: tests
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
       - name: make gradlew executable
         run: chmod +x gradlew
 
-      - name: test
+      - name: run tests
         run: ./gradlew :app:testReleaseUnitTest
 
       - name: upload test report
