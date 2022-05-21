@@ -301,6 +301,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     public void onPause() {
         GameState state = GameState.get();
+        if (state == null) {
+            return;
+        }
         if (state.peeking) {
             state.peeking = false;
         }
