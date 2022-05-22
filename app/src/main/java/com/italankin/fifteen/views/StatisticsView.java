@@ -158,7 +158,7 @@ public class StatisticsView extends BaseView {
         this.callbacks = callbacks;
     }
 
-    public void onClick(int x, int y) {
+    public void onClick(float x, float y) {
         if (mRectBack.contains(x, y)) {
             hide();
         }

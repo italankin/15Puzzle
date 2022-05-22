@@ -38,11 +38,11 @@ public class LeaderboardView extends BaseView {
     private final String mTextBack;
     private final String mTextNoData;
 
-    private final Rect mRectWidth;
-    private final Rect mRectHeight;
-    private final Rect mRectType;
-    private final Rect mRectMode;
-    private final Rect mRectSort;
+    private final RectF mRectWidth;
+    private final RectF mRectHeight;
+    private final RectF mRectType;
+    private final RectF mRectMode;
+    private final RectF mRectSort;
     private final RectF mRectExport;
     private final RectF mRectImport;
     private final RectF mRectBack;
@@ -124,18 +124,18 @@ public class LeaderboardView extends BaseView {
         int mLineGap = (int) (Dimensions.surfaceHeight * 0.06f);
         mTableMarginTop = marginTop + lineHeight + 3.4f * mLineGap;
 
-        mRectType = new Rect(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
+        mRectType = new RectF(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
         mRectType.inset(0, -lineHeight / 3);
-        mRectWidth = new Rect(mSettingsGuides[2], marginTop,
+        mRectWidth = new RectF(mSettingsGuides[2], marginTop,
                 (int) Dimensions.surfaceWidth, marginTop + lineHeight);
         mRectWidth.inset(0, -lineHeight / 3);
-        mRectMode = new Rect(0, marginTop + mLineGap,
+        mRectMode = new RectF(0, marginTop + mLineGap,
                 mSettingsGuides[2], marginTop + mLineGap + lineHeight);
         mRectMode.inset(0, -lineHeight / 3);
-        mRectHeight = new Rect(mSettingsGuides[2], marginTop + mLineGap,
+        mRectHeight = new RectF(mSettingsGuides[2], marginTop + mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
         mRectHeight.inset(0, -lineHeight / 3);
-        mRectSort = new Rect(0, marginTop + 2 * mLineGap,
+        mRectSort = new RectF(0, marginTop + 2 * mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
         mRectSort.inset(0, -lineHeight / 3);
 
@@ -153,7 +153,7 @@ public class LeaderboardView extends BaseView {
         mRectImport.inset(0, padding);
     }
 
-    public void onClick(int x, int y, int dx) {
+    public void onClick(float x, float y, float dx) {
         if (Math.abs(dx) < 15) {
             dx = 0;
         }

@@ -10,7 +10,7 @@ public interface SettingsPage {
 
     void draw(Canvas canvas, float valueRight, float textLeft, float textYOffset);
 
-    void onClick(int x, int y, int dx);
+    void onClick(float x, float y, float dx);
 
     void update();
 

@@ -128,7 +128,7 @@ public class BasicPage implements SettingsPage {
     }
 
     @Override
-    public void onClick(int x, int y, int dx) {
+    public void onClick(float x, float y, float dx) {
         if (mRectWidth.contains(x, y)) {
             Settings.gameWidth += ((dx == 0) ? 1 : Math.signum(dx));
             if (Settings.gameWidth < Constants.MIN_GAME_WIDTH) {

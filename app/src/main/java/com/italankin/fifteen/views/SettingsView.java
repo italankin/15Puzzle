@@ -91,7 +91,7 @@ public class SettingsView extends BaseView {
         return super.show();
     }
 
-    public void onClick(int x, int y, int dx) {
+    public void onClick(float x, float y, float dx) {
         if (Math.abs(dx) < 15) {
             dx = 0;
         }

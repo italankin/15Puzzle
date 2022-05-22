@@ -125,7 +125,7 @@ public class AdvancedPage implements SettingsPage {
     }
 
     @Override
-    public void onClick(int x, int y, int dx) {
+    public void onClick(float x, float y, float dx) {
         if (mRectBf.contains(x, y)) {
             Settings.hardmode = !Settings.hardmode;
             Settings.save();
