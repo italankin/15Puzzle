@@ -50,9 +50,10 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     private final StatisticsManager statisticsManager;
 
-    private int mGestureStartX;
-    private int mGestureStartY;
+    private float mGestureStartX;
+    private float mGestureStartY;
     private boolean mGestureTrail = false;
+    private boolean mSecondaryPointer = false;
     private long lastSolvedTimestamp = 0;
     private long lastOnDrawTimestamp = 0;
 
@@ -164,34 +165,46 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-        int x = (int) event.getX();
-        int y = (int) event.getY();
+        int action = event.getActionMasked();
 
         GameState state = GameState.get();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                mGestureStartX = x;
-                mGestureStartY = y;
+                float x = mGestureStartX = event.getX();
+                float y = mGestureStartY = event.getY();
                 boolean fieldFullyVisible = isFieldFullyVisible();
                 mGestureTrail = fieldFullyVisible && mRectField.contains(x, y) && mField.emptySpaceAt(x, y);
+                mSecondaryPointer = false;
                 if (fieldFullyVisible && Settings.hardmode && !state.isNotStarted() && !state.paused) {
                     state.peeking = mHardModeView.isPeekAt(x, y);
                 }
                 return true;
             }
 
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                if (!mSecondaryPointer) {
+                    mSecondaryPointer = true;
+                    mField.moveTiles(event.getX(), event.getY(), Game.DIRECTION_DEFAULT);
+                }
+                mGestureTrail = false;
+                int index = event.getActionIndex();
+                mField.moveTiles(event.getX(index), event.getY(index), Game.DIRECTION_DEFAULT);
+                return true;
+            }
+
             case MotionEvent.ACTION_MOVE: {
-                if (state.paused || state.isSolved() || !isFieldFullyVisible()) {
+                if (state.paused || state.isSolved() || !isFieldFullyVisible() || mSecondaryPointer) {
                     return true;
                 }
+                float x = event.getX();
+                float y = event.getY();
                 if (mGestureTrail) {
                     mField.moveTiles(x, y, Game.DIRECTION_DEFAULT, false);
                     return true;
                 }
-                int dx = x - mGestureStartX;
-                int dy = y - mGestureStartY;
+                float dx = x - mGestureStartX;
+                float dy = y - mGestureStartY;
                 float minSwipeDistance = Dimensions.tileSize / 6.0f;
                 if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
                     mField.moveTiles(mGestureStartX, mGestureStartY, Game.direction(dx, dy));
@@ -201,10 +214,12 @@ public class GameSurface extends View implements TopPanelView.Callback {
             }
 
             case MotionEvent.ACTION_UP: {
-                if (mGestureTrail) {
+                if (mGestureTrail || mSecondaryPointer) {
                     return true;
                 }
 
+                float x = event.getX();
+                float y = event.getY();
                 if (mHelpOverlay != null && mHelpOverlay.onClick(x, y) || hideHelpOverlay()) {
                     return true;
                 }
@@ -213,8 +228,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     state.peeking = false;
                 }
 
-                int dx = x - mGestureStartX;
-                int dy = y - mGestureStartY;
+                float dx = x - mGestureStartX;
+                float dy = y - mGestureStartY;
 
                 if (mLeaderboard.isShown()) {
                     mLeaderboard.onClick(mGestureStartX, mGestureStartY, dx);

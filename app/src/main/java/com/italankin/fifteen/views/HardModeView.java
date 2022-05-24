@@ -79,12 +79,12 @@ public class HardModeView extends BaseView {
         mCallbacks = callbacks;
     }
 
-    public boolean isPeekAt(int x, int y) {
+    public boolean isPeekAt(float x, float y) {
         Button peek = findButtonById(ID_PEEK);
         return peek.contains(x, y);
     }
 
-    public boolean onClick(int x, int y) {
+    public boolean onClick(float x, float y) {
         GameState state = GameState.get();
         if (mCallbacks != null && !state.isNotStarted() && !state.paused) {
             Button check = findButtonById(ID_CHECK);

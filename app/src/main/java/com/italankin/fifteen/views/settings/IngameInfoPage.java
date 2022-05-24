@@ -80,7 +80,7 @@ public class IngameInfoPage implements SettingsPage {
     }
 
     @Override
-    public void onClick(int x, int y, int dx) {
+    public void onClick(float x, float y, float dx) {
         if (mRectTimeFormat.contains(x, y)) {
             Settings.timeFormat = (++Settings.timeFormat % Constants.TIME_FORMATS);
             Settings.save();
