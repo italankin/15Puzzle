@@ -34,30 +34,40 @@ public class FieldView extends BaseView {
         mData.add(tile);
     }
 
-    public void moveTiles(float startX, float startY, int direction) {
-        moveTiles(startX, startY, direction, true);
+    public boolean moveTiles(float startX, float startY, int direction) {
+        return moveTiles(startX, startY, direction, true);
     }
 
-    public void moveTiles(float startX, float startY, int direction, boolean forced) {
+    public boolean moveTiles(float startX, float startY, int direction, boolean forced) {
         int startIndex = at(startX, startY);
+        return moveTiles(startIndex, direction, forced);
+    }
+
+    public boolean moveTiles(int startIndex, int direction) {
+        return moveTiles(startIndex, direction, true);
+    }
+
+    private boolean moveTiles(int startIndex, int direction, boolean forced) {
+        boolean moved = false;
         if (startIndex >= 0) {
             Game game = GameState.get().game;
             List<Integer> numbersToMove = game.findMovingTiles(startIndex, direction);
             for (Integer num : numbersToMove) {
                 for (Tile t : mData) {
                     if (t.getIndex() == num && (forced || !t.isAnimating())) {
-                        t.onClick();
+                        moved |= t.move();
                     }
                 }
             }
         }
+        return moved;
     }
 
     public boolean emptySpaceAt(float x, float y) {
         return at(x, y) == -1;
     }
 
-    private int at(float x, float y) {
+    public int at(float x, float y) {
         for (Tile t : mData) {
             if (t.contains(x, y)) {
                 return t.getIndex();

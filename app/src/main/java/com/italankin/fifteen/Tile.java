@@ -199,9 +199,9 @@ public class Tile {
         mDrawPath.set(mShape);
     }
 
-    public void onClick() {
+    public boolean move() {
         if (recycled) {
-            return;
+            return false;
         }
 
         int x = mIndex % Settings.gameWidth;
@@ -239,7 +239,9 @@ public class Tile {
                 setCanvasX(newX);
                 setCanvasY(newY);
             }
+            return true;
         }
+        return false;
     }
 
     public void animateAppearance(int delay) {

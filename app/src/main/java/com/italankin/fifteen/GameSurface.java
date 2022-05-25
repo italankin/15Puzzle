@@ -30,6 +30,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private static final int BTN_LEADERBOARD = 2;
     private static final int BTN_FOUR = 3;
 
+    private static final long LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS = 150;
+
     private final DBHelper dbHelper;
     private final ExportCallback exportCallback;
 
@@ -56,6 +58,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private boolean mSecondaryPointer = false;
     private long lastSolvedTimestamp = 0;
     private long lastOnDrawTimestamp = 0;
+
+    private int lastImpossibleMoveIndex = -1;
+    private long lastImpossibleMoveTimestamp = 0;
 
     private final TileAppearAnimator tileAppearAnimator = new TileAppearAnimator();
 
@@ -185,11 +190,12 @@ public class GameSurface extends View implements TopPanelView.Callback {
             case MotionEvent.ACTION_POINTER_DOWN: {
                 if (!mSecondaryPointer) {
                     mSecondaryPointer = true;
-                    mField.moveTiles(event.getX(), event.getY(), Game.DIRECTION_DEFAULT);
+                    moveTiles(event.getX(), event.getY());
                 }
                 mGestureTrail = false;
                 int index = event.getActionIndex();
                 mField.moveTiles(event.getX(index), event.getY(index), Game.DIRECTION_DEFAULT);
+                handleLastImpossibleMove();
                 return true;
             }
 
@@ -260,13 +266,33 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     mPauseOverlay.hide();
                     mField.update();
                 } else if (!state.isSolved()) {
-                    mField.moveTiles(mGestureStartX, mGestureStartY, Game.DIRECTION_DEFAULT);
+                    moveTiles(mGestureStartX, mGestureStartY);
+                    handleLastImpossibleMove();
                 }
                 return true;
             }
 
             default:
                 return true;
+        }
+    }
+
+    private void moveTiles(float x, float y) {
+        if (!mField.moveTiles(x, y, Game.DIRECTION_DEFAULT)) {
+            lastImpossibleMoveIndex = mField.at(mGestureStartX, mGestureStartY);
+            lastImpossibleMoveTimestamp = System.currentTimeMillis();
+        }
+    }
+
+    private void handleLastImpossibleMove() {
+        // when solving puzzle fast, users can accidentally click on correct numbers
+        // but in wrong order in short period of time
+        // this is the hack we use to improve user experience:
+        // if users clicks B then A, but B is possible only after A move - we move A first and then try to move B
+        if (lastImpossibleMoveIndex != -1 &&
+                System.currentTimeMillis() - lastImpossibleMoveTimestamp < LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS) {
+            mField.moveTiles(lastImpossibleMoveIndex, Game.DIRECTION_DEFAULT);
+            lastImpossibleMoveIndex = -1;
         }
     }
 
