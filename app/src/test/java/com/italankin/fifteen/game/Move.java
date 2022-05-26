@@ -35,8 +35,7 @@ public class Move {
         int height = state.getHeight();
 
         int zeroIndex = state.getState().indexOf(0);
-        int[] coords = Util.coords(zeroIndex, width);
-        int x = coords[0], y = coords[1];
+        int x = zeroIndex % width, y = zeroIndex / width;
 
         List<Move> moves = new ArrayList<>(4);
         if (x > 0) {

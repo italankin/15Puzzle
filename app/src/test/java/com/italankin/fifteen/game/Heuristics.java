@@ -18,13 +18,9 @@ public enum Heuristics {
             List<Integer> state = game.getState();
             int distance = 0;
             for (int i = 0, s = goal.size(); i < s; i++) {
-                int[] goalCoords = Util.coords(i, game.getWidth());
-                int sx = goalCoords[0];
-                int sy = goalCoords[1];
-                int[] stateCoords = Util.coords(state.indexOf(goal.get(i)), game.getWidth());
-                int gx = stateCoords[0];
-                int gy = stateCoords[1];
-                distance += Tools.manhattan(sx, sy, gx, gy);
+                int width = game.getWidth();
+                int index = state.indexOf(goal.get(i));
+                distance += Tools.manhattan(i % width, i / width, index % width, index / width);
             }
             return distance;
         }
