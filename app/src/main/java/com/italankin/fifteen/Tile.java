@@ -21,7 +21,8 @@ public class Tile {
     private static final Rect mRectBounds = new Rect();
 
     private final Path mShape;
-    private final RectF mRectShape;
+    private final RectF mRectTileShape;
+    private final RectF mRectAreaShape = new RectF();
 
     private int mIndex;
     private int mMultiColorIndex;
@@ -76,7 +77,7 @@ public class Tile {
 
         updatePaint();
 
-        mRectShape = new RectF();
+        mRectTileShape = new RectF();
         mShape = new Path();
 
         mCanvasX = Dimensions.fieldMarginLeft +
@@ -91,8 +92,7 @@ public class Tile {
                 Dimensions.tileCornerRadius, Dimensions.tileCornerRadius,
                 Path.Direction.CW);
 
-        mShape.computeBounds(mRectShape, false);
-        mDrawPath.set(mShape);
+        updatePath();
 
         TimeInterpolator interpolator = new OvershootInterpolator(.8f);
         mTileXAnimator = new TileXAnimator(this);
@@ -129,8 +129,8 @@ public class Tile {
             sPaintText.setTextSize(mTextScale * Dimensions.tileFontSize);
             sPaintText.getTextBounds(mDataText, 0, mDataText.length(), mRectBounds);
             if (state.isNotStarted() || state.isSolved() || !Settings.hardmode || state.peeking || state.help) {
-                canvas.drawText(mDataText, mRectShape.centerX(),
-                        mRectShape.centerY() - mRectBounds.centerY(), sPaintText);
+                canvas.drawText(mDataText, mRectTileShape.centerX(),
+                        mRectTileShape.centerY() - mRectBounds.centerY(), sPaintText);
             }
         }
     }
@@ -144,7 +144,7 @@ public class Tile {
     }
 
     public boolean contains(float x, float y) {
-        return mRectShape.contains(x, y);
+        return mRectAreaShape.contains(x, y);
     }
 
     public void setCanvasX(float newX) {
@@ -177,7 +177,7 @@ public class Tile {
         mTextScale = scale;
         updatePath();
         mMatrix.reset();
-        mMatrix.setScale(scale, scale, mRectShape.centerX(), mRectShape.centerY());
+        mMatrix.setScale(scale, scale, mRectTileShape.centerX(), mRectTileShape.centerY());
         mDrawPath.transform(mMatrix);
     }
 
@@ -195,8 +195,10 @@ public class Tile {
     }
 
     private void updatePath() {
-        mShape.computeBounds(mRectShape, false);
+        mShape.computeBounds(mRectTileShape, false);
         mDrawPath.set(mShape);
+        mRectAreaShape.set(mRectTileShape);
+        mRectAreaShape.inset(-Dimensions.spacing / 2, -Dimensions.spacing / 2);
     }
 
     public boolean move() {
