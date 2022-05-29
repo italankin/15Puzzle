@@ -10,7 +10,7 @@ on:
       - 'README.md'
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,12 +24,39 @@ jobs:
       - name: make gradlew executable
         run: chmod +x gradlew
 
-      - name: run tests
+      - name: run unit tests
         run: ./gradlew :app:testReleaseUnitTest
 
-      - name: upload test report
+      - name: upload unit tests report
         uses: actions/upload-artifact@v3
         with:
-          name: test-report
+          name: unit-tests-report
           path: app/build/reports/tests/testReleaseUnitTest/**
+          retention-days: 2
+
+  ui-tests:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - name: make gradlew executable
+        run: chmod +x gradlew
+
+      - name: run ui tests
+        uses: reactivecircus/android-emulator-runner@v2.24.0
+        with:
+          api-level: 29
+          script: ./gradlew :app:connectedDebugAndroidTest
+
+      - name: upload ui tests report
+        uses: actions/upload-artifact@v3
+        with:
+          name: ui-tests-report
+          path: app/build/reports/androidTests/connected/**
           retention-days: 2
