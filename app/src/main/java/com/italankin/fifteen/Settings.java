@@ -50,6 +50,11 @@ public class Settings {
     public static int timeFormat = Defaults.TIME_FORMAT;
     public static boolean stats = Defaults.STATS;
 
+    /**
+     * Used for UI tests to limit event loop queue
+     */
+    public static long postInvalidateDelay = 0;
+
     static SharedPreferences prefs;
     public static DateFormat dateFormat;
 

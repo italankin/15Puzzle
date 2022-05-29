@@ -166,7 +166,11 @@ public class GameSurface extends View implements TopPanelView.Callback {
         long current = System.currentTimeMillis();
         draw(canvas, current - lastOnDrawTimestamp);
         lastOnDrawTimestamp = current;
-        invalidate();
+        if (Settings.postInvalidateDelay > 0) {
+            postInvalidateDelayed(Settings.postInvalidateDelay);
+        } else {
+            postInvalidateOnAnimation();
+        }
     }
 
     @Override
