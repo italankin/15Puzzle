@@ -65,6 +65,7 @@ public class MainActivity extends Activity implements ExportCallback {
         Settings.updateUiMode(this);
         if (mGameView == null) {
             mGameView = new GameSurface(this, this, mDbHelper);
+            mGameView.setId(R.id.game_view);
         }
         setContentView(mGameView);
     }
