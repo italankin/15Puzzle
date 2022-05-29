@@ -30,7 +30,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private static final int BTN_LEADERBOARD = 2;
     private static final int BTN_FOUR = 3;
 
-    private static final long LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS = 150;
+    private static final long LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS = 135;
+    public static final float SWIPE_FACTOR = 3;
 
     private final DBHelper dbHelper;
     private final ExportCallback exportCallback;
@@ -190,12 +191,11 @@ public class GameSurface extends View implements TopPanelView.Callback {
             case MotionEvent.ACTION_POINTER_DOWN: {
                 if (!mSecondaryPointer) {
                     mSecondaryPointer = true;
-                    moveTiles(event.getX(), event.getY());
+                    moveTilesWithLastMoveCheck(event.getX(), event.getY());
                 }
                 mGestureTrail = false;
                 int index = event.getActionIndex();
-                mField.moveTiles(event.getX(index), event.getY(index), Game.DIRECTION_DEFAULT);
-                handleLastImpossibleMove();
+                moveTilesWithLastMoveCheck(event.getX(index), event.getY(index));
                 return true;
             }
 
@@ -211,7 +211,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
                 }
                 float dx = x - mGestureStartX;
                 float dy = y - mGestureStartY;
-                float minSwipeDistance = Dimensions.tileSize / 6.0f;
+                float minSwipeDistance = Dimensions.tileSize / SWIPE_FACTOR;
                 if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
                     mField.moveTiles(mGestureStartX, mGestureStartY, Game.direction(dx, dy));
                     event.setAction(MotionEvent.ACTION_CANCEL);
@@ -259,15 +259,14 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     return true;
                 }
 
-                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / 4.0f) && !state.paused) {
+                if (Math.sqrt(dx * dx + dy * dy) > (Dimensions.tileSize / SWIPE_FACTOR) && !state.paused) {
                     mField.moveTiles(mGestureStartX, mGestureStartY, Game.direction(dx, dy));
                 } else if (state.paused && mRectField.contains(x, y)) {
                     state.paused = false;
                     mPauseOverlay.hide();
                     mField.update();
                 } else if (!state.isSolved()) {
-                    moveTiles(mGestureStartX, mGestureStartY);
-                    handleLastImpossibleMove();
+                    moveTilesWithLastMoveCheck(mGestureStartX, mGestureStartY);
                 }
                 return true;
             }
@@ -277,22 +276,20 @@ public class GameSurface extends View implements TopPanelView.Callback {
         }
     }
 
-    private void moveTiles(float x, float y) {
+    private void moveTilesWithLastMoveCheck(float x, float y) {
         if (!mField.moveTiles(x, y, Game.DIRECTION_DEFAULT)) {
-            lastImpossibleMoveIndex = mField.at(mGestureStartX, mGestureStartY);
+            lastImpossibleMoveIndex = mField.at(x, y);
             lastImpossibleMoveTimestamp = System.currentTimeMillis();
-        }
-    }
-
-    private void handleLastImpossibleMove() {
-        // when solving puzzle fast, users can accidentally click on correct numbers
-        // but in wrong order in short period of time
-        // this is the hack we use to improve user experience:
-        // if users clicks B then A, but B is possible only after A move - we move A first and then try to move B
-        if (lastImpossibleMoveIndex != -1 &&
-                System.currentTimeMillis() - lastImpossibleMoveTimestamp < LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS) {
-            mField.moveTiles(lastImpossibleMoveIndex, Game.DIRECTION_DEFAULT);
-            lastImpossibleMoveIndex = -1;
+        } else {
+            // when solving puzzle fast, users can accidentally click on correct numbers
+            // but in wrong order in short period of time
+            // this is the hack we use to improve user experience:
+            // if users clicks B then A, but B is possible only after A move - we move A first and then try to move B
+            if (lastImpossibleMoveIndex != -1 &&
+                    System.currentTimeMillis() - lastImpossibleMoveTimestamp < LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS) {
+                mField.moveTiles(lastImpossibleMoveIndex, Game.DIRECTION_DEFAULT);
+                lastImpossibleMoveIndex = -1;
+            }
         }
     }
 
