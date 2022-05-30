@@ -42,14 +42,21 @@ jobs:
       id: current_tag
       run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
-    - name: rename apk
+    - name: rename artifacts
       run: >
-        mv "APK_OUTPUT_PATH/app-release.apk" "$APK_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk"
+        mv "$APK_OUTPUT_PATH/app-release.apk" "$APK_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk" &&
         mv "$AAB_OUTPUT_PATH/app-release.aab" "$AAB_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
 
     - name: create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "${{ env.APK_OUTPUT_PATH }}/*.apk,${{ env.AAB_OUTPUT_PATH }}/*.aab"
+        artifacts: "${{ env.APK_OUTPUT_PATH }}/*.apk"
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: upload aab
+      uses: actions/upload-artifact@v3
+      with:
+        name: "15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
+        path: "${{ env.AAB_OUTPUT_PATH }}/**"
+        retention-days: 2
