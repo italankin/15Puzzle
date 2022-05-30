@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      OUTPUT_PATH: 'app/build/outputs/apk/release'
+      APK_OUTPUT_PATH: 'app/build/outputs/apk/release'
+      AAB_OUTPUT_PATH: 'app/build/outputs/bundle/release'
 
     steps:
     - uses: actions/checkout@v2
@@ -35,18 +36,20 @@ jobs:
       run: chmod +x gradlew
 
     - name: assemble
-      run: ./gradlew assembleRelease
+      run: ./gradlew assembleRelease bundleRelease
 
     - name: get current tag
       id: current_tag
       run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
     - name: rename apk
-      run: mv "$OUTPUT_PATH/app-release.apk" "$OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk"
+      run: >
+        mv "APK_OUTPUT_PATH/app-release.apk" "$APK_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk"
+        mv "$AAB_OUTPUT_PATH/app-release.aab" "$AAB_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
 
     - name: create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "${{ env.OUTPUT_PATH }}/*.apk"
+        artifacts: "${{ env.APK_OUTPUT_PATH }}/*.apk,${{ env.AAB_OUTPUT_PATH }}/*.aab"
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
