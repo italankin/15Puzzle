@@ -31,7 +31,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private static final int BTN_FOUR = 3;
 
     private static final long LAST_IMPOSSIBLE_MOVE_WINDOW_MILLIS = 100;
-    public static final float SWIPE_FACTOR = 3;
+    private static final float SWIPE_FACTOR = 3;
 
     private final DBHelper dbHelper;
     private final ExportCallback exportCallback;
