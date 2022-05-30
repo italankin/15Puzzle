@@ -100,14 +100,20 @@ public class StatisticsManager {
         }
         List<StatisticsEntry> lastN;
         if (size == num) {
-            lastN = entries;
+            lastN = new ArrayList<>(entries);
         } else {
             // take last 'num' entries
-            lastN = entries.subList(size - num, size);
+            lastN = new ArrayList<>(entries.subList(size - num, size));
         }
-        long time = avgTime(new ArrayList<>(lastN));
-        float moves = avgMoves(new ArrayList<>(lastN));
-        float tps = avgTps(new ArrayList<>(lastN));
+        Collections.sort(lastN, StatisticsEntry.BY_TIME);
+        int lastNSize = lastN.size();
+        if (lastNSize > 2) {
+            lastN.remove(lastNSize - 1);
+            lastN.remove(0);
+        }
+        long time = avgTime(lastN);
+        float moves = avgMoves(lastN);
+        float tps = avgTps(lastN);
         return new Statistics.Avg(time, moves, tps);
     }
 
@@ -137,12 +143,6 @@ public class StatisticsManager {
     }
 
     private static long avgTime(List<StatisticsEntry> entries) {
-        Collections.sort(entries, StatisticsEntry.BY_TIME);
-        int size = entries.size();
-        if (size > 2) {
-            entries.remove(size - 1);
-            entries.remove(0);
-        }
         long total = 0;
         for (StatisticsEntry entry : entries) {
             total += entry.time;
@@ -151,12 +151,6 @@ public class StatisticsManager {
     }
 
     private static float avgMoves(List<StatisticsEntry> entries) {
-        Collections.sort(entries, StatisticsEntry.BY_MOVES);
-        int size = entries.size();
-        if (size > 2) {
-            entries.remove(size - 1);
-            entries.remove(0);
-        }
         float total = 0;
         for (StatisticsEntry entry : entries) {
             total += entry.moves;
@@ -165,12 +159,6 @@ public class StatisticsManager {
     }
 
     private static float avgTps(List<StatisticsEntry> entries) {
-        Collections.sort(entries, StatisticsEntry.BY_TPS);
-        int size = entries.size();
-        if (size > 2) {
-            entries.remove(size - 1);
-            entries.remove(0);
-        }
         float total = 0;
         for (StatisticsEntry entry : entries) {
             total += entry.tps;
