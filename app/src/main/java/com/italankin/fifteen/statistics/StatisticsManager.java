@@ -13,7 +13,7 @@ public class StatisticsManager {
 
     public synchronized static StatisticsManager getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new StatisticsManager(context);
+            INSTANCE = new StatisticsManager(new SessionStorage(context));
             INSTANCE.loadSession();
         }
         return INSTANCE;
@@ -24,8 +24,8 @@ public class StatisticsManager {
     private final SessionStorage sessionStorage;
     private final Map<StatisticsKey, List<StatisticsEntry>> records = new ConcurrentHashMap<>(50);
 
-    private StatisticsManager(Context context) {
-        sessionStorage = new SessionStorage(context);
+    StatisticsManager(SessionStorage sessionStorage) {
+        this.sessionStorage = sessionStorage;
     }
 
     public void add(int width, int height, int type, boolean hard, long time, int moves) {

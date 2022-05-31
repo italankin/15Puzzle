@@ -43,7 +43,11 @@ class SessionStorage {
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     SessionStorage(Context context) {
-        this.sessionFile = new File(context.getFilesDir(), SESSION_FILENAME);
+        this(new File(context.getFilesDir(), SESSION_FILENAME));
+    }
+
+    SessionStorage(File sessionFile) {
+        this.sessionFile = sessionFile;
     }
 
     void write(Map<StatisticsKey, List<StatisticsEntry>> session) {
