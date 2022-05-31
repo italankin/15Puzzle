@@ -63,6 +63,7 @@ public class Statistics {
                 ", ao12=" + ao12 +
                 ", ao50=" + ao50 +
                 ", ao100=" + ao100 +
+                ", session=" + session +
                 ", bestTime=" + bestTime +
                 ", bestMoves=" + bestMoves +
                 ", worstTime=" + worstTime +
