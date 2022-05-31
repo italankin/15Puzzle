@@ -45,10 +45,11 @@ public class StatisticsManager {
             return Statistics.EMPTY;
         }
         StatisticsKey key = new StatisticsKey(width, height, type, hard);
-        List<StatisticsEntry> entries = records.get(key);
-        if (entries == null || entries.isEmpty()) {
+        List<StatisticsEntry> recordsByKey = records.get(key);
+        if (recordsByKey == null || recordsByKey.isEmpty()) {
             return Statistics.EMPTY;
         }
+        List<StatisticsEntry> entries = Collections.unmodifiableList(recordsByKey);
         Statistics.Avg single = avgSingle(entries);
         Statistics.Avg ao5 = avg(entries, 5);
         Statistics.Avg ao12 = avg(entries, 12);
@@ -56,8 +57,8 @@ public class StatisticsManager {
         Statistics.Avg ao100 = avg(entries, 100);
         Statistics.Avg session = avg(entries, entries.size());
 
-        Statistics.Avg[] byTime = bestWorstBy(entries, StatisticsEntry.BY_TIME);
-        Statistics.Avg[] byMoves = bestWorstBy(entries, StatisticsEntry.BY_MOVES);
+        Statistics.Avg[] byTime = bestWorstBy(new ArrayList<>(entries), StatisticsEntry.BY_TIME);
+        Statistics.Avg[] byMoves = bestWorstBy(new ArrayList<>(entries), StatisticsEntry.BY_MOVES);
         return new Statistics(entries.size(),
                 single,
                 ao5,
