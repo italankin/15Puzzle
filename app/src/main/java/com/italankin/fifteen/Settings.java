@@ -67,11 +67,11 @@ public class Settings {
 
     static void load(Context context) {
         int w = prefs.getInt(KEY_GAME_WIDTH, Defaults.GAME_WIDTH);
-        if (w >= Constants.MIN_GAME_WIDTH && w < Constants.MAX_GAME_WIDTH) {
+        if (w >= Constants.MIN_GAME_WIDTH && w <= Constants.MAX_GAME_WIDTH) {
             gameWidth = w;
         }
         int h = prefs.getInt(KEY_GAME_HEIGHT, Defaults.GAME_HEIGHT);
-        if (h >= Constants.MIN_GAME_HEIGHT && h < Constants.MAX_GAME_HEIGHT) {
+        if (h >= Constants.MIN_GAME_HEIGHT && h <= Constants.MAX_GAME_HEIGHT) {
             gameHeight = h;
         }
         tileColor = prefs.getInt(KEY_GAME_TILE_COLOR, Defaults.TILE_COLOR);
