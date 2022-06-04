@@ -97,7 +97,9 @@ public class Colors {
             ORANGE,
             PURPLE,
             MUTED_BLUE,
-            GREY
+            GREY,
+            LIGHT_GREEN,
+            PINK
     };
     public static final int ERROR = 0xffd24242;
 
