@@ -35,6 +35,9 @@ public class Colors {
     private static final int WHITE = 0xffeeeeee;
     private static final int WHITE_U = 0xff7a7a7a;
 
+    private static final int CYAN = 0xff3fa694;
+    private static final int CYAN_U = 0xff4e6e68;
+
     public static final int backgroundField = 0xff373737;
     public static final int menuTextValue = 0xfffefefe;
     private static final int[] background = {0xffcacaca, 0xff181818};
@@ -46,49 +49,53 @@ public class Colors {
             MUTED_BLUE,
             RED,
             ORANGE,
+            CYAN,
             GREEN,
             PURPLE,
             BLUE,
             PINK,
             LIGHT_GREEN,
             GREY,
-            BLACK
+            BLACK,
     };
     private static final int[] tilesDayUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
+            CYAN_U,
             GREEN_U,
             PURPLE_U,
             BLUE_U,
             PINK_U,
             LIGHT_GREEN_U,
             GREY_U,
-            BLACK_U
+            BLACK_U,
     };
     private static final int[] tilesNight = {
             MUTED_BLUE,
             RED,
             ORANGE,
+            CYAN,
             GREEN,
             PURPLE,
             BLUE,
             PINK,
             LIGHT_GREEN,
             GREY,
-            WHITE
+            WHITE,
     };
     private static final int[] tilesNightUnsolved = {
             MUTED_BLUE_U,
             RED_U,
             ORANGE_U,
+            CYAN_U,
             GREEN_U,
             PURPLE_U,
             BLUE_U,
             PINK_U,
             LIGHT_GREEN_U,
             GREY_U,
-            WHITE_U
+            WHITE_U,
     };
     public static final int[] multiColorTiles = {
             RED,
@@ -99,7 +106,8 @@ public class Colors {
             MUTED_BLUE,
             GREY,
             LIGHT_GREEN,
-            PINK
+            PINK,
+            CYAN
     };
     public static final int ERROR = 0xffd24242;
 
