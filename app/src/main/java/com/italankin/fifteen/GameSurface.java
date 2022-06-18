@@ -49,7 +49,6 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private HardModeView mHardModeView;
     private HelpOverlay mHelpOverlay;
 
-    private final Paint backgroundPaint = new Paint();
     private final RectF mRectField = new RectF();
 
     private final StatisticsManager statisticsManager;
@@ -364,18 +363,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
             state.time += elapsed;
         }
 
-        canvas.drawRect(
-                0, Dimensions.topBarHeight,
-                Dimensions.surfaceWidth, Dimensions.infoBarMarginTop,
-                backgroundPaint);
-        canvas.drawRect(
-                0, Dimensions.infoBarMarginTop + Dimensions.infoBarHeight,
-                Dimensions.surfaceWidth, Dimensions.fieldMarginTop,
-                backgroundPaint);
-        canvas.drawRect(
-                0, Dimensions.fieldMarginTop + Dimensions.fieldHeight,
-                Dimensions.surfaceWidth, Dimensions.surfaceHeight,
-                backgroundPaint);
+        canvas.drawColor(Colors.getBackgroundColor());
 
         mTopPanel.draw(canvas, elapsed);
         mInfoPanel.draw(canvas, elapsed);
@@ -420,7 +408,6 @@ public class GameSurface extends View implements TopPanelView.Callback {
             // not initialized yet
             return;
         }
-        backgroundPaint.setColor(Colors.getBackgroundColor());
         mTopPanel.update();
         mInfoPanel.update();
         mField.update();
