@@ -428,6 +428,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mSolvedOverlay.hide();
 
         Game newGame = null;
+        long savedTime = 0;
 
         if (SaveGameManager.hasSavedGame()) {
             SaveGameManager.SavedGame savedGame = SaveGameManager.getSavedGame();
@@ -441,6 +442,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
                         savedGame.state,
                         savedGame.moves
                 );
+                savedTime = savedGame.time;
             }
         }
         if (newGame == null) {
@@ -453,6 +455,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         }
 
         GameState newState = GameState.set(newGame, Settings.hardmode);
+        newState.time = savedTime;
         if (newState.paused) {
             mPauseOverlay.show();
         }
