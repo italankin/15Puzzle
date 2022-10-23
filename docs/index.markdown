@@ -4,6 +4,8 @@ layout: default
 
 # 15 puzzle
 
+> Try out the new version of 15 puzzle: [Fifteen](https://play.google.com/store/apps/details?id=com.italankin.fifteen2)
+
 Simple Android sliding puzzle game
 
 ![Features](/assets/features.jpg)
