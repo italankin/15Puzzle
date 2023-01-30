@@ -193,6 +193,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
             }
 
             case MotionEvent.ACTION_POINTER_DOWN: {
+                if (state.paused || state.isSolved() || !isFieldFullyVisible()) {
+                    return true;
+                }
                 if (!mSecondaryPointer) {
                     mSecondaryPointer = true;
                     moveTilesWithLastMoveCheck(event.getX(), event.getY());
