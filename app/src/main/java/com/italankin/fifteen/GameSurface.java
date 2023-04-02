@@ -22,6 +22,7 @@ import com.italankin.fifteen.views.StatisticsView;
 import com.italankin.fifteen.views.TopPanelView;
 import com.italankin.fifteen.views.help.HelpOverlay;
 import com.italankin.fifteen.views.overlay.FieldTextOverlay;
+import com.italankin.fifteen.views.overlay.NewGameConfirmationOverlay;
 
 public class GameSurface extends View implements TopPanelView.Callback {
 
@@ -48,8 +49,10 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private FieldTextOverlay mPauseOverlay;
     private HardModeView mHardModeView;
     private HelpOverlay mHelpOverlay;
+    private NewGameConfirmationOverlay mNewGameConfirmationOverlay;
 
     private final RectF mRectField = new RectF();
+    private final RectF mRectScreen = new RectF();
 
     private final StatisticsManager statisticsManager;
 
@@ -79,6 +82,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
+        mRectScreen.set(0, 0, Dimensions.surfaceWidth, Dimensions.surfaceHeight);
     }
 
     @Override
@@ -233,6 +237,11 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
                 float x = event.getX();
                 float y = event.getY();
+
+                if (mNewGameConfirmationOverlay != null) {
+                    mNewGameConfirmationOverlay.onClick(x, y);
+                    return true;
+                }
                 if (mHelpOverlay != null && mHelpOverlay.onClick(x, y) || hideHelpOverlay()) {
                     return true;
                 }
@@ -302,9 +311,14 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     @Override
     public void onTopPanelButtonClick(int id) {
+        GameState state = GameState.get();
         switch (id) {
             case BTN_NEW:
-                createNewGame(true);
+                if (Settings.confirmNewGame && !state.isSolved() && state.getMoves() > 0) {
+                    showNewGameConfirmationOverlay();
+                } else {
+                    createNewGame(true);
+                }
                 break;
 
             case BTN_SETTINGS:
@@ -322,7 +336,6 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     pauseGame();
                     mStatistics.show();
                 } else {
-                    GameState state = GameState.get();
                     if (!state.isSolved()) {
                         state.invertPaused();
                     }
@@ -338,6 +351,11 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     public boolean onBackPressed() {
+        if (mNewGameConfirmationOverlay != null && mNewGameConfirmationOverlay.isShown()) {
+            hideNewGameConfirmationOverlay();
+            resumeGame();
+            return true;
+        }
         if (hideHelpOverlay()) {
             return true;
         }
@@ -401,6 +419,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
             mStatistics.draw(canvas, elapsed);
         } else if (mHelpOverlay != null && mHelpOverlay.isShown()) {
             mHelpOverlay.draw(canvas, elapsed);
+        } else if (mNewGameConfirmationOverlay != null && mNewGameConfirmationOverlay.isShown()) {
+            mNewGameConfirmationOverlay.draw(canvas, elapsed);
         } else if (!helpShown && paused && !solved && mPauseOverlay.isShown()) {
             mPauseOverlay.draw(canvas, elapsed);
         }
@@ -429,6 +449,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
         mPauseOverlay.hide();
         mSolvedOverlay.hide();
+        hideNewGameConfirmationOverlay();
 
         Game newGame = null;
         long savedTime = 0;
@@ -528,13 +549,21 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mField.update();
     }
 
+    private void resumeGame() {
+        GameState state = GameState.get();
+        mPauseOverlay.hide();
+        state.paused = false;
+        mField.update();
+    }
+
     private boolean isFieldFullyVisible() {
         boolean overlayVisible = mLeaderboard.isShown()
                 || mSettings.isShown()
                 || mSolvedOverlay.isShown()
                 || mPauseOverlay.isShown()
                 || mStatistics.isShown()
-                || mHelpOverlay != null && mHelpOverlay.isShown();
+                || mHelpOverlay != null && mHelpOverlay.isShown()
+                || mNewGameConfirmationOverlay != null && mNewGameConfirmationOverlay.isShown();
         return !overlayVisible;
     }
 
@@ -546,5 +575,43 @@ public class GameSurface extends View implements TopPanelView.Callback {
             return true;
         }
         return false;
+    }
+
+    private void showNewGameConfirmationOverlay() {
+        if (mNewGameConfirmationOverlay != null) {
+            if (!mNewGameConfirmationOverlay.isShown()) {
+                mNewGameConfirmationOverlay.show();
+            }
+            return;
+        }
+
+        GameState state = GameState.get();
+        if (!state.paused) {
+            state.paused = true;
+            mField.update();
+        }
+
+        mNewGameConfirmationOverlay = new NewGameConfirmationOverlay(mRectScreen, mResources);
+        mNewGameConfirmationOverlay.addCallback(new NewGameConfirmationOverlay.Callback() {
+            @Override
+            public void onNewGameConfirm() {
+                hideNewGameConfirmationOverlay();
+                createNewGame(true);
+            }
+
+            @Override
+            public void onResumeGame() {
+                hideNewGameConfirmationOverlay();
+                resumeGame();
+            }
+        });
+        mNewGameConfirmationOverlay.show();
+    }
+
+    private void hideNewGameConfirmationOverlay() {
+        if (mNewGameConfirmationOverlay != null) {
+            mNewGameConfirmationOverlay.hide();
+            mNewGameConfirmationOverlay = null;
+        }
     }
 }

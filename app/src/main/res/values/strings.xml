@@ -11,6 +11,10 @@
     <string name="action_hm_check">check</string>
     <string name="action_hm_peek">peek</string>
 
+    <string name="confirm_new_game_title">Start new game?</string>
+    <string name="confirm_new_game_confirm">new game</string>
+    <string name="confirm_new_game_resume">resume</string>
+
     <string name="info_moves">MOVES</string>
     <string name="info_time">TIME</string>
     <string name="info_tps">TPS</string>
@@ -35,6 +39,7 @@
     <string name="pref_time_format">Time format</string>
     <string name="pref_stats">Stats</string>
     <string name="pref_missing_tile">Missing tile</string>
+    <string name="pref_confirm_new_game">Start new</string>
     <string name="pref_ingame_info">Ingame info</string>
     <string name="pref_ingame_info_customize">customize &gt;</string>
     <string name="pref_ingame_info_moves">Moves</string>
@@ -123,6 +128,10 @@
     <string-array name="missing_tile_values">
         <item>default</item>
         <item>random</item>
+    </string-array>
+    <string-array name="confirm_new_game_values">
+        <item>immediately</item>
+        <item>confirm</item>
     </string-array>
 
     <plurals name="stats_total">

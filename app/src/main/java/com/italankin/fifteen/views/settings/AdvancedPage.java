@@ -29,8 +29,10 @@ public class AdvancedPage implements SettingsPage {
     private final String mTextIngameInfoValue;
     private final String mTextStats;
     private final String mTextMissingTile;
+    private final String mTextConfirmNewGame;
     private final String[] mTextMissingTileValues;
     private final String[] mTextStatsValues;
+    private final String[] mTextConfirmNewGameValues;
 
     private RectF mRectMultiColor;
     private RectF mRectAntiAlias;
@@ -39,6 +41,7 @@ public class AdvancedPage implements SettingsPage {
     private RectF mRectBf;
     private RectF mRectStats;
     private RectF mRectMissingTile;
+    private RectF mRectConfirmNewGame;
 
     private SettingsView.Callbacks mCallbacks;
 
@@ -61,6 +64,8 @@ public class AdvancedPage implements SettingsPage {
         mTextStatsValues = res.getStringArray(R.array.toggle);
         mTextMissingTile = res.getString(R.string.pref_missing_tile);
         mTextMissingTileValues = res.getStringArray(R.array.missing_tile_values);
+        mTextConfirmNewGame = res.getString(R.string.pref_confirm_new_game);
+        mTextConfirmNewGameValues = res.getStringArray(R.array.confirm_new_game_values);
     }
 
     @Override
@@ -84,6 +89,10 @@ public class AdvancedPage implements SettingsPage {
         topMargin += lineSpacing;
         mRectNewGameDelay = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
         mRectNewGameDelay.inset(0, padding);
+
+        topMargin += lineSpacing;
+        mRectConfirmNewGame = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectConfirmNewGame.inset(0, padding);
 
         topMargin += lineSpacing;
         mRectIngameInfo = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
@@ -122,6 +131,10 @@ public class AdvancedPage implements SettingsPage {
         canvas.drawText(mTextMissingTile, textLeft, mRectMissingTile.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextMissingTileValues[Settings.randomMissingTile ? 1 : 0],
                 valueRight, mRectMissingTile.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextConfirmNewGame, textLeft, mRectConfirmNewGame.bottom - textYOffset, mPaintText);
+        canvas.drawText(mTextConfirmNewGameValues[Settings.confirmNewGame ? 1 : 0],
+                valueRight, mRectConfirmNewGame.bottom - textYOffset, mPaintValue);
     }
 
     @Override
@@ -179,6 +192,11 @@ public class AdvancedPage implements SettingsPage {
             if (mCallbacks != null) {
                 mCallbacks.onSettingsChanged(true);
             }
+        }
+
+        if (mRectConfirmNewGame.contains(x, y)) {
+            Settings.confirmNewGame = !Settings.confirmNewGame;
+            Settings.save();
         }
     }
 
