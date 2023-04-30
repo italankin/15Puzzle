@@ -2,9 +2,13 @@
 layout: default
 ---
 
-# 15 puzzle
+<a href="https://play.google.com/store/apps/details?id=com.italankin.fifteen2">
+    <img src="/assets/fifteen.png" alt="Fifteen">
+</a>
 
 > Try out the new version of 15 puzzle: [Fifteen](https://play.google.com/store/apps/details?id=com.italankin.fifteen2)
+
+# 15 puzzle
 
 Simple Android sliding puzzle game
 
