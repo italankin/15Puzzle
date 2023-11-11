@@ -1,15 +1,9 @@
 package com.italankin.fifteen;
 
 import android.animation.TimeInterpolator;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-
 import com.italankin.fifteen.anim.TileScaleAnimator;
 import com.italankin.fifteen.anim.TileXAnimator;
 import com.italankin.fifteen.anim.TileYAnimator;
@@ -279,6 +273,14 @@ public class Tile {
             } else {
                 int colorIndex = mMultiColorIndex;
                 if (colorIndex >= 0 && colorIndex < Colors.multiColorTiles.length) {
+                    if (Settings.multiColor == Constants.MULTI_COLOR_FRINGE3) {
+                        int x = mIndex / Settings.gameWidth;
+                        int y = mIndex % Settings.gameWidth;
+                        int index = Math.min(x, y);
+                        if (index != x) {
+                            return Colors.multiColorTilesFringe3[colorIndex];
+                        }
+                    }
                     return Colors.multiColorTiles[colorIndex];
                 }
             }
@@ -295,6 +297,7 @@ public class Tile {
             case Constants.MULTI_COLOR_COLUMNS:
                 return index % gameWidth;
             case Constants.MULTI_COLOR_FRINGE:
+            case Constants.MULTI_COLOR_FRINGE3:
                 return Math.min(index % gameWidth, index / gameWidth);
             case Constants.MULTI_COLOR_OFF:
             case Constants.MULTI_COLOR_SOLVED:

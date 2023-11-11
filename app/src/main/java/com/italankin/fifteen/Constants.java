@@ -17,12 +17,13 @@ public class Constants {
     public static final int TYPE_SNAKE = 1;
     public static final int TYPE_SPIRAL = 2;
 
-    public static final int MULTI_COLOR_MODES = 5;
+    public static final int MULTI_COLOR_MODES = 6;
     public static final int MULTI_COLOR_OFF = 0;
     public static final int MULTI_COLOR_ROWS = 1;
     public static final int MULTI_COLOR_COLUMNS = 2;
     public static final int MULTI_COLOR_FRINGE = 3;
     public static final int MULTI_COLOR_SOLVED = 4;
+    public static final int MULTI_COLOR_FRINGE3 = 5;
 
     public static final int INGAME_INFO_VALUES = 3;
     public static final int INGAME_INFO_ON = 0;

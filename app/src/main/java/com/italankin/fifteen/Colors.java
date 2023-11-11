@@ -4,30 +4,39 @@ public class Colors {
 
     private static final int MUTED_BLUE = 0xff5e707e;
     private static final int MUTED_BLUE_U = 0xff454c51;
+    private static final int MUTED_BLUE_F3 = 0xff95adbf;
 
     private static final int RED = 0xff983030;
     private static final int RED_U = 0xff5b3434;
+    private static final int RED_F3 = 0xffe33939;
 
     private static final int ORANGE = 0xffd2974c;
     private static final int ORANGE_U = 0xff705a3f;
+    private static final int ORANGE_F3 = 0xfff29927;
 
     private static final int GREEN = 0xff39885a;
     private static final int GREEN_U = 0xff385544;
+    private static final int GREEN_F3 = 0xff29ba66;
 
     private static final int PURPLE = 0xff614d69;
     private static final int PURPLE_U = 0xff47404a;
+    private static final int PURPLE_F3 = 0xff8e58a3;
 
     private static final int BLUE = 0xff5893b5;
     private static final int BLUE_U = 0xff435965;
+    private static final int BLUE_F3 = 0xff23a2eb;
 
     private static final int GREY = 0xff838383;
     private static final int GREY_U = 0xff535353;
+    private static final int GREY_F3 = 0xffb3b3b3;
 
     private static final int PINK = 0xff935783;
     private static final int PINK_U = 0xff594353;
+    private static final int PINK_F3 = 0xffd158b1;
 
     private static final int LIGHT_GREEN = 0xff8db368;
     private static final int LIGHT_GREEN_U = 0xff576549;
+    private static final int LIGHT_GREEN_F3 = 0xff85c445;
 
     private static final int BLACK = 0xff111111;
     private static final int BLACK_U = 0xff292929;
@@ -37,6 +46,7 @@ public class Colors {
 
     private static final int CYAN = 0xff3fa694;
     private static final int CYAN_U = 0xff4e6e68;
+    private static final int CYAN_F3 = 0xff39d4ba;
 
     public static final int backgroundField = 0xff373737;
     public static final int menuTextValue = 0xfffefefe;
@@ -108,6 +118,18 @@ public class Colors {
             LIGHT_GREEN,
             PINK,
             CYAN
+    };
+    public static final int[] multiColorTilesFringe3 = {
+            RED_F3,
+            BLUE_F3,
+            GREEN_F3,
+            ORANGE_F3,
+            PURPLE_F3,
+            MUTED_BLUE_F3,
+            GREY_F3,
+            LIGHT_GREEN_F3,
+            PINK_F3,
+            CYAN_F3
     };
     public static final int ERROR = 0xffd24242;
 

@@ -115,6 +115,7 @@
         <item>columns</item>
         <item>fringe</item>
         <item>solved</item>
+        <item>fringe-3</item>
     </string-array>
     <string-array name="ingame_info">
         <item>on</item>

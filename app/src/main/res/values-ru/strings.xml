@@ -103,6 +103,7 @@
         <item>стоблцы</item>
         <item>края</item>
         <item>решенные</item>
+        <item>fringe-3</item>
     </string-array>
     <string-array name="ingame_info">
         <item>вкл.</item>
