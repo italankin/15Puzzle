@@ -15,7 +15,8 @@ permalink: /how-to-play/
 
 ## 1. Basic rules
 
-A classic 15 puzzle uses tiles with 15 numbers written on each and one empty slot. Tiles can be moved either vertically or horizontally, if they stand next to empty space.
+A classic 15 puzzle uses tiles with 15 numbers written on each and one empty slot. Tiles can be moved either vertically
+or horizontally, if they stand next to empty space.
 
 The goal of the game is to rearrange numbers on field into order.
 
@@ -29,7 +30,8 @@ So, to solve the puzzle we must arrange them in order:
 
 There are many ways to reach the final position, one of them is solve puzzle row by row.
 
-To start, we place number `1` on its place, then number `2`, then `3` and so on. For example, first row can be done this way:
+To start, we place number `1` on its place, then number `2`, then `3` and so on. For example, first row can be done this
+way:
 
 <p align="center"><img src="/assets/first-row.gif" alt="First row solve" /></p>
 
@@ -53,7 +55,8 @@ Swipe on a tile(s) to move:
 
 ### 2.3. Hover
 
-Hover is more advanced (and faster) way to solve the puzzle. Start by pressing and holding on the empty space, and then move finger over the tiles you want to move.
+Hover is more advanced (and faster) way to solve the puzzle. Start by pressing and holding on the empty space, and then
+move finger over the tiles you want to move.
 
 <p align="center"><img src="/assets/hover.gif" alt="Hover method" /></p>
 
@@ -73,13 +76,15 @@ Numbers arranged from left to right, top to bottom.
 
 ### 3.2. Snake
 
-Starting at top left corner go right, then next row from right to left, the third row arranged from left to right and so on.
+Starting at top left corner go right, then next row from right to left, the third row arranged from left to right and so
+on.
 
 <p align="center"><img src="/assets/snake.jpg" alt="Snake mode" /></p>
 
 ### 3.3. Spiral
 
-Start at top left corner, move right to the edge, then move from top to bottom, then from right to left, then from bottom to top and so on. 
+Start at top left corner, move right to the edge, then move from top to bottom, then from right to left, then from
+bottom to top and so on.
 
 <p align="center"><img src="/assets/spiral.jpg" alt="Spiral mode" /></p>
 
@@ -93,13 +98,16 @@ The default mode you start with.
 
 ### 4.2. Hard
 
-In a hard mode the puzzle must be solved blindly - the player can see the numbers only the on first move. If any move is done, numbers disappear from field.
+In a hard mode the puzzle must be solved blindly - the player can see the numbers only the on first move. If any move is
+done, numbers disappear from field.
 
-To solve the puzzle, player must arrange numbers in their order, and then hit `check` button to check if they solved puzzle correctly.
+To solve the puzzle, player must arrange numbers in their order, and then hit `check` button to check if they solved
+puzzle correctly.
 
 <p align="center"><img src="/assets/hard-check.gif" alt="Hard mode check" /></p>
 
-If you find intimidating playing the hard mode, `peek` button comes to the rescue. Press and hold the button to show numbers on tiles.
+If you find intimidating playing the hard mode, `peek` button comes to the rescue. Press and hold the button to show
+numbers on tiles.
 
 <p align="center"><img src="/assets/hard-peek.gif" alt="Hard mode peek" /></p>
 
@@ -107,7 +115,8 @@ If you find intimidating playing the hard mode, `peek` button comes to the rescu
 
 The fastest and most efficient solves are put to the Records.
 
-The top panel of `Records` screen is interactive. There are `Type`, `Mode`, `Width` and `Height` filters, and two `Sort` modes: `fewer moves` and `less time`.
+The top panel of `Records` screen is interactive. There are `Type`, `Mode`, `Width` and `Height` filters, and two `Sort`
+modes: `fewer moves` and `less time`.
 
 The table shows place, moves count, time spent and date of the solve.
 
@@ -115,13 +124,14 @@ The table shows place, moves count, time spent and date of the solve.
 
 ### 5.1. Export
 
-Records can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format by pressing `export` button.
+Records can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format by
+pressing `export` button.
 
 The exported file contains the following information:
 
-|type|hard mode|width|height|time|moves|date|
-|-|-|-|-|-|-|-|
-|[game type](#3-game-types)|`0` for easy mode, `1` for [hard mode](#42-hard)|width of the puzzle|height of the puzzle|time in seconds (with milliseconds)|count of moves|date of the record|
+| type                       | hard mode                                        | width               | height               | time                                | moves          | date               |
+|----------------------------|--------------------------------------------------|---------------------|----------------------|-------------------------------------|----------------|--------------------|
+| [game type](#3-game-types) | `0` for easy mode, `1` for [hard mode](#42-hard) | width of the puzzle | height of the puzzle | time in seconds (with milliseconds) | count of moves | date of the record |
 
 For example:
 
@@ -139,40 +149,41 @@ Import previously [exported records](#51-export).
 
 ### 6.1. Basic
 
-|Setting|Values|Description|
-|-|-|-|
-|Type|`classic`, `snake`, `spiral`|See [game types](#3-game-types)|
-|Width|`3 - 10`|Width of the puzzle|
-|Height|`3 - 10`|Height of the puzzle|
-|Animation|`on`, `off`|Play animations on tiles moves, etc.|
-|Color theme|`day`, `night`, `system`|The overall color theme of the app. `system` will follow system dark mode settings|
-|Color|various colors|The color of tiles and interface|
+| Setting     | Values                       | Description                                                                        |
+|-------------|------------------------------|------------------------------------------------------------------------------------|
+| Type        | `classic`, `snake`, `spiral` | See [game types](#3-game-types)                                                    |
+| Width       | `3 - 10`                     | Width of the puzzle                                                                |
+| Height      | `3 - 10`                     | Height of the puzzle                                                               |
+| Animation   | `on`, `off`                  | Play animations on tiles moves, etc.                                               |
+| Color theme | `day`, `night`, `system`     | The overall color theme of the app. `system` will follow system dark mode settings |
+| Color       | various colors               | The color of tiles and interface                                                   |
 
 ### 6.2. Advanced
 
-|Setting|Values|Description|
-|-|-|-|
-|Mode|`easy`, `hard`|See [game modes](#4-game-modes)|
-|Missing tile|`default`, `random`|See [missing tile](#622-missing-tile)|
-|Anti-alias|`on`, `off`|Smoother appearance of lines. Disabling can improve performance|
-|Multi-color|`off`, `rows`, `columns`, `fringe`, `solved`|See [multi-color](#7-multi-color)|
-|Animation speed|`off`, `fast`, `normal`|Tile animation speed|
-|Delay|`on`, `off`|After solving a puzzle, there is a small delay before you can start a new game by clicking on a game field|
-|Ingame&nbsp;info||See [ingame info](#621-ingame-info)|
-|Stats|`on`, `off`|See [statistics](#8-statistics)|
+| Setting          | Values                                                   | Description                                                                                                |
+|------------------|----------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| Mode             | `easy`, `hard`                                           | See [game modes](#4-game-modes)                                                                            |
+| Missing tile     | `default`, `random`                                      | See [missing tile](#622-missing-tile)                                                                      |
+| Anti-alias       | `on`, `off`                                              | Smoother appearance of lines. Disabling can improve performance                                            |
+| Multi-color      | `off`, `rows`, `columns`, `fringe`, `solved`, `fringe-3` | See [multi-color](#7-multi-color)                                                                          |
+| Animation speed  | `off`, `fast`, `normal`                                  | Tile animation speed                                                                                       |
+| Delay            | `on`, `off`                                              | After solving a puzzle, there is a small delay before you can start a new game by clicking on a game field |
+| Ingame&nbsp;info |                                                          | See [ingame info](#621-ingame-info)                                                                        |
+| Stats            | `on`, `off`                                              | See [statistics](#8-statistics)                                                                            |
 
 ### 6.2.1. Ingame info
 
-|Setting|Values|Description|
-|-|-|-|
-|Time&nbsp;format|`0:12.3`, `0:12.345`, `12.345`, `0:12`|Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)|
-|Moves|`on`,<br>`after solve`, `off`|Show number of moves on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
-|Time|`on`,<br>`after solve`, `off`|Show elapsed time on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
-|TPS|`on`,<br>`after solve`, `off`|Show current [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show|
+| Setting          | Values                                 | Description                                                                                                                                                                                |
+|------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Time&nbsp;format | `0:12.3`, `0:12.345`, `12.345`, `0:12` | Time format to display. Affects main screen, [records](#5-records) and [statistics](#8-statistics)                                                                                         |
+| Moves            | `on`,<br>`after solve`, `off`          | Show number of moves on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show                                                             |
+| Time             | `on`,<br>`after solve`, `off`          | Show elapsed time on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show                                                                |
+| TPS              | `on`,<br>`after solve`, `off`          | Show current [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) on the main screen. `on` - always show, `after solve` - show only if puzzle is solved, `off` - never show |
 
 ### 6.2.2. Missing tile
 
-By `default`, the missing tile will be the last one (for 4x4 it's number 16, 9 for 3x3, 12 for 4x3 and so on). If set to `random`, the tile will be chosen randomly and the goal will be different.
+By `default`, the missing tile will be the last one (for 4x4 it's number 16, 9 for 3x3, 12 for 4x3 and so on). If set
+to `random`, the tile will be chosen randomly and the goal will be different.
 
 For example, in this position the missing tile is 6:
 
@@ -186,17 +197,20 @@ So, you need to arrange tiles in this order:
 
 Multi-color is a way the tiles on game field are colored.
 
-|Mode|Description|Image|
-|-|-|-|
-|`off`|All tiles colored by [chosen color](#61-basic)|![off](/assets/mc-off.jpg)|
-|`rows`|Each row has different color|![rows](/assets/mc-rows.jpg)|
-|`columns`|Each column has different color|![columns](/assets/mc-columns.jpg)|
-|`fringe`|Tiles colored by layers|![fringe](/assets/mc-fringe.jpg)|
-|`solved`|Solved tiles have a brighter color|![solved](/assets/mc-solved.jpg)|
+| Mode       | Description                                        | Image                              |
+|------------|----------------------------------------------------|------------------------------------|
+| `off`      | All tiles colored by [chosen color](#61-basic)     | ![off](/assets/mc-off.jpg)         |
+| `rows`     | Each row has different color                       | ![rows](/assets/mc-rows.jpg)       |
+| `columns`  | Each column has different color                    | ![columns](/assets/mc-columns.jpg) |
+| `fringe`   | Tiles colored by layers                            | ![fringe](/assets/mc-fringe.jpg)   |
+| `fringe-3` | Same as `fringe`, but with more colors for columns | ![fringe](/assets/mc-fringe-3.jpg) |
+| `solved`   | Solved tiles have a brighter color                 | ![solved](/assets/mc-solved.jpg)   |
 
 ## 8. Statistics
 
-Statistics screen shows various information about current session, such as [average](https://www.speedsolving.com/wiki/index.php/Average) times, moves and [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second).
+Statistics screen shows various information about current session, such
+as [average](https://www.speedsolving.com/wiki/index.php/Average) times, moves
+and [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second).
 
 <p align="center"><img src="/assets/stats.jpg" alt="Statistics" /></p>
 
@@ -204,13 +218,14 @@ Statistics can be enabled in [advanced settings](#62-advanced).
 
 ### 8.1. Export
 
-Current session statistics can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format by pressing `export` button.
+Current session statistics can be exported to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values)
+format by pressing `export` button.
 
 The exported file contains the following information:
 
-|type|hard mode|width|height|time|moves|tps|
-|-|-|-|-|-|-|-|
-|[game type](#3-game-types)|`0` for easy mode, `1` for [hard mode](#42-hard)|width of the puzzle|height of the puzzle|time in seconds (with milliseconds)|count of moves|[TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second)|
+| type                       | hard mode                                        | width               | height               | time                                | moves          | tps                                                                 |
+|----------------------------|--------------------------------------------------|---------------------|----------------------|-------------------------------------|----------------|---------------------------------------------------------------------|
+| [game type](#3-game-types) | `0` for easy mode, `1` for [hard mode](#42-hard) | width of the puzzle | height of the puzzle | time in seconds (with milliseconds) | count of moves | [TPS](https://www.speedsolving.com/wiki/index.php/Turns_per_second) |
 
 For example:
 
