@@ -9,17 +9,10 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.italankin.fifteen.export.ExportCallback;
 import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.statistics.StatisticsManager;
-import com.italankin.fifteen.views.FieldView;
-import com.italankin.fifteen.views.HardModeView;
-import com.italankin.fifteen.views.InfoPanelView;
-import com.italankin.fifteen.views.LeaderboardView;
-import com.italankin.fifteen.views.SettingsView;
-import com.italankin.fifteen.views.StatisticsView;
-import com.italankin.fifteen.views.TopPanelView;
+import com.italankin.fifteen.views.*;
 import com.italankin.fifteen.views.help.HelpOverlay;
 import com.italankin.fifteen.views.overlay.FieldTextOverlay;
 
@@ -125,7 +118,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
             }
             return false;
         });
-        mSettings = new SettingsView(mResources);
+        mSettings = new SettingsView(getContext());
         mSettings.addCallback(needUpdate -> {
             if (needUpdate) {
                 createNewGame(true);

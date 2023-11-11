@@ -40,6 +40,12 @@
     <string name="pref_ingame_info_moves">Moves</string>
     <string name="pref_ingame_info_time">Time</string>
     <string name="pref_ingame_info_tps">TPS</string>
+    <string name="pref_source_code">Source code</string>
+    <string name="pref_source_code_value" translatable="false">Github</string>
+    <string name="pref_website">Website</string>
+    <string name="pref_website_value" translatable="false">15puzzle.app</string>
+    <string name="pref_new_app">New app</string>
+    <string name="pref_new_app_value" translatable="false">Fifteen</string>
 
     <string name="tile_anim_speed_off">off</string>
     <string name="tile_anim_speed_fast">fast</string>
@@ -62,6 +68,11 @@
 
     <string name="settings_page_basic">basic</string>
     <string name="settings_page_advanced">advanced</string>
+    <string name="settings_page_about">about</string>
+
+    <string name="source_code_url" translatable="false">https://github.com/italankin/15Puzzle</string>
+    <string name="fifteen_app_url" translatable="false">https://play.google.com/store/apps/details?id=com.italankin.fifteen2</string>
+    <string name="website_url" translatable="false">https://15puzzle.app</string>
 
     <string name="export">export</string>
     <string name="import_records">import</string>

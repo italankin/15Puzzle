@@ -1,20 +1,13 @@
 package com.italankin.fifteen.views;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
-import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.Logger;
-import com.italankin.fifteen.R;
-import com.italankin.fifteen.Settings;
-import com.italankin.fifteen.views.settings.AdvancedPage;
-import com.italankin.fifteen.views.settings.BasicPage;
-import com.italankin.fifteen.views.settings.IngameInfoPage;
-import com.italankin.fifteen.views.settings.SettingsPage;
+import com.italankin.fifteen.*;
+import com.italankin.fifteen.views.settings.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +17,9 @@ public class SettingsView extends BaseView {
     public static final int PAGE_BASIC = 0;
     public static final int PAGE_ADVANCED = 1;
     public static final int PAGE_INGAME_INFO = 2;
+    public static final int PAGE_ABOUT = 3;
+
+    private final Context context;
 
     private final Paint mPaintText;
     private final Paint mPaintValue;
@@ -32,15 +28,19 @@ public class SettingsView extends BaseView {
     private final Map<Integer, SettingsPage> pages = new HashMap<>();
 
     private final String mTextBack;
+    private final String mTextAbout;
     private final String mTextSettingsPageBasic;
     private final String mTextSettingsPageAdvanced;
 
     private final RectF mRectSettingsPage;
+    private final RectF mRectAbout;
     private final RectF mRectBack;
 
     private int mCurrentPage = PAGE_BASIC;
 
-    public SettingsView(Resources res) {
+    public SettingsView(Context context) {
+        this.context = context;
+
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f);
         int topMargin = (int) (Dimensions.surfaceHeight * 0.07f);
         int padding = -lineSpacing / 4;
@@ -62,7 +62,9 @@ public class SettingsView extends BaseView {
         mPaintControls = new Paint(mPaintText);
         mPaintControls.setTextAlign(Paint.Align.CENTER);
 
+        Resources res = context.getResources();
         mTextBack = res.getString(R.string.back);
+        mTextAbout = res.getString(R.string.settings_page_about);
         mTextSettingsPageBasic = res.getString(R.string.settings_page_basic);
         mTextSettingsPageAdvanced = res.getString(R.string.settings_page_advanced);
 
@@ -76,13 +78,19 @@ public class SettingsView extends BaseView {
             page.init(lineSpacing, topMargin, padding, textHeight);
         }
 
-        mRectSettingsPage = new RectF(0, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight * 2,
-                Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing * 1.5f - textHeight);
-        mRectSettingsPage.inset(0, padding);
-
         mRectBack = new RectF(0, Dimensions.surfaceHeight - lineSpacing - textHeight,
                 Dimensions.surfaceWidth, Dimensions.surfaceHeight - lineSpacing);
         mRectBack.inset(0, padding);
+
+        float buttonSpacing = lineSpacing * 0.15f;
+
+        mRectSettingsPage = new RectF(0, mRectBack.top - textHeight - buttonSpacing,
+                Dimensions.surfaceWidth, mRectBack.top - buttonSpacing);
+        mRectSettingsPage.inset(0, padding);
+
+        mRectAbout = new RectF(0, mRectSettingsPage.top - textHeight - buttonSpacing,
+                Dimensions.surfaceWidth, mRectSettingsPage.top - buttonSpacing);
+        mRectAbout.inset(0, padding);
     }
 
     @Override
@@ -115,6 +123,11 @@ public class SettingsView extends BaseView {
                     // do nothing
                     break;
             }
+        }
+
+        if (mCurrentPage == PAGE_BASIC && mRectAbout.contains(x, y)) {
+            mCurrentPage = PAGE_ABOUT;
+            return;
         }
 
         if (mRectBack.contains(x, y)) {
@@ -155,6 +168,11 @@ public class SettingsView extends BaseView {
                     mRectSettingsPage.bottom - textYOffset, mPaintControls);
         }
 
+        if (mCurrentPage == PAGE_BASIC) {
+            canvas.drawText(mTextAbout, mRectAbout.centerX(),
+                    mRectAbout.bottom - textYOffset, mPaintControls);
+        }
+
         canvas.drawText(mTextBack, mRectBack.centerX(),
                 mRectBack.bottom - textYOffset, mPaintControls);
     }
@@ -184,11 +202,15 @@ public class SettingsView extends BaseView {
 
     @Override
     public boolean hide() {
-        if (mCurrentPage == PAGE_INGAME_INFO) {
-            mCurrentPage = PAGE_ADVANCED;
-            return true;
-        } else {
-            return super.hide();
+        switch (mCurrentPage) {
+            case PAGE_INGAME_INFO:
+                mCurrentPage = PAGE_ADVANCED;
+                return true;
+            case PAGE_ABOUT:
+                mCurrentPage = PAGE_BASIC;
+                return true;
+            default:
+                return super.hide();
         }
     }
 
@@ -196,6 +218,7 @@ public class SettingsView extends BaseView {
         pages.put(PAGE_BASIC, new BasicPage(mPaintText, mPaintValue, res));
         pages.put(PAGE_ADVANCED, new AdvancedPage(this, mPaintText, mPaintValue, res));
         pages.put(PAGE_INGAME_INFO, new IngameInfoPage(mPaintText, mPaintValue, res));
+        pages.put(PAGE_ABOUT, new AboutPage(context, mPaintText, mPaintValue));
     }
 
     public interface Callbacks {

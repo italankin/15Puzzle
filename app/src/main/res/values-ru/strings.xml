@@ -40,6 +40,9 @@
     <string name="pref_ingame_info_moves">Время</string>
     <string name="pref_ingame_info_time">Ходы</string>
     <string name="pref_ingame_info_tps">TPS</string>
+    <string name="pref_source_code">Исходный код</string>
+    <string name="pref_website">Сайт</string>
+    <string name="pref_new_app">Новая версия</string>
 
     <string name="tile_anim_speed_off">выкл.</string>
     <string name="tile_anim_speed_fast">быстрые</string>
@@ -57,6 +60,7 @@
 
     <string name="settings_page_basic">базовые</string>
     <string name="settings_page_advanced">дополнительные</string>
+    <string name="settings_page_about">о приложении</string>
 
     <string name="export">экспорт</string>
     <string name="import_records">импорт</string>
