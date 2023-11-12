@@ -7,6 +7,7 @@ import android.view.animation.OvershootInterpolator;
 import com.italankin.fifteen.anim.TileScaleAnimator;
 import com.italankin.fifteen.anim.TileXAnimator;
 import com.italankin.fifteen.anim.TileYAnimator;
+import com.italankin.fifteen.game.Game;
 
 public class Tile {
 
@@ -22,6 +23,7 @@ public class Tile {
     private int mMultiColorIndex;
     private final boolean mIsHelpTile;
     private final int mNumber;
+    private final int mGoalIndex;
 
     private float mCanvasX;
     private float mCanvasY;
@@ -64,7 +66,8 @@ public class Tile {
     public Tile(int number, int index, boolean isHelpTile) {
         mIndex = index;
         mNumber = number;
-        mMultiColorIndex = getMultiColorIndex(number);
+        mGoalIndex = GameState.get().game.getGoal().indexOf(number);
+        mMultiColorIndex = getMultiColorIndex();
         mIsHelpTile = isHelpTile;
         tileColor = getTileColor();
         mDataText = Integer.toString(number);
@@ -177,7 +180,7 @@ public class Tile {
 
     public void update() {
         useMultiColor = Settings.useMultiColor();
-        mMultiColorIndex = getMultiColorIndex(mNumber);
+        mMultiColorIndex = getMultiColorIndex();
         tileColor = getTileColor();
     }
 
@@ -267,17 +270,12 @@ public class Tile {
         GameState state = GameState.get();
         if (useMultiColor && (mIsHelpTile || !state.paused)) {
             if (Settings.multiColor == Constants.MULTI_COLOR_SOLVED) {
-                return mIndex == state.game.getGoal().indexOf(mNumber)
-                        ? tileColor
-                        : Colors.getUnsolvedTileColor();
+                return mIndex == mGoalIndex ? tileColor : Colors.getUnsolvedTileColor();
             } else {
                 int colorIndex = mMultiColorIndex;
                 if (colorIndex >= 0 && colorIndex < Colors.multiColorTiles.length) {
                     if (Settings.multiColor == Constants.MULTI_COLOR_FRINGE3) {
-                        int x = mIndex / Settings.gameWidth;
-                        int y = mIndex % Settings.gameWidth;
-                        int index = Math.min(x, y);
-                        if (index != x) {
+                        if (colorIndex != mGoalIndex / state.game.getWidth()) {
                             return Colors.multiColorTilesFringe3[colorIndex];
                         }
                     }
@@ -288,17 +286,20 @@ public class Tile {
         return tileColor;
     }
 
-    private static int getMultiColorIndex(int number) {
-        int index = GameState.get().game.getGoal().indexOf(number);
+    private int getMultiColorIndex() {
         int gameWidth = Settings.gameWidth;
         switch (Settings.multiColor) {
             case Constants.MULTI_COLOR_ROWS:
-                return index / gameWidth;
+                return mGoalIndex / gameWidth;
             case Constants.MULTI_COLOR_COLUMNS:
-                return index % gameWidth;
+                return mGoalIndex % gameWidth;
             case Constants.MULTI_COLOR_FRINGE:
+                return Math.min(mGoalIndex % gameWidth, mGoalIndex / gameWidth);
             case Constants.MULTI_COLOR_FRINGE3:
-                return Math.min(index % gameWidth, index / gameWidth);
+                Game game = GameState.get().game;
+                int x = mGoalIndex / game.getWidth();
+                int y = mGoalIndex % game.getWidth();
+                return Math.min(x, y);
             case Constants.MULTI_COLOR_OFF:
             case Constants.MULTI_COLOR_SOLVED:
             default:
