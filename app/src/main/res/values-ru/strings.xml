@@ -44,6 +44,8 @@
     <string name="pref_website">Сайт</string>
     <string name="pref_new_app">Новая версия</string>
 
+    <string name="new_app_banner_text">НОВАЯ ВЕРСИЯ: FIFTEEN</string>
+
     <string name="tile_anim_speed_off">выкл.</string>
     <string name="tile_anim_speed_fast">быстрые</string>
     <string name="tile_anim_speed_normal">обычные</string>

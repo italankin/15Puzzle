@@ -132,6 +132,8 @@ public class Colors {
             CYAN_F3
     };
     public static final int ERROR = 0xffd24242;
+    public static final int NEW_APP = 0xff00639b;
+    public static final int NEW_APP_TEXT = 0xffffffff;
 
     public static int getBackgroundColor() {
         return background[Settings.getColorMode()];

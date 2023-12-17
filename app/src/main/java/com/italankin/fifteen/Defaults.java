@@ -18,4 +18,5 @@ class Defaults {
     static final boolean STATS = false;
     static final boolean RANDOM_MISSING_TILE = false;
     static final boolean NEW_GAME_DELAY = true;
+    static final boolean SHOW_NEW_APP_BANNER = true;
 }

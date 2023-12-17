@@ -215,7 +215,7 @@ public class SettingsView extends BaseView {
     }
 
     private void initPages(Resources res) {
-        pages.put(PAGE_BASIC, new BasicPage(mPaintText, mPaintValue, res));
+        pages.put(PAGE_BASIC, new BasicPage(context, mPaintText, mPaintValue));
         pages.put(PAGE_ADVANCED, new AdvancedPage(this, mPaintText, mPaintValue, res));
         pages.put(PAGE_INGAME_INFO, new IngameInfoPage(mPaintText, mPaintValue, res));
         pages.put(PAGE_ABOUT, new AboutPage(context, mPaintText, mPaintValue));

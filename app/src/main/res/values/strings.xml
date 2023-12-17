@@ -47,6 +47,8 @@
     <string name="pref_new_app">New app</string>
     <string name="pref_new_app_value" translatable="false">Fifteen</string>
 
+    <string name="new_app_banner_text">NEW VERSION: FIFTEEN</string>
+
     <string name="tile_anim_speed_off">off</string>
     <string name="tile_anim_speed_fast">fast</string>
     <string name="tile_anim_speed_normal">normal</string>

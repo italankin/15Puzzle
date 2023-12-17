@@ -1,19 +1,16 @@
 package com.italankin.fifteen.views.settings;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-
-import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Constants;
-import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.R;
-import com.italankin.fifteen.Settings;
+import com.italankin.fifteen.*;
 import com.italankin.fifteen.views.SettingsView;
 
 public class BasicPage implements SettingsPage {
 
+    private final Context mContext;
     private final Paint mPaintText;
     private final Paint mPaintValue;
     private final Paint mPaintIcon;
@@ -31,6 +28,8 @@ public class BasicPage implements SettingsPage {
     private final String[] mTextColorModeValues;
     private final String mTextType;
     private final String[] mTextTypeValue;
+    private final String mTextNewApp;
+    private final String mTextNewAppValue;
 
     private RectF mRectWidth;
     private RectF mRectAnimations;
@@ -39,16 +38,19 @@ public class BasicPage implements SettingsPage {
     private RectF mRectColor;
     private RectF mRectColorMode;
     private RectF mRectColorIcon;
+    private RectF mRectNewApp;
 
     private SettingsView.Callbacks mCallbacks;
 
-    public BasicPage(Paint paintText, Paint paintValue, Resources res) {
+    public BasicPage(Context context, Paint paintText, Paint paintValue) {
+        this.mContext = context;
         this.mPaintText = paintText;
         this.mPaintValue = paintValue;
 
         mPaintIcon = new Paint();
         mPaintIcon.setAntiAlias(Settings.antiAlias);
 
+        Resources res = context.getResources();
         mTextHeight = res.getString(R.string.pref_height);
         mTextHeightValue = Integer.toString(Settings.gameHeight);
         mTextWidth = res.getString(R.string.pref_width);
@@ -62,6 +64,8 @@ public class BasicPage implements SettingsPage {
         mTextColorMode = res.getString(R.string.pref_color_mode);
         mTextColorModeValues = res.getStringArray(R.array.color_mode);
         mTextColor = res.getString(R.string.pref_color);
+        mTextNewApp = res.getString(R.string.pref_new_app);
+        mTextNewAppValue = res.getString(R.string.pref_new_app_value);
     }
 
     public void addCallback(SettingsView.Callbacks callbacks) {
@@ -98,6 +102,10 @@ public class BasicPage implements SettingsPage {
                 Dimensions.surfaceWidth / 2 + 2.0f * Dimensions.spacing + textHeight,
                 mRectColor.bottom + padding);
         mRectColorIcon.inset(-mRectColorIcon.width() / 4, -mRectColorIcon.width() / 4);
+
+        topMargin += lineSpacing;
+        mRectNewApp = new RectF(0, topMargin, Dimensions.surfaceWidth, topMargin + textHeight);
+        mRectNewApp.inset(0, padding);
     }
 
     @Override
@@ -125,6 +133,12 @@ public class BasicPage implements SettingsPage {
         canvas.drawText(mTextType, textLeft, mRectGameType.bottom - textYOffset, mPaintText);
         canvas.drawText(mTextTypeValue[Settings.gameType],
                 valueRight, mRectGameType.bottom - textYOffset, mPaintValue);
+
+        canvas.drawText(mTextNewApp, textLeft, mRectNewApp.bottom - textYOffset, mPaintText);
+        int valueColor = mPaintValue.getColor();
+        mPaintValue.setColor(Colors.NEW_APP);
+        canvas.drawText(mTextNewAppValue, valueRight, mRectNewApp.bottom - textYOffset, mPaintValue);
+        mPaintValue.setColor(valueColor);
     }
 
     @Override
@@ -196,6 +210,10 @@ public class BasicPage implements SettingsPage {
             if (mCallbacks != null) {
                 mCallbacks.onSettingsChanged(true);
             }
+        }
+
+        if (mRectNewApp.contains(x, y)) {
+            Tools.openUrl(mContext, R.string.fifteen_app_url);
         }
     }
 

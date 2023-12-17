@@ -1,6 +1,9 @@
 package com.italankin.fifteen;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 
 import java.util.Locale;
 
@@ -44,5 +47,12 @@ public class Tools {
      */
     public static int manhattan(int x1, int y1, int x2, int y2) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
+    public static void openUrl(Context context, int urlResource) {
+        Intent intent = new Intent(Intent.ACTION_VIEW)
+                .setData(Uri.parse(context.getResources().getString(urlResource)));
+        Intent chooser = Intent.createChooser(intent, null);
+        context.startActivity(chooser);
     }
 }

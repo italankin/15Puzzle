@@ -1,12 +1,10 @@
 package com.italankin.fifteen;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
 import com.italankin.fifteen.export.ExportCallback;
@@ -31,6 +29,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
 
     private final Resources mResources;
 
+    private NewAppBannerView mNewAppBanner;
     private TopPanelView mTopPanel;
     private InfoPanelView mInfoPanel;
     private FieldView mField;
@@ -82,6 +81,12 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     private void init() {
+        mNewAppBanner = new NewAppBannerView(getContext());
+        if (Settings.showNewAppBanner) {
+            Settings.showNewAppBanner = false;
+            Settings.save();
+            mNewAppBanner.show();
+        }
         mTopPanel = new TopPanelView();
         mTopPanel.addButton(BTN_NEW, mResources.getString(R.string.action_new));
         mTopPanel.addButton(BTN_SETTINGS, mResources.getString(R.string.action_settings));
@@ -96,13 +101,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
             GameState.get().help = true;
             RectF window = new RectF(0, 0, Dimensions.surfaceWidth, Dimensions.surfaceHeight);
             mHelpOverlay = new HelpOverlay(getResources(), tileAppearAnimator, window, mRectField);
-            mHelpOverlay.addCallback(() -> {
-                Resources res = getResources();
-                Intent intent = new Intent(Intent.ACTION_VIEW)
-                        .setData(Uri.parse(res.getString(R.string.help_how_to_play_url)));
-                Intent chooser = Intent.createChooser(intent, res.getString(R.string.help_how_to_play));
-                getContext().startActivity(chooser);
-            });
+            mHelpOverlay.addCallback(() -> Tools.openUrl(getContext(), R.string.help_how_to_play_url));
             mHelpOverlay.show();
         });
 
@@ -157,6 +156,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
     @Override
     protected void onDraw(Canvas canvas) {
         long current = System.currentTimeMillis();
+        if (lastOnDrawTimestamp == 0) {
+            lastOnDrawTimestamp = current - 1;
+        }
         draw(canvas, current - lastOnDrawTimestamp);
         lastOnDrawTimestamp = current;
         if (Settings.postInvalidateDelay > 0) {
@@ -248,6 +250,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     return true;
                 } else if (state.isSolved() && mRectField.contains(x, y)) {
                     createNewGame(true);
+                    return true;
+                } else if (mNewAppBanner.isShown()) {
+                    mNewAppBanner.onClick(x, y);
                     return true;
                 } else if (mTopPanel.onClick(x, y)) {
                     return true;
@@ -362,6 +367,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
         canvas.drawColor(Colors.getBackgroundColor());
 
         mTopPanel.draw(canvas, elapsed);
+        if (mNewAppBanner.isShown()) {
+            mNewAppBanner.draw(canvas, elapsed);
+        }
         mInfoPanel.draw(canvas, elapsed);
         boolean helpShown = mHelpOverlay != null && mHelpOverlay.isShown();
         if (!helpShown) {

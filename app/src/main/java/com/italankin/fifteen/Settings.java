@@ -27,6 +27,7 @@ public class Settings {
     private static final String KEY_TIME_FORMAT = "time_format";
     private static final String KEY_STATS = "stats";
     private static final String KEY_MISSING_RANDOM_TILE = "missing_random_tile";
+    private static final String KEY_SHOW_NEW_APP_BANNER = "show_new_app_banner";
 
     static final String KEY_SAVED_GAME_ARRAY = "puzzle_prev";
     static final String KEY_SAVED_GAME_MOVES = "puzzle_prev_moves";
@@ -49,6 +50,7 @@ public class Settings {
     public static int ingameInfoTps = Defaults.INGAME_INFO_TPS;
     public static int timeFormat = Defaults.TIME_FORMAT;
     public static boolean stats = Defaults.STATS;
+    public static boolean showNewAppBanner = Defaults.SHOW_NEW_APP_BANNER;
 
     /**
      * Used for UI tests to limit event loop queue
@@ -85,6 +87,7 @@ public class Settings {
         timeFormat = prefs.getInt(KEY_TIME_FORMAT, Defaults.TIME_FORMAT);
         stats = prefs.getBoolean(KEY_STATS, Defaults.STATS);
         randomMissingTile = prefs.getBoolean(KEY_MISSING_RANDOM_TILE, Defaults.RANDOM_MISSING_TILE);
+        showNewAppBanner = prefs.getBoolean(KEY_SHOW_NEW_APP_BANNER, Defaults.SHOW_NEW_APP_BANNER);
 
         if (prefs.contains("ingame_info")) {
             // old logic for backward compatibility
@@ -146,6 +149,7 @@ public class Settings {
         editor.putInt(KEY_TIME_FORMAT, timeFormat);
         editor.putBoolean(KEY_STATS, stats);
         editor.putBoolean(KEY_MISSING_RANDOM_TILE, randomMissingTile);
+        editor.putBoolean(KEY_SHOW_NEW_APP_BANNER, showNewAppBanner);
         SaveGameManager.saveGame(editor);
         if (sync) {
             editor.commit();
