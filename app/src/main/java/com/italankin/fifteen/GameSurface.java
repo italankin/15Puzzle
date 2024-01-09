@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import com.italankin.fifteen.export.ExportCallback;
@@ -13,6 +16,9 @@ import com.italankin.fifteen.statistics.StatisticsManager;
 import com.italankin.fifteen.views.*;
 import com.italankin.fifteen.views.help.HelpOverlay;
 import com.italankin.fifteen.views.overlay.FieldTextOverlay;
+
+import java.util.Collections;
+import java.util.List;
 
 public class GameSurface extends View implements TopPanelView.Callback {
 
@@ -52,6 +58,10 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private long lastSolvedTimestamp = 0;
     private long lastOnDrawTimestamp = 0;
 
+    private final int systemExclusionRectSize;
+    private final Rect systemExclusionRect = new Rect();
+    private final List<Rect> systemExclusionRects = Collections.singletonList(systemExclusionRect);
+
     private int lastImpossibleMoveIndex = -1;
     private long lastImpossibleMoveTimestamp = 0;
 
@@ -65,6 +75,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         this.exportCallback = exportCallback;
 
         mResources = context.getResources();
+        systemExclusionRectSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, mResources.getDisplayMetrics());
     }
 
     @Override
@@ -165,6 +176,9 @@ public class GameSurface extends View implements TopPanelView.Callback {
             postInvalidateDelayed(Settings.postInvalidateDelay);
         } else {
             postInvalidateOnAnimation();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            setSystemGestureExclusionRects(systemExclusionRects);
         }
     }
 
@@ -464,11 +478,19 @@ public class GameSurface extends View implements TopPanelView.Callback {
             mPauseOverlay.show();
         }
 
-        newGame.setCallback(() -> {
-            GameState state = GameState.get();
-            if (!state.hardmode) {
-                // on hardmode solution must be checked manually
-                onGameSolve(state);
+        newGame.setCallback(new Game.Callback() {
+            @Override
+            public void onGameStateUpdated(Game game) {
+                updateSystemExclusionRects(game);
+            }
+
+            @Override
+            public void onGameSolve(Game game) {
+                GameState state = GameState.get();
+                if (!state.hardmode) {
+                    // on hardmode solution must be checked manually
+                    GameSurface.this.onGameSolve(state);
+                }
             }
         });
 
@@ -496,6 +518,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
         if (animate) {
             tileAppearAnimator.nextAnim();
         }
+
+        updateSystemExclusionRects(newGame);
     }
 
     private void onGameSolve(GameState state) {
@@ -547,5 +571,17 @@ public class GameSurface extends View implements TopPanelView.Callback {
             return true;
         }
         return false;
+    }
+
+    private void updateSystemExclusionRects(Game game) {
+        int index = game.getState().indexOf(0);
+        //noinspection IntegerDivisionInFloatingPointContext
+        float emptySpaceY = Dimensions.fieldMarginTop +
+                (Dimensions.tileSize + Dimensions.spacing) * (index / Settings.gameWidth) +
+                Dimensions.tileSize / 2f;
+        systemExclusionRect.set(0,
+                (int) (emptySpaceY - systemExclusionRectSize / 2),
+                (int) Dimensions.surfaceWidth,
+                (int) (emptySpaceY + systemExclusionRectSize / 2));
     }
 }

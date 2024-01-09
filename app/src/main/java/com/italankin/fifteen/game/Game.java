@@ -85,6 +85,8 @@ public interface Game {
 
     interface Callback {
 
-        void onGameSolve();
+        void onGameStateUpdated(Game game);
+
+        void onGameSolve(Game game);
     }
 }

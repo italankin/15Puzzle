@@ -3,12 +3,7 @@ package com.italankin.fifteen.game;
 import com.italankin.fifteen.Logger;
 import com.italankin.fifteen.Tools;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 abstract class BaseGame implements Game {
 
@@ -126,10 +121,13 @@ abstract class BaseGame implements Game {
 
         Collections.swap(state, pos, zeroPos);
         moves++;
+        if (callback != null) {
+            callback.onGameStateUpdated(this);
+        }
 
         solved = state.equals(goal);
         if (solved && callback != null) {
-            callback.onGameSolve();
+            callback.onGameSolve(this);
         }
 
         return zeroPos;

@@ -3,7 +3,6 @@ package com.italankin.fifteen.views;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.GameState;
 import com.italankin.fifteen.Settings;
