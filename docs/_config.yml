@@ -4,7 +4,7 @@ google_play: https://play.google.com/store/apps/details?id=com.italankin.fifteen
 github: https://github.com/italankin/15Puzzle
 baseurl: ""
 url: "https://15puzzle.app"
-google_analytics: UA-174999394-2
+google_analytics: G-CJ36FVK3J6
 
 theme: "minima"
 
