@@ -16,10 +16,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: set up jdk
-      uses: actions/setup-java@v1
+    - name: Set up Java
+      uses: actions/setup-java@v3
       with:
-        java-version: 1.11
+        distribution: 'zulu'
+        java-version: '17'
 
     - name: decode keystore
       uses: italankin/android-keystore-decode-action@v1
@@ -48,7 +49,7 @@ jobs:
         mv "$AAB_OUTPUT_PATH/app-release.aab" "$AAB_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
 
     - name: create release
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1.12.0
       with:
         artifacts: "${{ env.APK_OUTPUT_PATH }}/*.apk"
         prerelease: true
