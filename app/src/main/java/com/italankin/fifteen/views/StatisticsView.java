@@ -5,12 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
-import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.R;
-import com.italankin.fifteen.Settings;
-import com.italankin.fifteen.Tools;
+import com.italankin.fifteen.*;
 import com.italankin.fifteen.statistics.Statistics;
 import com.italankin.fifteen.statistics.StatisticsManager;
 
@@ -71,6 +66,14 @@ public class StatisticsView extends BaseView {
     private final String mTextTime;
     private final String mTextMoves;
     private final String mTextTps;
+
+    private boolean mShowResetConfirmation;
+    private final String mTextResetConfirmTitle;
+    private final RectF mRectResetConfirmTitle;
+    private final String mTextResetConfirmOk;
+    private final RectF mRectResetConfirmOk;
+    private final String mTextResetConfirmCancel;
+    private final RectF mRectResetConfirmCancel;
 
     private final StatisticsManager statisticsManager;
     private Statistics statistics = Statistics.EMPTY;
@@ -134,6 +137,9 @@ public class StatisticsView extends BaseView {
         mTextTime = res.getString(R.string.stats_time);
         mTextMoves = res.getString(R.string.stats_moves);
         mTextTps = res.getString(R.string.stats_tps);
+        mTextResetConfirmTitle = res.getString(R.string.stats_reset_title);
+        mTextResetConfirmOk = res.getString(R.string.stats_reset_confirm);
+        mTextResetConfirmCancel = res.getString(R.string.stats_reset_cancel);
 
         Rect r = new Rect();
         mPaintText.getTextBounds(mTextBack, 0, mTextBack.length(), r);
@@ -152,6 +158,14 @@ public class StatisticsView extends BaseView {
         mRectReset = new RectF(mRectExport);
         mRectReset.left = Dimensions.surfaceWidth / 2;
         mRectReset.right = Dimensions.surfaceWidth;
+
+        mRectResetConfirmTitle = new RectF(0, Dimensions.surfaceHeight * .4f,
+                Dimensions.surfaceWidth, Dimensions.surfaceHeight * .4f + textHeight);
+        mRectResetConfirmOk = new RectF(0, mRectResetConfirmTitle.bottom + lineSpacing,
+                Dimensions.surfaceWidth / 2f, mRectResetConfirmTitle.bottom + lineSpacing + textHeight);
+        mRectResetConfirmCancel = new RectF(mRectResetConfirmOk);
+        mRectResetConfirmCancel.left = Dimensions.surfaceWidth / 2;
+        mRectResetConfirmCancel.right = Dimensions.surfaceWidth;
     }
 
     public void addCallbacks(Callbacks callbacks) {
@@ -159,6 +173,14 @@ public class StatisticsView extends BaseView {
     }
 
     public void onClick(float x, float y) {
+        if (mShowResetConfirmation) {
+            mShowResetConfirmation = false;
+            if (mRectResetConfirmOk.contains(x, y)) {
+                statisticsManager.clear();
+                statistics = Statistics.EMPTY;
+            }
+            return;
+        }
         if (mRectBack.contains(x, y)) {
             hide();
         }
@@ -166,8 +188,7 @@ public class StatisticsView extends BaseView {
             callbacks.onExportClicked();
         }
         if (mRectReset.contains(x, y)) {
-            statisticsManager.clear();
-            statistics = Statistics.EMPTY;
+            mShowResetConfirmation = true;
         }
     }
 
@@ -186,6 +207,11 @@ public class StatisticsView extends BaseView {
         float textYOffset = (int) (Dimensions.surfaceHeight * 0.02f);
 
         canvas.drawColor(Colors.getOverlayColor());
+        if (mShowResetConfirmation) {
+            drawResetConfirmation(canvas);
+            return;
+        }
+
         drawStats(canvas, textYOffset);
         canvas.drawText(mTextBack, mRectBack.centerX(),
                 mRectBack.bottom - textYOffset, mPaintControls);
@@ -206,6 +232,12 @@ public class StatisticsView extends BaseView {
         mPaintValue.setAntiAlias(Settings.antiAlias);
         mPaintTitle.setAntiAlias(Settings.antiAlias);
         mPaintTotal.setAntiAlias(Settings.antiAlias);
+    }
+
+    @Override
+    public boolean hide() {
+        mShowResetConfirmation = false;
+        return super.hide();
     }
 
     private void initStats(int lineSpacing, int topMargin, int padding, int textHeight) {
@@ -315,6 +347,15 @@ public class StatisticsView extends BaseView {
 
         String total = mResources.getQuantityString(R.plurals.stats_total, statistics.totalCount, statistics.totalCount);
         canvas.drawText(total, mRectTotal.centerX(), mRectTotal.bottom - textYOffset, mPaintTotal);
+    }
+
+    private void drawResetConfirmation(Canvas canvas) {
+        canvas.drawText(mTextResetConfirmTitle, mRectResetConfirmTitle.centerX(),
+                mRectResetConfirmTitle.bottom, mPaintControls);
+        canvas.drawText(mTextResetConfirmOk, mRectResetConfirmOk.centerX(),
+                mRectResetConfirmOk.bottom, mPaintControls);
+        canvas.drawText(mTextResetConfirmCancel, mRectResetConfirmCancel.centerX(),
+                mRectResetConfirmCancel.bottom, mPaintControls);
     }
 
     private String formatTime(Statistics.Avg avg) {

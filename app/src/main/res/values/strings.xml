@@ -67,6 +67,9 @@
     <string name="stats_na">n/a</string>
     <string name="stats_time">Time</string>
     <string name="stats_moves">Moves</string>
+    <string name="stats_reset_title">Reset stats?</string>
+    <string name="stats_reset_confirm">reset</string>
+    <string name="stats_reset_cancel">cancel</string>
 
     <string name="settings_page_basic">basic</string>
     <string name="settings_page_advanced">advanced</string>

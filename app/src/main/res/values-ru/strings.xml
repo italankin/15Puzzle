@@ -59,6 +59,9 @@
     <string name="stats_na">н/д</string>
     <string name="stats_time">Время</string>
     <string name="stats_moves">Ходы</string>
+    <string name="stats_reset_title">Сбросить статистику?</string>
+    <string name="stats_reset_confirm">сброс</string>
+    <string name="stats_reset_cancel">отмена</string>
 
     <string name="settings_page_basic">базовые</string>
     <string name="settings_page_advanced">дополнительные</string>
