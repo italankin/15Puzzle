@@ -3,16 +3,21 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdkVersion 35
+    namespace 'com.italankin.fifteen'
 
     defaultConfig {
         applicationId 'com.italankin.fifteen'
         versionCode 47
         versionName "1.15.5"
         minSdkVersion 19
-        targetSdkVersion 34
+        targetSdkVersion 35
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     signingConfigs {

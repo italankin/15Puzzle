@@ -1,7 +1,3 @@
 plugins {
-    id 'com.android.application' version '7.2.0' apply false
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    id 'com.android.application' version '8.12.3' apply false
 }
