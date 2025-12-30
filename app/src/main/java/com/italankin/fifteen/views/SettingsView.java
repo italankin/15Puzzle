@@ -42,7 +42,7 @@ public class SettingsView extends BaseView {
         this.context = context;
 
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f);
-        int topMargin = (int) (Dimensions.surfaceHeight * 0.07f);
+        int topMargin = (int) (Dimensions.topBarMargin + Dimensions.surfaceHeight * 0.07f);
         int padding = -lineSpacing / 4;
 
         mPaintText = new Paint();

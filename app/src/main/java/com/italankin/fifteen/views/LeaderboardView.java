@@ -6,14 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
-import com.italankin.fifteen.Colors;
-import com.italankin.fifteen.Constants;
-import com.italankin.fifteen.DBHelper;
-import com.italankin.fifteen.Dimensions;
-import com.italankin.fifteen.R;
-import com.italankin.fifteen.Settings;
-import com.italankin.fifteen.Tools;
+import com.italankin.fifteen.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -120,24 +113,24 @@ public class LeaderboardView extends BaseView {
         mPaintText.getTextBounds(mTextWidth, 0, 1, r);
 
         int lineHeight = r.height();
-        int marginTop = (int) (Dimensions.surfaceHeight * 0.08f);
+        int marginTop = (int) (Dimensions.topBarMargin + Dimensions.surfaceHeight * 0.08f);
         int mLineGap = (int) (Dimensions.surfaceHeight * 0.06f);
         mTableMarginTop = marginTop + lineHeight + 3.4f * mLineGap;
 
         mRectType = new RectF(0, marginTop, mSettingsGuides[2], marginTop + lineHeight);
-        mRectType.inset(0, -lineHeight / 3);
+        mRectType.inset(0, -lineHeight / 3f);
         mRectWidth = new RectF(mSettingsGuides[2], marginTop,
                 (int) Dimensions.surfaceWidth, marginTop + lineHeight);
-        mRectWidth.inset(0, -lineHeight / 3);
+        mRectWidth.inset(0, -lineHeight / 3f);
         mRectMode = new RectF(0, marginTop + mLineGap,
                 mSettingsGuides[2], marginTop + mLineGap + lineHeight);
-        mRectMode.inset(0, -lineHeight / 3);
+        mRectMode.inset(0, -lineHeight / 3f);
         mRectHeight = new RectF(mSettingsGuides[2], marginTop + mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + mLineGap + lineHeight);
-        mRectHeight.inset(0, -lineHeight / 3);
+        mRectHeight.inset(0, -lineHeight / 3f);
         mRectSort = new RectF(0, marginTop + 2 * mLineGap,
                 (int) Dimensions.surfaceWidth, marginTop + 2 * mLineGap + lineHeight);
-        mRectSort.inset(0, -lineHeight / 3);
+        mRectSort.inset(0, -lineHeight / 3f);
 
         int lineSpacing = (int) (Dimensions.surfaceHeight * 0.082f);
         int padding = -lineSpacing / 4;
@@ -278,7 +271,7 @@ public class LeaderboardView extends BaseView {
         canvas.drawText(mTextExport, mRectExport.centerX(), mRectExport.bottom - textYOffset, mPaintControls);
         canvas.drawText(mTextImport, mRectImport.centerX(), mRectImport.bottom - textYOffset, mPaintControls);
 
-        if (mTableItems.size() == 0) {
+        if (mTableItems.isEmpty()) {
             mPaintText.setTextAlign(Paint.Align.CENTER);
             mPaintText.setAlpha(128);
             canvas.drawText(mTextNoData,

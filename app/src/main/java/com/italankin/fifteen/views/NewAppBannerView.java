@@ -34,7 +34,8 @@ public class NewAppBannerView extends BaseView {
         paint.getTextBounds("A", 0, 1, r);
         buttonTextYOffset = r.centerY();
         bannerText = context.getString(R.string.new_app_banner_text);
-        bannerRect.set(0, 0, Dimensions.surfaceWidth, Dimensions.topBarHeight);
+        bannerRect.set(0, Dimensions.topBarMargin,
+                Dimensions.surfaceWidth, Dimensions.topBarMargin + Dimensions.topBarHeight);
         clipRect.set(bannerRect);
     }
 

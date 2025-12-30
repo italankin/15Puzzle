@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.animation.AccelerateInterpolator;
-
 import com.italankin.fifteen.Colors;
 import com.italankin.fifteen.Dimensions;
 import com.italankin.fifteen.Settings;
@@ -68,7 +67,8 @@ public class TopPanelView extends BaseView {
         Button b;
         for (int i = 0; i < size; i++) {
             b = mButtons.get(i);
-            b.rect.set(width * i, 0.0f, width * (i + 1), Dimensions.topBarHeight);
+            b.rect.set(width * i, Dimensions.topBarMargin,
+                    width * (i + 1), Dimensions.topBarMargin + Dimensions.topBarHeight);
         }
     }
 
@@ -91,7 +91,10 @@ public class TopPanelView extends BaseView {
             return;
         }
 
-        canvas.drawRect(0.0f, 0.0f, Dimensions.surfaceWidth, Dimensions.topBarHeight, mPaintButton);
+        // paint from top=0.0 to paint top inset
+        canvas.drawRect(0.0f, 0.0f,
+                Dimensions.surfaceWidth, Dimensions.topBarMargin + Dimensions.topBarHeight,
+                mPaintButton);
 
         for (Button button : mButtons) {
             if ((button.frame -= elapsedTime) > 0) {

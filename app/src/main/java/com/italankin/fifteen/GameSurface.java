@@ -2,14 +2,12 @@ package com.italankin.fifteen;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowInsets;
 import com.italankin.fifteen.export.ExportCallback;
 import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.statistics.StatisticsManager;
@@ -62,6 +60,8 @@ public class GameSurface extends View implements TopPanelView.Callback {
     private final Rect systemExclusionRect = new Rect();
     private final List<Rect> systemExclusionRects = Collections.singletonList(systemExclusionRect);
 
+    private int stableInsetTop = 0;
+
     private int lastImpossibleMoveIndex = -1;
     private long lastImpossibleMoveTimestamp = 0;
 
@@ -79,9 +79,18 @@ public class GameSurface extends View implements TopPanelView.Callback {
     }
 
     @Override
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            Insets systemBarInsets = insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+            stableInsetTop = systemBarInsets.top;
+        }
+        return super.onApplyWindowInsets(insets);
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
+        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight(), stableInsetTop);
     }
 
     @Override
@@ -494,7 +503,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
             }
         });
 
-        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight());
+        Dimensions.update(this.getMeasuredWidth(), this.getMeasuredHeight(), stableInsetTop);
         mRectField.set(
                 Dimensions.fieldMarginLeft - Dimensions.spacing,
                 Dimensions.fieldMarginTop - Dimensions.spacing,

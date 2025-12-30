@@ -14,25 +14,27 @@ public class Dimensions {
     public static float interfaceFontSize;
     public static float menuFontSize;
     public static float spacing;
+    public static float topBarMargin;
     public static float topBarHeight;
     public static float infoBarHeight;
     public static float infoBarMarginTop;
     public static float hardModeViewHeight;
     public static float hardModeViewMarginBottom;
 
-    public static void update(int width, int height) {
-        update(width, height, 1f, 1f);
+    public static void update(int width, int height, int insetTop) {
+        update(width, height, insetTop, 1f, 1f);
     }
 
-    public static void update(int width, int height, float scaleX, float scaleY) {
+    public static void update(int width, int height, int insetTop, float scaleX, float scaleY) {
         surfaceWidth = width * scaleX;
         surfaceHeight = height * scaleY;
 
+        topBarMargin = insetTop;
         topBarHeight = Dimensions.surfaceHeight * 0.07f;
         float hwf = surfaceHeight / surfaceWidth;
         float viewSpacing = Dimensions.surfaceHeight * (hwf > 1.63 ? 0.05f : 0.03f);
 
-        infoBarMarginTop = topBarHeight + viewSpacing;
+        infoBarMarginTop = topBarMargin + topBarHeight + viewSpacing;
         infoBarHeight = Dimensions.surfaceHeight * 0.13f;
 
         spacing = Math.min(surfaceWidth, surfaceHeight) * 0.015f;
