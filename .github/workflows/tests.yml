@@ -29,7 +29,7 @@ jobs:
         run: ./gradlew :app:testReleaseUnitTest
 
       - name: upload unit tests report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: unit-tests-report
           path: app/build/reports/tests/testReleaseUnitTest/**
@@ -63,7 +63,7 @@ jobs:
           script: ./gradlew :app:connectedDebugAndroidTest
 
       - name: upload ui tests report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: ui-tests-report
           path: app/build/reports/androidTests/connected/**
