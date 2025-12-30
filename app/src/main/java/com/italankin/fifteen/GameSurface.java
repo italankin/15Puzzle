@@ -446,7 +446,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mHardModeView.update();
     }
 
-    private void createNewGame(boolean isUser) {
+    public void createNewGame(boolean isUser) {
         if (Settings.newGameDelay && ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
             return;
         }

@@ -8,6 +8,7 @@ import com.italankin.fifteen.game.ClassicGame;
 import com.italankin.fifteen.game.Game;
 import com.italankin.fifteen.game.SnakeGame;
 import com.italankin.fifteen.game.SpiralGame;
+import com.italankin.fifteen.util.CreateNewGameAction;
 import com.italankin.fifteen.util.HoverSolveAction;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,6 +48,7 @@ public class SolveGameTest {
         )));
 
         onView(withId(R.id.game_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.game_view)).perform(new CreateNewGameAction());
 
         List<Integer> solution = Arrays.asList(
                 2, 15, 9, 12, 1, 5, 12, 8, 4, 9,
@@ -69,6 +71,7 @@ public class SolveGameTest {
         )));
 
         onView(withId(R.id.game_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.game_view)).perform(new CreateNewGameAction());
 
         List<Integer> solution = Arrays.asList(
                 4, 1, 6, 12, 9, 4, 1, 6, 7, 5, 12, 3,
@@ -89,6 +92,7 @@ public class SolveGameTest {
         )));
 
         onView(withId(R.id.game_view)).check(matches(isDisplayed()));
+        onView(withId(R.id.game_view)).perform(new CreateNewGameAction());
 
         List<Integer> solution = Arrays.asList(
                 5, 2, 3, 5, 7, 12, 4, 1, 10, 14, 12, 4,

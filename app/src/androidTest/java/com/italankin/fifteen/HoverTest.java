@@ -1,20 +1,13 @@
 package com.italankin.fifteen;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
 import android.content.SharedPreferences;
-
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-
 import com.italankin.fifteen.game.ClassicGame;
 import com.italankin.fifteen.game.Game;
+import com.italankin.fifteen.util.CreateNewGameAction;
 import com.italankin.fifteen.util.HoverSolveAction;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,6 +16,11 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -56,6 +54,9 @@ public class HoverTest {
                 9, 13, 2, 10, 1, 5, 11, 7, 3, 1,
                 5, 2, 10, 9, 13, 14, 15, 11, 7, 6,
                 4, 7, 6, 3, 2, 6, 7, 8, 12);
+
+        onView(withId(R.id.game_view)).perform(new CreateNewGameAction());
+
         Game game = GameState.get().game;
 
         onView(withId(R.id.game_view)).perform(new HoverSolveAction(game, solution));
