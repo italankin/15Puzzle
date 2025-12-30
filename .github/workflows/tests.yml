@@ -57,7 +57,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: run ui tests
-        uses: reactivecircus/android-emulator-runner@v2.32.0
+        uses: reactivecircus/android-emulator-runner@v2.35.0
         with:
           api-level: 29
           script: ./gradlew :app:connectedDebugAndroidTest
