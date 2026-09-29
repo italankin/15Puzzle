@@ -5,24 +5,40 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
 
     env:
       APK_OUTPUT_PATH: 'app/build/outputs/apk/release'
       AAB_OUTPUT_PATH: 'app/build/outputs/bundle/release'
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7.0.1
 
     - name: Set up Java
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v6.0.1
       with:
         distribution: 'zulu'
         java-version: '17'
 
-    - name: decode keystore
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v4.0.4
+      with:
+        packages: 'platform-tools platforms;android-37.0 build-tools;35.0.0'
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v6.4.0
+      with:
+        cache-provider: basic
+
+    - name: Decode keystore
       uses: italankin/android-keystore-decode-action@v1
       with:
         output_dir: 'app/keystore-release/'
@@ -33,31 +49,27 @@ jobs:
         key_alias: ${{ secrets.KEYSTORE_ALIAS }}
         key_alias_password: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
 
-    - name: make gradlew executable
-      run: chmod +x gradlew
-
-    - name: assemble
+    - name: Assemble release
       run: ./gradlew assembleRelease bundleRelease
 
-    - name: get current tag
-      id: current_tag
-      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+    - name: Rename artifacts
+      run: |
+        artifact_tag="${GITHUB_REF_NAME//\//-}"
+        mv "$APK_OUTPUT_PATH/app-release.apk" "$APK_OUTPUT_PATH/15-puzzle-$artifact_tag.apk"
+        mv "$AAB_OUTPUT_PATH/app-release.aab" "$AAB_OUTPUT_PATH/15-puzzle-$artifact_tag.aab"
 
-    - name: rename artifacts
-      run: >
-        mv "$APK_OUTPUT_PATH/app-release.apk" "$APK_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.apk" &&
-        mv "$AAB_OUTPUT_PATH/app-release.aab" "$AAB_OUTPUT_PATH/15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
-
-    - name: create release
-      uses: ncipollo/release-action@v1.12.0
+    - name: Create release
+      uses: ncipollo/release-action@v1.21.0
       with:
         artifacts: "${{ env.APK_OUTPUT_PATH }}/*.apk"
+        artifactErrorsFailBuild: true
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: upload aab
-      uses: actions/upload-artifact@v6.0.0
+    - name: Upload AAB
+      uses: actions/upload-artifact@v7.0.1
       with:
-        name: "15-puzzle-${{ steps.current_tag.outputs.tag }}.aab"
-        path: "${{ env.AAB_OUTPUT_PATH }}/**"
+        name: 15-puzzle-aab
+        path: "${{ env.AAB_OUTPUT_PATH }}/*.aab"
+        if-no-files-found: error
         retention-days: 2
