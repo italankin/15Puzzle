@@ -3,29 +3,29 @@ plugins {
 }
 
 android {
-    compileSdkVersion 37
-    namespace 'com.italankin.fifteen'
+    compileSdk = 37
+    namespace = 'com.italankin.fifteen'
 
     defaultConfig {
-        applicationId 'com.italankin.fifteen'
-        versionCode 49
-        versionName "1.16.1"
-        minSdkVersion 21
-        targetSdkVersion 37
+        applicationId = 'com.italankin.fifteen'
+        versionCode = 49
+        versionName = "1.16.1"
+        minSdk = 21
+        targetSdk = 37
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
     signingConfigs {
         debug {
-            storeFile file('keystore-debug/debug.keystore')
-            storePassword 'android'
-            keyAlias 'debug'
-            keyPassword 'android'
+            storeFile = file('keystore-debug/debug.keystore')
+            storePassword = 'android'
+            keyAlias = 'debug'
+            keyPassword = 'android'
         }
         release {
             Properties propsRelease = new Properties()
@@ -33,22 +33,22 @@ android {
             if (propsFileRelease.exists()) {
                 propsRelease.load(new FileInputStream(propsFileRelease))
 
-                storeFile file('keystore-release/' + propsRelease['keystore'])
-                storePassword propsRelease['keystore_password']
-                keyAlias propsRelease['alias']
-                keyPassword propsRelease['alias_password']
+                storeFile = file('keystore-release/' + propsRelease['keystore'])
+                storePassword = propsRelease['keystore_password']
+                keyAlias = propsRelease['alias']
+                keyPassword = propsRelease['alias_password']
             }
         }
     }
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
-            applicationIdSuffix ".debug"
+            signingConfig = signingConfigs.debug
+            applicationIdSuffix = ".debug"
         }
         release {
-            debuggable false
-            signingConfig signingConfigs.release
+            debuggable = false
+            signingConfig = signingConfigs.release
         }
     }
 
@@ -57,8 +57,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 

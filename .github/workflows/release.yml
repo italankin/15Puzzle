@@ -31,7 +31,7 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v4.0.4
       with:
-        packages: 'platform-tools platforms;android-37.0 build-tools;35.0.0'
+        packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
 
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v6.4.0
